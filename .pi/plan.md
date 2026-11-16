@@ -24,7 +24,7 @@ Il record canonico contiene `number`, `title`, `category`, `image`, `sourcePage`
 
 - [x] Task 1 — catalogo e scaffold verificabili.
 - [x] Task 2 — pipeline PDF → JPEG + JSON.
-- [ ] Task 3 — modello puro del grafo.
+- [x] Task 3 — modello puro del grafo.
 - [ ] Task 4 — interfaccia completa e accessibile.
 - [ ] Task 5 — test browser e confezionamento GitHub.
 - [ ] Task 6 — server locale, log e consegna.

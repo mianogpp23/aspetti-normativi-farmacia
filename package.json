@@ -1,0 +1,10 @@
+{
+  "name": "mappa-mentale-globo-farmaci",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mappa mentale interattiva a forma di globo per il corso FAD di dispensazione dei medicinali.",
+  "scripts": {
+    "test:model": "node --test tests/test_map_model.mjs"
+  }
+}

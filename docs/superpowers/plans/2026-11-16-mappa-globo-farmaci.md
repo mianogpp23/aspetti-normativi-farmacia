@@ -98,24 +98,24 @@ Atteso: 84 pagine, 84 JPEG, 84 record.
 - Creare: `assets/js/map-model.js`
 - Test: `tests/test_map_model.mjs`
 
-- [ ] **Step 1: scrivere il test RED**
+- [x] **Step 1: scrivere il test RED**
 
 `node --test tests/test_map_model.mjs` asserisce 94 nodi (1 centro + 9 hub + 84 slide), 176 collegamenti senza dangling endpoint, ID univoci, categorie e query di ricerca combinabili.
 
-- [ ] **Step 2: eseguire il test e verificare il fallimento**
+- [x] **Step 2: eseguire il test e verificare il fallimento**
 
 Atteso: FAIL perché il modulo non esiste.
 
-- [ ] **Step 3: implementare il modulo ES**
+- [x] **Step 3: implementare il modulo ES**
 
 Esporta `buildGraph(slides, categories)`, `filterGraph(graph, query, category)` e `neighborIds(graph, id)`. Il layout posiziona il centro, gli hub in ellisse e le slide in anelli locali deterministici.
 
-- [ ] **Step 4: eseguire il test e verificare il passaggio**
+- [x] **Step 4: eseguire il test e verificare il passaggio**
 
 Comando: `node --test tests/test_map_model.mjs`  
 Atteso: PASS.
 
-- [ ] **Step 5: commit**
+- [x] **Step 5: commit**
 
 `git add assets/js/map-model.js tests/test_map_model.mjs && git commit -m "feat: add deterministic globe graph model"`
 

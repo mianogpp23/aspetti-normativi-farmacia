@@ -29,7 +29,6 @@
 ---
 
 ### Task 1: scaffold e catalogo verificabile
-
 **File:**
 - Creare: `PROJECT.md`, `.pi/settings.json`, `.pi/plan.md`
 - Creare: `scripts/slide_catalog.py`
@@ -62,7 +61,6 @@ Atteso: PASS.
 `git add PROJECT.md .pi scripts/slide_catalog.py tests/test_build_slides.py && git commit -m "feat: define slide catalog and project scaffold"`
 
 ### Task 2: pipeline PDF → JPEG + JSON
-
 **File:**
 - Creare: `scripts/build_slides.py`
 - Creare: `assets/source/slides.pdf`, `assets/data/slides.json`, `assets/slides/slide-01.jpg` … `slide-84.jpg`
@@ -96,7 +94,6 @@ Atteso: 84 pagine, 84 JPEG, 84 record.
 `git add scripts/build_slides.py assets tests && git commit -m "feat: generate slide assets and catalog"`
 
 ### Task 3: modello puro del grafo
-
 **File:**
 - Creare: `assets/js/map-model.js`
 - Test: `tests/test_map_model.mjs`
@@ -123,7 +120,6 @@ Atteso: PASS.
 `git add assets/js/map-model.js tests/test_map_model.mjs && git commit -m "feat: add deterministic globe graph model"`
 
 ### Task 4: interfaccia completa e accessibile
-
 **File:**
 - Creare: `index.html`, `assets/css/styles.css`, `assets/js/app.js`
 - Creare: `assets/vendor/echarts.min.js`
@@ -154,7 +150,6 @@ Atteso: nessun errore e test PASS.
 `git add index.html assets && git commit -m "feat: build interactive globe map interface"`
 
 ### Task 5: test browser e confezionamento GitHub
-
 **File:**
 - Creare: `scripts/smoke_test.py`, `tests/browser-harness.html`
 - Creare: `README.md`, `.gitignore`, `.nojekyll`
@@ -186,7 +181,6 @@ Atteso: test PASS, nessun asset mancante, working tree pulito salvo artefatti es
 `git add README.md .gitignore .nojekyll scripts tests shots && git commit -m "test: verify browser behavior and GitHub packaging"`
 
 ### Task 6: avvio locale e consegna
-
 - [ ] **Step 1: avviare il server locale**
 
 Avviare `python3 -m http.server 8091 --bind 127.0.0.1` dalla root del progetto, con log in `/tmp/mappa-globo-farmaci-8091.log`.

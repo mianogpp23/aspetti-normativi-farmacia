@@ -34,29 +34,29 @@
 - Creare: `scripts/slide_catalog.py`
 - Test: `tests/test_build_slides.py`
 
-- [ ] **Step 1: scrivere il test RED del catalogo**
+- [x] **Step 1: scrivere il test RED del catalogo**
 
 Il test importa `SLIDES` e `CATEGORIES` e asserisce: 84 record, numeri da 1 a 84 senza duplicati, titolo non vuoto, categoria nota e copertura delle pagine 1 e 84.
 
-- [ ] **Step 2: eseguire il test e verificare il fallimento**
+- [x] **Step 2: eseguire il test e verificare il fallimento**
 
 Comando: `python3 -m unittest tests.test_build_slides -v`  
 Atteso: FAIL perché `scripts/slide_catalog.py` non esiste.
 
-- [ ] **Step 3: implementare il catalogo**
+- [x] **Step 3: implementare il catalogo**
 
 `slide_catalog.py` espone `CATEGORIES: dict[str, str]` e `SLIDES: list[dict]`; ogni record contiene `number`, `title`, `category`. I titoli derivano dal testo del PDF e le categorie sono: introduzione, fondamenti, prescrizione, tipi di ricetta, ricetta rossa, dematerializzazione, stupefacenti, registri, adempimenti.
 
-- [ ] **Step 4: eseguire il test e verificare il passaggio**
+- [x] **Step 4: eseguire il test e verificare il passaggio**
 
 Comando: `python3 -m unittest tests.test_build_slides -v`  
 Atteso: PASS.
 
-- [ ] **Step 5: creare metadati progetto e piano sintetico**
+- [x] **Step 5: creare metadati progetto e piano sintetico**
 
 `PROJECT.md` descrive scopo, struttura, comandi e regole; `.pi/settings.json` abilita le skill; `.pi/plan.md` riassume il piano in meno di 100 righe.
 
-- [ ] **Step 6: commit**
+- [x] **Step 6: commit**
 
 `git add PROJECT.md .pi scripts/slide_catalog.py tests/test_build_slides.py && git commit -m "feat: define slide catalog and project scaffold"`
 

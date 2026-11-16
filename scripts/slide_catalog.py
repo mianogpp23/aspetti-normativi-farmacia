@@ -2,6 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TypedDict
+
+
+class SlideMeta(TypedDict):
+    """Stable metadata shared by the build pipeline and the web application."""
+
+    number: int
+    title: str
+    category: str
+
+
 CATEGORIES: dict[str, str] = {
     "introduzione": "Introduzione",
     "fondamenti": "Fondamenti e classificazione",
@@ -101,7 +112,7 @@ _RAW_SLIDES: tuple[tuple[int, str, str], ...] = (
     (84, "Gestione dei medicinali per uso umano – Grazie per l’attenzione", "introduzione"),
 )
 
-SLIDES: list[dict[str, object]] = [
+SLIDES: list[SlideMeta] = [
     {"number": number, "title": title, "category": category}
     for number, title, category in _RAW_SLIDES
 ]

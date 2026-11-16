@@ -66,30 +66,30 @@ Atteso: PASS.
 - Creare: `assets/source/slides.pdf`, `assets/data/slides.json`, `assets/slides/slide-01.jpg` … `slide-84.jpg`
 - Test: `tests/test_build_slides.py`
 
-- [ ] **Step 1: estendere il test RED della pipeline**
+- [x] **Step 1: estendere il test RED della pipeline**
 
 Il test esegue `build_slides.build_catalog(source, temp_output, temp_images)` in una directory temporanea e asserisce 84 JPEG validi, 84 record JSON e percorsi relativi.
 
-- [ ] **Step 2: eseguire il test e verificare il fallimento**
+- [x] **Step 2: eseguire il test e verificare il fallimento**
 
 Comando: `python3 -m unittest tests.test_build_slides -v`  
 Atteso: FAIL per la funzione pipeline mancante.
 
-- [ ] **Step 3: implementare `build_slides.py`**
+- [x] **Step 3: implementare `build_slides.py`**
 
 Firma: `build_catalog(source_pdf: Path, output_json: Path, images_dir: Path) -> list[dict]`. La funzione copia il sorgente in `assets/source/slides.pdf`, esegue `pdftoppm -jpeg -r 120 -jpegopt quality=84,progressive=y,optimize=y`, rinomina gli output in `slide-NN.jpg` e scrive il JSON con `number`, `title`, `category`, `image`, `sourcePage`.
 
-- [ ] **Step 4: eseguire pipeline e test**
+- [x] **Step 4: eseguire pipeline e test**
 
 Comandi: `python3 scripts/build_slides.py && python3 -m unittest tests.test_build_slides -v`  
 Atteso: 84 immagini, JSON valido, test PASS.
 
-- [ ] **Step 5: verificare gli artefatti**
+- [x] **Step 5: verificare gli artefatti**
 
 Comando: `pdfinfo assets/source/slides.pdf` e conteggio JPEG/JSON.  
 Atteso: 84 pagine, 84 JPEG, 84 record.
 
-- [ ] **Step 6: commit**
+- [x] **Step 6: commit**
 
 `git add scripts/build_slides.py assets tests && git commit -m "feat: generate slide assets and catalog"`
 

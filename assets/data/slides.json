@@ -1,0 +1,590 @@
+[
+  {
+    "number": 1,
+    "title": "Gestione dei medicinali uso umano e disciplina di dispensazione al pubblico",
+    "category": "introduzione",
+    "image": "assets/slides/slide-01.jpg",
+    "sourcePage": 1
+  },
+  {
+    "number": 2,
+    "title": "Gestione dei medicinali per uso umano – Disciplina di dispensazione al pubblico",
+    "category": "introduzione",
+    "image": "assets/slides/slide-02.jpg",
+    "sourcePage": 2
+  },
+  {
+    "number": 3,
+    "title": "Classificazione dei medicinali",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-03.jpg",
+    "sourcePage": 3
+  },
+  {
+    "number": 4,
+    "title": "Classificazione dei medicinali – Regime di dispensazione al pubblico",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-04.jpg",
+    "sourcePage": 4
+  },
+  {
+    "number": 5,
+    "title": "Medicinali – Il bilancio rischio-beneficio",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-05.jpg",
+    "sourcePage": 5
+  },
+  {
+    "number": 6,
+    "title": "Classificazione dei medicinali sulla base del regime di dispensazione",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-06.jpg",
+    "sourcePage": 6
+  },
+  {
+    "number": 7,
+    "title": "La prescrizione medica",
+    "category": "prescrizione",
+    "image": "assets/slides/slide-07.jpg",
+    "sourcePage": 7
+  },
+  {
+    "number": 8,
+    "title": "La prescrizione medica – Supporti ammessi",
+    "category": "prescrizione",
+    "image": "assets/slides/slide-08.jpg",
+    "sourcePage": 8
+  },
+  {
+    "number": 9,
+    "title": "La prescrizione medica – Regime SSN e regime privato",
+    "category": "prescrizione",
+    "image": "assets/slides/slide-09.jpg",
+    "sourcePage": 9
+  },
+  {
+    "number": 10,
+    "title": "Tipologie di ricette: classificazione",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-10.jpg",
+    "sourcePage": 10
+  },
+  {
+    "number": 11,
+    "title": "Classificazione dei farmaci e regime di rimborsabilità",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-11.jpg",
+    "sourcePage": 11
+  },
+  {
+    "number": 12,
+    "title": "Farmaci A/PHT – Prontuario ospedale territorio",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-12.jpg",
+    "sourcePage": 12
+  },
+  {
+    "number": 13,
+    "title": "Etichettatura dei medicinali e regime di dispensazione",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-13.jpg",
+    "sourcePage": 13
+  },
+  {
+    "number": 14,
+    "title": "Etichettatura dei medicinali e regime di dispensazione",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-14.jpg",
+    "sourcePage": 14
+  },
+  {
+    "number": 15,
+    "title": "Ricetta ripetibile (RR)",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-15.jpg",
+    "sourcePage": 15
+  },
+  {
+    "number": 16,
+    "title": "Ricetta ripetibile (RR) – Elementi obbligatori",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-16.jpg",
+    "sourcePage": 16
+  },
+  {
+    "number": 17,
+    "title": "Ricetta da rinnovare volta per volta (RNR)",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-17.jpg",
+    "sourcePage": 17
+  },
+  {
+    "number": 18,
+    "title": "Ricetta da rinnovare volta per volta (RNR) – Elementi obbligatori",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-18.jpg",
+    "sourcePage": 18
+  },
+  {
+    "number": 19,
+    "title": "Ricetta limitativa (RRL; RNRL)",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-19.jpg",
+    "sourcePage": 19
+  },
+  {
+    "number": 20,
+    "title": "Ricetta limitativa (RRL; RNRL) – Elementi obbligatori",
+    "category": "tipi-di-ricetta",
+    "image": "assets/slides/slide-20.jpg",
+    "sourcePage": 20
+  },
+  {
+    "number": 21,
+    "title": "Ricetta rossa a lettura ottica SSN",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-21.jpg",
+    "sourcePage": 21
+  },
+  {
+    "number": 22,
+    "title": "Ricetta rossa a lettura ottica SSN – Uso personale e responsabilità",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-22.jpg",
+    "sourcePage": 22
+  },
+  {
+    "number": 23,
+    "title": "Ricetta rossa a lettura ottica SSN – Istruzioni per la corretta compilazione",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-23.jpg",
+    "sourcePage": 23
+  },
+  {
+    "number": 24,
+    "title": "Ricetta rossa a lettura ottica SSN – Codice della ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-24.jpg",
+    "sourcePage": 24
+  },
+  {
+    "number": 25,
+    "title": "Ricetta rossa a lettura ottica SSN – Modalità di compilazione",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-25.jpg",
+    "sourcePage": 25
+  },
+  {
+    "number": 26,
+    "title": "Ricetta rossa a lettura ottica SSN – Elementi obbligatori",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-26.jpg",
+    "sourcePage": 26
+  },
+  {
+    "number": 27,
+    "title": "Ricetta rossa a lettura ottica SSN – Assistito e codice fiscale",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-27.jpg",
+    "sourcePage": 27
+  },
+  {
+    "number": 28,
+    "title": "Ricetta rossa a lettura ottica SSN – Dati relativi all’esenzione",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-28.jpg",
+    "sourcePage": 28
+  },
+  {
+    "number": 29,
+    "title": "Ricetta rossa a lettura ottica SSN – Prescrizione e Note AIFA",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-29.jpg",
+    "sourcePage": 29
+  },
+  {
+    "number": 30,
+    "title": "Le Note AIFA",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-30.jpg",
+    "sourcePage": 30
+  },
+  {
+    "number": 31,
+    "title": "Ricetta rossa a lettura ottica SSN – Data, timbro e firma del medico",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-31.jpg",
+    "sourcePage": 31
+  },
+  {
+    "number": 32,
+    "title": "Ricetta rossa a lettura ottica SSN – Sigla provincia e codice ASL",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-32.jpg",
+    "sourcePage": 32
+  },
+  {
+    "number": 33,
+    "title": "Ricetta rossa a lettura ottica SSN – Numero confezioni e tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-33.jpg",
+    "sourcePage": 33
+  },
+  {
+    "number": 34,
+    "title": "Ricetta rossa a lettura ottica SSN – Tipi di ricetta per assistito straniero",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-34.jpg",
+    "sourcePage": 34
+  },
+  {
+    "number": 35,
+    "title": "Ricetta rossa a lettura ottica SSN – Tipi di ricetta per assistito straniero",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-35.jpg",
+    "sourcePage": 35
+  },
+  {
+    "number": 36,
+    "title": "Straniero temporaneamente presente (STP) – Tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-36.jpg",
+    "sourcePage": 36
+  },
+  {
+    "number": 37,
+    "title": "Assistito SASN da istituzioni europee (NE) – Tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-37.jpg",
+    "sourcePage": 37
+  },
+  {
+    "number": 38,
+    "title": "Assistito SASN da istituzioni extraeuropee (NX) – Tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-38.jpg",
+    "sourcePage": 38
+  },
+  {
+    "number": 39,
+    "title": "Assistito SASN da istituzioni europee (UE) – Tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-39.jpg",
+    "sourcePage": 39
+  },
+  {
+    "number": 40,
+    "title": "Assistito SASN da istituzioni europee (UE) – Tipo di ricetta",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-40.jpg",
+    "sourcePage": 40
+  },
+  {
+    "number": 41,
+    "title": "Stranieri appartenenti alla Comunità Europea – Denominazione e codice paese",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-41.jpg",
+    "sourcePage": 41
+  },
+  {
+    "number": 42,
+    "title": "Stranieri appartenenti alla Comunità Europea",
+    "category": "ricetta-rossa",
+    "image": "assets/slides/slide-42.jpg",
+    "sourcePage": 42
+  },
+  {
+    "number": 43,
+    "title": "Dematerializzazione della prescrizione medica",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-43.jpg",
+    "sourcePage": 43
+  },
+  {
+    "number": 44,
+    "title": "Dematerializzazione della ricetta medica – La normativa non cambia",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-44.jpg",
+    "sourcePage": 44
+  },
+  {
+    "number": 45,
+    "title": "Flusso prescrizione medica dematerializzata",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-45.jpg",
+    "sourcePage": 45
+  },
+  {
+    "number": 46,
+    "title": "Ricette SSN – Riepilogo degli adempimenti del farmacista",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-46.jpg",
+    "sourcePage": 46
+  },
+  {
+    "number": 47,
+    "title": "La ricetta medica dematerializzata – Farmaci non SSN",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-47.jpg",
+    "sourcePage": 47
+  },
+  {
+    "number": 48,
+    "title": "Promemoria ricetta dematerializzata – Farmaci non SSN",
+    "category": "dematerializzazione",
+    "image": "assets/slides/slide-48.jpg",
+    "sourcePage": 48
+  },
+  {
+    "number": 49,
+    "title": "Disciplina degli stupefacenti e sostanze psicotrope",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-49.jpg",
+    "sourcePage": 49
+  },
+  {
+    "number": 50,
+    "title": "Legge 12/2001 e legge 38/2010 – Terapia del dolore",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-50.jpg",
+    "sourcePage": 50
+  },
+  {
+    "number": 51,
+    "title": "Medicinali stupefacenti – Classificazione",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-51.jpg",
+    "sourcePage": 51
+  },
+  {
+    "number": 52,
+    "title": "Gradi per la classificazione del dolore e dei rispettivi farmaci",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-52.jpg",
+    "sourcePage": 52
+  },
+  {
+    "number": 53,
+    "title": "Medicinali stupefacenti – Ricettario a ricalco",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-53.jpg",
+    "sourcePage": 53
+  },
+  {
+    "number": 54,
+    "title": "Medicinali stupefacenti – Ricetta a ricalco",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-54.jpg",
+    "sourcePage": 54
+  },
+  {
+    "number": 55,
+    "title": "Medicinali stupefacenti – Utilizzo ricettario SSN",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-55.jpg",
+    "sourcePage": 55
+  },
+  {
+    "number": 56,
+    "title": "Medicinali stupefacenti – Utilizzo ricetta elettronica",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-56.jpg",
+    "sourcePage": 56
+  },
+  {
+    "number": 57,
+    "title": "Medicinali stupefacenti – Utilizzo ricetta elettronica",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-57.jpg",
+    "sourcePage": 57
+  },
+  {
+    "number": 58,
+    "title": "Medicinali stupefacenti – Prescrizione dematerializzata",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-58.jpg",
+    "sourcePage": 58
+  },
+  {
+    "number": 59,
+    "title": "Modalità di compilazione della ricetta SSN",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-59.jpg",
+    "sourcePage": 59
+  },
+  {
+    "number": 60,
+    "title": "Medicinali stupefacenti – Obbligo di RMR",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-60.jpg",
+    "sourcePage": 60
+  },
+  {
+    "number": 61,
+    "title": "Medicinali stupefacenti – Ricetta a ricalco",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-61.jpg",
+    "sourcePage": 61
+  },
+  {
+    "number": 62,
+    "title": "Medicinali stupefacenti – Sezione A",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-62.jpg",
+    "sourcePage": 62
+  },
+  {
+    "number": 63,
+    "title": "Ricetta speciale (RMR)",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-63.jpg",
+    "sourcePage": 63
+  },
+  {
+    "number": 64,
+    "title": "Ricetta speciale (RMR) – Elementi obbligatori",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-64.jpg",
+    "sourcePage": 64
+  },
+  {
+    "number": 65,
+    "title": "Medicinali stupefacenti – Sezione B e C",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-65.jpg",
+    "sourcePage": 65
+  },
+  {
+    "number": 66,
+    "title": "Medicinali stupefacenti – Sezione B e C",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-66.jpg",
+    "sourcePage": 66
+  },
+  {
+    "number": 67,
+    "title": "Ricetta non ripetibile (RNR)",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-67.jpg",
+    "sourcePage": 67
+  },
+  {
+    "number": 68,
+    "title": "Ricetta non ripetibile (RNR) – Elementi obbligatori",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-68.jpg",
+    "sourcePage": 68
+  },
+  {
+    "number": 69,
+    "title": "Medicinali stupefacenti – Sezione A-B-C: Buono acquisto e registri",
+    "category": "registri",
+    "image": "assets/slides/slide-69.jpg",
+    "sourcePage": 69
+  },
+  {
+    "number": 70,
+    "title": "Medicinali stupefacenti – Sezione A-B-C: Dispensa frazionata",
+    "category": "registri",
+    "image": "assets/slides/slide-70.jpg",
+    "sourcePage": 70
+  },
+  {
+    "number": 71,
+    "title": "Medicinali stupefacenti – Sezione D",
+    "category": "registri",
+    "image": "assets/slides/slide-71.jpg",
+    "sourcePage": 71
+  },
+  {
+    "number": 72,
+    "title": "Ricetta non ripetibile (RNR)",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-72.jpg",
+    "sourcePage": 72
+  },
+  {
+    "number": 73,
+    "title": "Ricetta non ripetibile (RNR) – Elementi obbligatori",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-73.jpg",
+    "sourcePage": 73
+  },
+  {
+    "number": 74,
+    "title": "Medicinali stupefacenti – Sezione E",
+    "category": "registri",
+    "image": "assets/slides/slide-74.jpg",
+    "sourcePage": 74
+  },
+  {
+    "number": 75,
+    "title": "Ricetta ripetibile (RR)",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-75.jpg",
+    "sourcePage": 75
+  },
+  {
+    "number": 76,
+    "title": "Ricetta ripetibile (RR) – Elementi obbligatori",
+    "category": "stupefacenti",
+    "image": "assets/slides/slide-76.jpg",
+    "sourcePage": 76
+  },
+  {
+    "number": 77,
+    "title": "Medicinali stupefacenti – Regime di dispensazione e adempimenti",
+    "category": "registri",
+    "image": "assets/slides/slide-77.jpg",
+    "sourcePage": 77
+  },
+  {
+    "number": 78,
+    "title": "Prescrizione medicinali stupefacenti – Sezione A e D",
+    "category": "adempimenti",
+    "image": "assets/slides/slide-78.jpg",
+    "sourcePage": 78
+  },
+  {
+    "number": 79,
+    "title": "Stupefacenti SSN – Riepilogo degli adempimenti del farmacista",
+    "category": "adempimenti",
+    "image": "assets/slides/slide-79.jpg",
+    "sourcePage": 79
+  },
+  {
+    "number": 80,
+    "title": "Classificazione dei medicinali sulla base del regime di fornitura",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-80.jpg",
+    "sourcePage": 80
+  },
+  {
+    "number": 81,
+    "title": "Classificazione dei medicinali sulla base del regime di fornitura",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-81.jpg",
+    "sourcePage": 81
+  },
+  {
+    "number": 82,
+    "title": "Classificazione dei medicinali sulla base del regime di rimborsabilità",
+    "category": "fondamenti",
+    "image": "assets/slides/slide-82.jpg",
+    "sourcePage": 82
+  },
+  {
+    "number": 83,
+    "title": "I farmaci soggetti a ricetta medica – La responsabilità del farmacista",
+    "category": "adempimenti",
+    "image": "assets/slides/slide-83.jpg",
+    "sourcePage": 83
+  },
+  {
+    "number": 84,
+    "title": "Gestione dei medicinali per uso umano – Grazie per l’attenzione",
+    "category": "introduzione",
+    "image": "assets/slides/slide-84.jpg",
+    "sourcePage": 84
+  }
+]

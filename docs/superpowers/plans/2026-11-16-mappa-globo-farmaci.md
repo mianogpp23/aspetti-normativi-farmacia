@@ -154,29 +154,29 @@ Atteso: nessun errore e test PASS.
 - Creare: `scripts/smoke_test.py`, `tests/browser-harness.html`
 - Creare: `README.md`, `.gitignore`, `.nojekyll`
 
-- [ ] **Step 1: scrivere il test browser RED**
+- [x] **Step 1: scrivere il test browser RED**
 
 L’harness importa il modello, carica `slides.json`, simula il click su slide 43 e verifica apertura, titolo e navigazione; espone `data-test-result` e `data-test-error`.
 
-- [ ] **Step 2: eseguire lo smoke test e verificare il fallimento**
+- [x] **Step 2: eseguire lo smoke test e verificare il fallimento**
 
 Comando: `python3 scripts/smoke_test.py`  
 Atteso: FAIL finché l’harness o il viewer non funzionano.
 
-- [ ] **Step 3: completare harness e smoke runner**
+- [x] **Step 3: completare harness e smoke runner**
 
 Lo script avvia un server HTTP temporaneo, esegue Chromium headless con `--dump-dom`, controlla il risultato e genera screenshot desktop/mobile in `shots/`.
 
-- [ ] **Step 4: documentare GitHub**
+- [x] **Step 4: documentare GitHub**
 
 README: avvio locale, rigenerazione, test, struttura, pubblicazione GitHub Pages, assenza di build e licenza da definire prima della pubblicazione. `.gitignore` esclude cache e screenshot; `.nojekyll` abilita la pubblicazione statica.
 
-- [ ] **Step 5: eseguire la verifica completa**
+- [x] **Step 5: eseguire la verifica completa**
 
 Comandi: `python3 -m unittest discover -s tests -v`, `node --test tests/test_map_model.mjs`, `python3 scripts/smoke_test.py`, controllo link/asset e `git status --short`.  
 Atteso: test PASS, nessun asset mancante, working tree pulito salvo artefatti esclusi.
 
-- [ ] **Step 6: commit finale**
+- [x] **Step 6: commit finale**
 
 `git add README.md .gitignore .nojekyll scripts tests shots && git commit -m "test: verify browser behavior and GitHub packaging"`
 

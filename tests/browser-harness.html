@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smoke test browser — mappa mentale</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module">
+      const app = document.querySelector("#app");
+      const result = { ok: false, errors: [] };
+
+      function finish() {
+        document.body.dataset.testResult = JSON.stringify(result);
+        document.body.dataset.testError = result.errors.join("; ");
+      }
+
+      try {
+        const iframe = document.createElement("iframe");
+        iframe.src = "../index.html";
+        iframe.style.width = "1280px";
+        iframe.style.height = "900px";
+        iframe.style.border = "0";
+        app.append(iframe);
+
+        const win = iframe.contentWindow;
+        let mapApp = null;
+        for (let attempt = 0; attempt < 100 && !mapApp; attempt += 1) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          mapApp = win?.__MAP_APP__;
+        }
+        if (!mapApp) {
+          throw new Error("__MAP_APP__ non disponibile dopo attesa");
+        }
+
+        const doc = iframe.contentDocument;
+        mapApp.openSlide(43);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const viewer = doc.querySelector("#slide-viewer");
+        const title = doc.querySelector("#viewer-title")?.textContent?.trim() ?? "";
+        const image = doc.querySelector("#viewer-image");
+        const counter = doc.querySelector("#viewer-counter")?.textContent?.trim() ?? "";
+
+        if (!viewer?.open) throw new Error("il viewer non si apre");
+        if (title !== "Dematerializzazione della prescrizione medica") {
+          throw new Error(`titolo inatteso: ${title}`);
+        }
+        if (!image?.src.endsWith("assets/slides/slide-43.jpg")) {
+          throw new Error(`immagine inattesa: ${image?.src}`);
+        }
+        if (!counter.includes("43 di 84")) {
+          throw new Error(`contatore inatteso: ${counter}`);
+        }
+
+        const next = doc.querySelector("#viewer-next");
+        next.click();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const nextTitle = doc.querySelector("#viewer-title")?.textContent?.trim() ?? "";
+        if (nextTitle !== "Dematerializzazione della ricetta medica – La normativa non cambia") {
+          throw new Error(`navigazione inattesa: ${nextTitle}`);
+        }
+
+        mapApp.closeViewer();
+        await new Promise((resolve) => setTimeout(resolve, 200));
+
+        result.ok = true;
+        result.title = title;
+        result.nextTitle = nextTitle;
+        result.nodes = mapApp.getState().nodes;
+        result.links = mapApp.getState().links;
+      } catch (error) {
+        result.ok = false;
+        result.errors.push(error?.message ?? String(error));
+      } finally {
+        finish();
+      }
+    </script>
+  </body>
+</html>

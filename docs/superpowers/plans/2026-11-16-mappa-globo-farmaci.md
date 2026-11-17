@@ -181,19 +181,19 @@ Atteso: test PASS, nessun asset mancante, working tree pulito salvo artefatti es
 `git add README.md .gitignore .nojekyll scripts tests shots && git commit -m "test: verify browser behavior and GitHub packaging"`
 
 ### Task 6: avvio locale e consegna
-- [ ] **Step 1: avviare il server locale**
+- [x] **Step 1: avviare il server locale**
 
 Avviare `python3 -m http.server 8091 --bind 127.0.0.1` dalla root del progetto, con log in `/tmp/mappa-globo-farmaci-8091.log`.
 
-- [ ] **Step 2: verificare HTTP e asset**
+- [x] **Step 2: verificare HTTP e asset**
 
 Controllare `/`, `/assets/data/slides.json`, una slide JPEG, ECharts e il repository Git.  
 Atteso: HTTP 200 su tutti i percorsi.
 
-- [ ] **Step 3: registrare esito e artefatti**
+- [x] **Step 3: registrare esito e artefatti**
 
 Aggiornare `~/.pi/agent/logs/agent.log` e `~/.pi/agent/logs/created-files.txt`; osservare e riassumere in wiki il progetto e le lezioni tecniche.
 
-- [ ] **Step 4: consegna**
+- [x] **Step 4: consegna**
 
 Riportare URL locale, percorso progetto, commit, test, file principali e nota esplicita: nessun push GitHub eseguito.

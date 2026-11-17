@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="it" data-type="software" data-site-kind="software">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestione dei medicinali — Mappa mentale a 84 slide</title>
+    <meta
+      name="description"
+      content="Mappa mentale interattiva del corso FAD sulla gestione dei medicinali e la disciplina di dispensazione al pubblico: 84 slide organizzate in un globo navigabile."
+    />
+    <meta name="page-type" content="software" />
+    <meta name="site-kind" content="software" />
+    <meta name="theme-color" content="#04101c" />
+    <meta property="og:title" content="Gestione dei medicinali — Mappa mentale" />
+    <meta
+      property="og:description"
+      content="Globo interattivo delle 84 slide del corso FAD di dispensazione dei medicinali."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contenuto">Vai alla mappa</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" focusable="false">
+              <circle cx="24" cy="24" r="19" />
+              <path d="M5 24h38M24 5c7 6 10 12 10 19s-3 13-10 19c-7-6-10-12-10-19S17 11 24 5Z" />
+              <path d="M11 12c4 3 8 4 13 4s9-1 13-4M11 36c4-3 8-4 13-4s9 1 13 4" />
+            </svg>
+          </span>
+          <div>
+            <p class="eyebrow">Corso FAD · Farmacia</p>
+            <h1>Gestione dei medicinali</h1>
+          </div>
+        </div>
+        <p class="header-note">
+          <strong>84 slide</strong>
+          <span>dispensazione al pubblico</span>
+        </p>
+      </div>
+    </header>
+
+    <main id="contenuto">
+      <section class="shell workspace" aria-labelledby="map-title">
+        <div class="workspace-head">
+          <div>
+            <p class="eyebrow">Mappa mentale</p>
+            <h2 id="map-title">Il globo delle 84 slide</h2>
+            <p class="lede">
+              Un hub centrale, nove arere tematiche e ogni slide del corso. Seleziona un nodo per
+              aprirla, oppure usa la ricerca e l’elenco accessibile.
+            </p>
+          </div>
+          <div class="map-tools" role="group" aria-label="Controlli della vista">
+            <button type="button" class="tool-button" data-zoom="in" aria-label="Ingrandisci la mappa">＋</button>
+            <button type="button" class="tool-button" data-zoom="out" aria-label="Riduci la mappa">−</button>
+            <button type="button" class="tool-button" data-zoom="reset" aria-label="Ripristina la vista della mappa">↺</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-field" for="slide-search">
+            <span>Cerca nel corso</span>
+            <input
+              type="search"
+              id="slide-search"
+              data-testid="search"
+              placeholder="Titolo o numero esatto (es. 43)"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <div
+            class="filters"
+            id="category-filters"
+            data-testid="filters"
+            role="group"
+            aria-label="Filtra le slide per argomento"
+          ></div>
+          <p class="result-status" id="result-status" role="status" aria-live="polite">
+            Caricamento delle slide…
+          </p>
+        </div>
+
+        <div class="map-layout">
+          <section class="panel map-panel" aria-labelledby="graph-title">
+            <h3 class="sr-only" id="graph-title">Grafo interattivo delle slide</h3>
+            <div
+              class="globe"
+              id="globe"
+              role="img"
+              aria-label="Mappa a forma di globo con un nodo centrale, nove hub tematici e 84 slide collegate"
+            ></div>
+            <p class="map-hint">
+              Trascina per muovere la mappa, usa la rotellina per lo zoom.
+              <a href="#slide-list">Vai all’elenco delle slide</a>
+            </p>
+            <ul class="legend" id="legend" aria-label="Legenda delle aree tematiche"></ul>
+          </section>
+
+          <section class="panel list-panel" aria-labelledby="list-title">
+            <div class="list-head">
+              <h3 id="list-title">Elenco delle slide</h3>
+              <span class="list-count" id="list-count">84</span>
+            </div>
+            <div class="slide-list" id="slide-list" data-testid="slide-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell">
+        <p>
+          Mappa mentale del corso “Gestione dei medicinali uso umano e disciplina di dispensazione
+          al pubblico” — Dott. Michele Dalfino Spinelli. Progetto statico, utilizzabile offline.
+        </p>
+      </div>
+    </footer>
+
+    <dialog class="viewer" id="slide-viewer" data-testid="viewer" aria-labelledby="viewer-title">
+      <div class="viewer-bar">
+        <p class="viewer-counter" id="viewer-counter">Slide 1 di 84</p>
+        <button type="button" class="icon-button" id="viewer-close" aria-label="Chiudi la slide">×</button>
+      </div>
+      <div class="viewer-media">
+        <img id="viewer-image" src="" alt="" />
+      </div>
+      <div class="viewer-body">
+        <p class="eyebrow" id="viewer-category"></p>
+        <h2 id="viewer-title"></h2>
+        <div class="viewer-actions">
+          <button type="button" class="secondary-button" id="viewer-prev">← Slide precedente</button>
+          <button type="button" class="primary-button" id="viewer-next">Slide successiva →</button>
+        </div>
+      </div>
+    </dialog>
+
+    <noscript>
+      <p class="noscript">
+        Questa mappa usa JavaScript per il grafo. Il PDF completo resta disponibile in
+        <a href="assets/source/slides.pdf">assets/source/slides.pdf</a>.
+      </p>
+    </noscript>
+
+    <script src="assets/vendor/echarts.min.js"></script>
+    <script type="module" src="assets/js/app.js"></script>
+  </body>
+</html>

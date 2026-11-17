@@ -124,28 +124,28 @@ Atteso: PASS.
 - Creare: `index.html`, `assets/css/styles.css`, `assets/js/app.js`
 - Creare: `assets/vendor/echarts.min.js`
 
-- [ ] **Step 1: vendorizzare ECharts**
+- [x] **Step 1: vendorizzare ECharts**
 
 Usare `npm pack echarts@6.1.0`, copiare solo `dist/echarts.min.js` in `assets/vendor/` e registrarne la versione nel README. Nessun CDN nel sito.
 
-- [ ] **Step 2: costruire la shell HTML**
+- [x] **Step 2: costruire la shell HTML**
 
 Includere meta, skip link, intestazione, ricerca, nove filtri, area grafo, legenda, elenco accessibile delle slide e `<dialog>` con immagine, titolo, numero, chiusura e navigazione.
 
-- [ ] **Step 3: implementare l’interazione**
+- [x] **Step 3: implementare l’interazione**
 
 `app.js` importa il modello, inizializza ECharts, applica filtri, gestisce highlight/zoom, apre il viewer al clic e supporta `Esc`, frecce, focus e riduzione del movimento.
 
-- [ ] **Step 4: applicare il sistema visivo**
+- [x] **Step 4: applicare il sistema visivo**
 
 Palette medica blu notte/ciano, globo con meridiani, nodi tipizzati per categoria, label leggibili, pannelli compatti, layout responsive e target mobili da almeno 44 px.
 
-- [ ] **Step 5: controlli statici**
+- [x] **Step 5: controlli statici**
 
 Verificare percorsi relativi, assenza di URL remoti, JSON valido, `node --check` e tutti i test.  
 Atteso: nessun errore e test PASS.
 
-- [ ] **Step 6: commit**
+- [x] **Step 6: commit**
 
 `git add index.html assets && git commit -m "feat: build interactive globe map interface"`
 

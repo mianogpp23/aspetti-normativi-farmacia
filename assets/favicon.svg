@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Globo della mappa mentale">
+  <rect width="48" height="48" rx="12" fill="#04101c" />
+  <g fill="none" stroke="#22d3ee" stroke-width="1.8">
+    <circle cx="24" cy="24" r="15" />
+    <path d="M9 24h30M24 9c5 4.5 7.5 9.5 7.5 15S29 34.5 24 39c-5-4.5-7.5-9.5-7.5-15S19 13.5 24 9Z" />
+    <path d="M13.5 14.5c3.2 2.2 6.5 3.2 10.5 3.2s7.3-1 10.5-3.2M13.5 33.5c3.2-2.2 6.5-3.2 10.5-3.2s7.3 1 10.5 3.2" />
+  </g>
+</svg>

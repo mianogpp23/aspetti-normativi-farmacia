@@ -181,9 +181,9 @@ function toChartNode(node) {
     symbolSize: nodeSymbolSize(node),
     itemStyle: {
       color: nodeColor(node),
-      borderColor: isCenter ? "#a5f3fc" : isHub ? "#e0f2fe" : "#04101c",
+      borderColor: (isCenter && "#a5f3fc") || (isHub && "#e0f2fe") || "#04101c",
       borderWidth: isCenter || isHub ? 2 : 1,
-      shadowBlur: isCenter ? 28 : isHub ? 14 : 0,
+      shadowBlur: (isCenter && 28) || (isHub && 14) || 0,
       shadowColor: isCenter ? "rgba(34,211,238,0.65)" : "rgba(0,0,0,0.35)",
     },
     label: {
@@ -216,12 +216,12 @@ function toChartNode(node) {
 
 function toChartLink(link, nodeById) {
   const source = nodeById.get(link.source);
-  const color =
-    link.kind === "branch"
-      ? "#7dd3fc"
-      : link.kind === "member"
-        ? CATEGORY_COLORS[source?.category] ?? "#7dd3fc"
-        : "#8fabb9";
+  let color = "#8fabb9";
+  if (link.kind === "branch") {
+    color = "#7dd3fc";
+  } else if (link.kind === "member") {
+    color = CATEGORY_COLORS[source?.category] ?? "#7dd3fc";
+  }
   return {
     source: link.source,
     target: link.target,
@@ -288,84 +288,7 @@ function graphOption(graph) {
   };
 }
 
-function globeGrid(width, height) {
-  const radius = Math.min(width, height) * 0.455;
-  const cx = width / 2;
-  const cy = height / 2;
-  const elements = [
-    {
-      type: "circle",
-      shape: { cx, cy, r: radius },
-      style: {
-        fill: "rgba(34,211,238,0.035)",
-        stroke: "rgba(125,211,252,0.30)",
-        lineWidth: 1,
-      },
-      silent: true,
-      z: -6,
-    },
-  ];
 
-  for (const latitude of [-60, -30, 0, 30, 60]) {
-    const phi = (latitude * Math.PI) / 180;
-    const points = [];
-    for (let longitude = -90; longitude <= 90; longitude += 5) {
-      const lambda = (longitude * Math.PI) / 180;
-      points.push([
-        cx + radius * Math.cos(phi) * Math.cos(lambda),
-        cy + radius * Math.sin(phi),
-      ]);
-    }
-    elements.push({
-      type: "polyline",
-      shape: { points },
-      style: { stroke: "rgba(125,211,252,0.12)", lineWidth: 1, fill: "transparent" },
-      silent: true,
-      z: -5,
-    });
-  }
-
-  for (const longitude of [-60, -30, 0, 30, 60]) {
-    const lambda = (longitude * Math.PI) / 180;
-    const points = [];
-    for (let latitude = -90; latitude <= 90; latitude += 5) {
-      const phi = (latitude * Math.PI) / 180;
-      points.push([
-        cx + radius * Math.cos(phi) * Math.cos(lambda),
-        cy + radius * Math.sin(phi),
-      ]);
-    }
-    for (let latitude = 90; latitude >= -90; latitude -= 5) {
-      const phi = (latitude * Math.PI) / 180;
-      points.push([
-        cx + radius * Math.cos(phi) * Math.cos(lambda + Math.PI),
-        cy + radius * Math.sin(phi),
-      ]);
-    }
-    elements.push({
-      type: "polyline",
-      shape: { points },
-      style: { stroke: "rgba(125,211,252,0.14)", lineWidth: 1, fill: "transparent" },
-      silent: true,
-      z: -5,
-    });
-  }
-  return elements;
-}
-
-function drawGlobeGrid() {
-  if (!state.chart) {
-    return;
-  }
-  const { width, height } = dom.globe.getBoundingClientRect();
-  if (width === 0 || height === 0) {
-    return;
-  }
-  state.chart.setOption(
-    { graphic: globeGrid(width, height) },
-    { replaceMerge: ["graphic"] },
-  );
-}
 
 function initChart() {
   if (!window.echarts) {
@@ -374,7 +297,6 @@ function initChart() {
   }
   state.chart = window.echarts.init(dom.globe, null, { renderer: "canvas" });
   state.chart.setOption(graphOption(state.graph));
-  drawGlobeGrid();
   state.chart.on("click", (params) => {
     if (params.dataType === "node") {
       handleNodeClick(params.data);
@@ -383,7 +305,6 @@ function initChart() {
 
   const observer = new ResizeObserver(() => {
     state.chart?.resize();
-    drawGlobeGrid();
   });
   observer.observe(dom.globe);
 }
@@ -420,7 +341,6 @@ function applyFilters() {
   if (state.chart) {
     state.chart.setOption(graphOption(filtered));
     state.chart.setOption({ series: [{ zoom: state.zoom, center: [0, 0] }] });
-    drawGlobeGrid();
   }
 
   for (const button of dom.filters.querySelectorAll("button")) {
@@ -490,7 +410,7 @@ function bindInteractions() {
     }
   });
 
-  document.querySelectorAll("[data-zoom]").forEach((button) => {
+  for (const button of document.querySelectorAll("[data-zoom]")) {
     button.addEventListener("click", () => {
       const action = button.dataset.zoom;
       if (action === "in") {
@@ -504,7 +424,7 @@ function bindInteractions() {
         state.chart.setOption({ series: [{ zoom: state.zoom, center: [0, 0] }] });
       }
     });
-  });
+  }
 
   dom.viewerClose.addEventListener("click", closeViewer);
   dom.viewerPrev.addEventListener("click", () => stepSlide(-1));

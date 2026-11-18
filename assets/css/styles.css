@@ -499,6 +499,16 @@ button {
   animation: viewer-in 200ms ease-out;
 }
 
+/* Scroll containment for the modal dialog (modern-web-guidance: dialog) */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
 .viewer-bar {
   display: flex;
   align-items: center;

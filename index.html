@@ -27,7 +27,7 @@
       <div class="shell header-inner">
         <div class="brand">
           <span class="brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 48 48" focusable="false">
+            <svg viewBox="0 0 48 48" focusable="false" aria-hidden="true">
               <circle cx="24" cy="24" r="19" />
               <path d="M5 24h38M24 5c7 6 10 12 10 19s-3 13-10 19c-7-6-10-12-10-19S17 11 24 5Z" />
               <path d="M11 12c4 3 8 4 13 4s9-1 13-4M11 36c4-3 8-4 13-4s9 1 13 4" />
@@ -63,7 +63,7 @@
           </div>
         </div>
 
-        <div class="toolbar">
+        <search class="toolbar" aria-label="Ricerca e filtri delle slide">
           <label class="search-field" for="slide-search">
             <span>Cerca nel corso</span>
             <input
@@ -85,7 +85,7 @@
           <p class="result-status" id="result-status" role="status" aria-live="polite">
             Caricamento delle slide…
           </p>
-        </div>
+        </search>
 
         <div class="map-layout">
           <section class="panel map-panel" aria-labelledby="graph-title">
@@ -94,7 +94,7 @@
               class="globe"
               id="globe"
               role="img"
-              aria-label="Mappa a forma di globo con un nodo centrale, nove hub tematici e 84 slide collegate"
+              aria-label="Mappa mentale statica (MITRE Discovery)"
             ></div>
             <p class="map-hint">
               Trascina per muovere la mappa, usa la rotellina per lo zoom.
@@ -123,10 +123,10 @@
       </div>
     </footer>
 
-    <dialog class="viewer" id="slide-viewer" data-testid="viewer" aria-labelledby="viewer-title">
+    <dialog class="viewer" id="slide-viewer" data-testid="viewer" aria-labelledby="viewer-title" closedby="any">
       <div class="viewer-bar">
         <p class="viewer-counter" id="viewer-counter">Slide 1 di 84</p>
-        <button type="button" class="icon-button" id="viewer-close" aria-label="Chiudi la slide">×</button>
+        <button type="button" class="icon-button" id="viewer-close" aria-label="Chiudi la slide" autofocus>×</button>
       </div>
       <div class="viewer-media">
         <img id="viewer-image" src="" alt="" />
@@ -148,7 +148,7 @@
       </p>
     </noscript>
 
-    <script src="assets/vendor/echarts.min.js"></script>
+    <script src="assets/vendor/echarts.min.js" defer></script>
     <script type="module" src="assets/js/app.js"></script>
   </body>
 </html>

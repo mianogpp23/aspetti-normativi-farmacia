@@ -32,7 +32,7 @@ export function normalizeText(value) {
 
 function categoryGroups(slides, categoryOrder) {
   const groups = new Map(categoryOrder.map((category) => [category, []]));
-  for (const slide of [...slides].sort((left, right) => left.number - right.number)) {
+  for (const slide of slides.toSorted((left, right) => left.number - right.number)) {
     if (!groups.has(slide.category)) {
       throw new Error(`Categoria sconosciuta: ${slide.category}`);
     }
@@ -91,7 +91,7 @@ export function buildGraph(slides, categories = CATEGORY_DEFINITIONS) {
     links.push({ source: "center", target: hub.id, kind: "branch" });
   });
 
-  const orderedSlides = [...slides].sort((left, right) => left.number - right.number);
+  const orderedSlides = slides.toSorted((left, right) => left.number - right.number);
   for (const [category, categorySlides] of groups) {
     const hub = hubs.get(category);
     categorySlides.forEach((slide, index) => {

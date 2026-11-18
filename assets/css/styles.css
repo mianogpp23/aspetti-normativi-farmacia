@@ -345,9 +345,7 @@ button {
 .globe {
   width: 100%;
   min-height: 460px;
-  background:
-    radial-gradient(circle at 50% 46%, rgba(14, 116, 144, 0.16), transparent 62%),
-    var(--bg-soft);
+  background: var(--bg-soft);
 }
 
 .map-hint {

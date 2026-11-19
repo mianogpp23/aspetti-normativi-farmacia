@@ -105,7 +105,9 @@ export function createOrbit({ stage, info, onOpen }) {
           title: mod.title,
           style: `width:${d}px;height:${d}px`,
         }, String(mod.n).padStart(2, "0"));
-        const label = el("span", { class: "mnode-label" },
+        // l'etichetta e' volutamente compatta (2 righe): il titolo completo
+        // resta disponibile nel tooltip, nell'aria-label del nodo e nel pannello.
+        const label = el("span", { class: "mnode-label", title: mod.title },
           `<span class="lbl-n">${String(mod.n).padStart(2, "0")}</span>${esc(shortLabel(mod))}`);
 
         wrap.append(dot, label);

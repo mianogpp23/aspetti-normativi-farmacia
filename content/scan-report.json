@@ -1,0 +1,172 @@
+{
+ "generatedAt": "2026-11-19T20:01:45+0100",
+ "source": "FARMACISTA: ASPETTI NORMATIVI E PRATICO-OPERATIVI PER IL TIROCINIO E PER L’ESERCIZIO DELLA PROFESSIONE",
+ "elapsedSeconds": 3.6,
+ "totals": {
+  "modules": 19,
+  "modulesWithSlides": 18,
+  "pdfs": 18,
+  "pages": 725,
+  "videos": 19,
+  "imageBytes": 59016832,
+  "renderedImages": 725,
+  "pdfBytes": 43850680,
+  "topics": 120
+ },
+ "manifestBytes": 81087,
+ "searchBytes": 349540,
+ "modules": [
+  {
+   "id": "dispositivi-medici-e-presidi-medico-chirurgici",
+   "title": "Dispositivi medici e presidi medico-chirurgici",
+   "pages": 53,
+   "topics": 10,
+   "rendered": 53,
+   "elapsed": 1.98
+  },
+  {
+   "id": "farmaci-stupefacenti-la-ricetta-elettronica-veterinaria",
+   "title": "Farmaci stupefacenti - La ricetta elettronica veterinaria",
+   "pages": 39,
+   "topics": 10,
+   "rendered": 39,
+   "elapsed": 2.19
+  },
+  {
+   "id": "gestione-dei-medicinali-dopanti-e-dei-veleni",
+   "title": "Gestione dei medicinali dopanti e dei veleni",
+   "pages": 12,
+   "topics": 3,
+   "rendered": 12,
+   "elapsed": 1.89
+  },
+  {
+   "id": "gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al",
+   "title": "Gestione dei medicinali uso umano e disciplina di dispensazione al pubblico",
+   "pages": 84,
+   "topics": 11,
+   "rendered": 84,
+   "elapsed": 0.65
+  },
+  {
+   "id": "gestione-economico-finanziaria-e-imprenditoriale-della-farmacia",
+   "title": "Gestione economico-finanziaria e imprenditoriale della farmacia",
+   "pages": 59,
+   "topics": 12,
+   "rendered": 59,
+   "elapsed": 0.32
+  },
+  {
+   "id": "gestione-sostanze-stupefacenti-e-psicotrope",
+   "title": "Gestione sostanze stupefacenti e psicotrope",
+   "pages": 42,
+   "topics": 9,
+   "rendered": 42,
+   "elapsed": 0.27
+  },
+  {
+   "id": "il-codice-deontologico-del-farmacista",
+   "title": "Il Codice Deontologico del Farmacista",
+   "pages": 10,
+   "topics": 2,
+   "rendered": 10,
+   "elapsed": 0.28
+  },
+  {
+   "id": "il-tirocinio-pratico-valutativo-finalita-e-adempimenti",
+   "title": "Il tirocinio pratico valutativo: finalità e adempimenti",
+   "pages": 34,
+   "topics": 8,
+   "rendered": 34,
+   "elapsed": 0.18
+  },
+  {
+   "id": "integratori-alimentari-alimenti-per-gruppi-speciali",
+   "title": "Integratori alimentari, alimenti per gruppi speciali",
+   "pages": 49,
+   "topics": 11,
+   "rendered": 49,
+   "elapsed": 0.24
+  },
+  {
+   "id": "introduzione",
+   "title": "Introduzione",
+   "pages": 0,
+   "topics": 0,
+   "rendered": 0,
+   "elapsed": 0.22
+  },
+  {
+   "id": "medicinali-ad-uso-veterinario",
+   "title": "Medicinali ad uso veterinario",
+   "pages": 102,
+   "topics": 0,
+   "rendered": 102,
+   "elapsed": 0.36
+  },
+  {
+   "id": "organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1",
+   "title": "Organizzazione della farmacia aperta al pubblico e attività autoispettiva",
+   "pages": 9,
+   "topics": 2,
+   "rendered": 9,
+   "elapsed": 0.14
+  },
+  {
+   "id": "organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2",
+   "title": "Organizzazione della farmacia aperta al pubblico e attività autoispettiva",
+   "pages": 32,
+   "topics": 5,
+   "rendered": 32,
+   "elapsed": 0.27
+  },
+  {
+   "id": "ossigeno-e-ossigenoterapia",
+   "title": "Ossigeno e ossigenoterapia",
+   "pages": 10,
+   "topics": 0,
+   "rendered": 10,
+   "elapsed": 0.1
+  },
+  {
+   "id": "preparazioni-galeniche-magistrali-o-officinali",
+   "title": "Preparazioni galeniche magistrali o officinali",
+   "pages": 70,
+   "topics": 12,
+   "rendered": 70,
+   "elapsed": 0.41
+  },
+  {
+   "id": "prodotti-cosmetici",
+   "title": "Prodotti cosmetici",
+   "pages": 14,
+   "topics": 3,
+   "rendered": 14,
+   "elapsed": 0.15
+  },
+  {
+   "id": "prodotti-e-preparati-di-origine-vegetale",
+   "title": "Prodotti e preparati di origine vegetale",
+   "pages": 25,
+   "topics": 6,
+   "rendered": 25,
+   "elapsed": 0.17
+  },
+  {
+   "id": "sanita-digitale-e-tracciabilita-dei-farmaci",
+   "title": "Sanità digitale e tracciabilità dei farmaci",
+   "pages": 33,
+   "topics": 7,
+   "rendered": 33,
+   "elapsed": 0.28
+  },
+  {
+   "id": "vaccini",
+   "title": "Vaccini",
+   "pages": 48,
+   "topics": 9,
+   "rendered": 48,
+   "elapsed": 0.29
+  }
+ ]
+}

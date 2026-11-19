@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mappa orbitale · Dispense del corso</title>
+<meta name="description" content="Piattaforma didattica interattiva: mappa orbitale dei moduli, percorsi gerarchici e lettura full-screen delle dispense in PDF.">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/orbit.css">
+<link rel="stylesheet" href="css/flow.css">
+<link rel="stylesheet" href="css/viewer.css">
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+<a class="skip-link" href="#view-home">Vai al contenuto</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#/" aria-label="Torna alla mappa orbitale">
+      <span class="brand-glyph" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="4.2" fill="url(#bg1)"/>
+          <ellipse cx="20" cy="20" rx="17" ry="7.4" stroke="url(#bg1)" stroke-width="1.4" opacity=".85"/>
+          <ellipse cx="20" cy="20" rx="17" ry="7.4" stroke="url(#bg1)" stroke-width="1.4" opacity=".55" transform="rotate(60 20 20)"/>
+          <ellipse cx="20" cy="20" rx="17" ry="7.4" stroke="url(#bg1)" stroke-width="1.4" opacity=".55" transform="rotate(120 20 20)"/>
+          <defs><linearGradient id="bg1" x1="3" y1="3" x2="37" y2="37">
+            <stop stop-color="#2f6bff"/><stop offset="1" stop-color="#22c7e6"/>
+          </linearGradient></defs>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong id="brand-title">Dispense del corso</strong>
+        <small id="brand-sub">Mappa orbitale interattiva</small>
+      </span>
+    </a>
+
+    <div class="search" role="search">
+      <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.8 12.8 17 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="search-input" type="search" placeholder="Cerca in 725 slide, argomenti, moduli…" autocomplete="off" spellcheck="false"
+             aria-label="Cerca nelle dispense" aria-expanded="false" aria-controls="search-results" role="combobox">
+      <kbd class="search-kbd" aria-hidden="true">/</kbd>
+      <div class="search-panel" id="search-results" role="listbox" aria-label="Risultati della ricerca" hidden></div>
+    </div>
+
+    <button class="icon-btn" id="btn-help" aria-label="Scorciatoie e informazioni" title="Scorciatoie (?)">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.9 7.7a2.2 2.2 0 0 1 4.2.9c0 1.5-2.1 1.6-2.1 3.1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14.4" r=".95" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ===================== HOME · MAPPA ORBITALE ===================== -->
+  <section class="view" id="view-home" aria-labelledby="home-title">
+    <div class="home-head">
+      <p class="eyebrow" id="home-eyebrow">Archivio didattico</p>
+      <h1 id="home-title">Mappa orbitale dei moduli</h1>
+      <p class="home-sub" id="home-sub">Ogni modulo orbita attorno al corso. Apri un nodo per entrare nel percorso gerarchico degli argomenti e delle singole slide.</p>
+      <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
+    </div>
+
+    <div class="orbit-wrap">
+      <div class="orbit-stage" id="orbit-stage">
+        <noscript><p class="notice">Serve JavaScript per visualizzare la mappa orbitale.</p></noscript>
+      </div>
+
+      <aside class="orbit-info" id="orbit-info" aria-live="polite">
+        <p class="oi-hint" id="oi-hint">Passa sopra un nodo per i dettagli, clicca per aprire il modulo.</p>
+        <div class="oi-body" id="oi-body" hidden></div>
+      </aside>
+    </div>
+
+    <div class="orbit-legend">
+      <span class="lg"><i class="dot d1"></i>modulo con slide</span>
+      <span class="lg"><i class="dot d2"></i>modulo con video</span>
+      <span class="lg"><i class="dot d3"></i>dimensione = numero di slide</span>
+      <button class="linkish" id="btn-list" type="button">Vista elenco</button>
+    </div>
+
+    <div class="module-list" id="module-list" hidden></div>
+  </section>
+
+  <!-- ===================== MODULE · FLUSSO GERARCHICO ===================== -->
+  <section class="view" id="view-module" aria-labelledby="mod-title" hidden>
+    <nav class="crumbs" aria-label="Percorso">
+      <a href="#/" class="crumb-link">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.8 3.4 5.2 8l4.6 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Mappa orbitale
+      </a>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-cur" id="crumb-cur">Modulo</span>
+    </nav>
+
+    <header class="mod-head">
+      <div class="mod-head-main">
+        <p class="eyebrow" id="mod-eyebrow"></p>
+        <h1 id="mod-title"></h1>
+        <p class="mod-meta" id="mod-meta"></p>
+      </div>
+      <div class="mod-actions">
+        <a class="btn btn-ghost" id="mod-pdf" target="_blank" rel="noopener">PDF originale</a>
+        <button class="btn btn-primary" id="mod-start">Inizia dalle slide</button>
+      </div>
+    </header>
+
+    <div class="flow" id="flow">
+      <div class="flow-rail-head">
+        <h2 class="rail-title">Percorso degli argomenti</h2>
+        <p class="rail-sub" id="rail-sub"></p>
+      </div>
+      <div class="flow-rail-scroll">
+        <svg class="flow-rail-line" id="flow-rail-line" aria-hidden="true" preserveAspectRatio="none"></svg>
+        <ol class="flow-rail" id="flow-rail"></ol>
+      </div>
+
+      <div class="flow-body">
+        <div class="flow-detail" id="flow-detail"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="foot-inner">
+    <span id="foot-meta">Archivio didattico · mappa orbitale</span>
+    <span class="foot-sep">·</span>
+    <a href="#/" class="foot-link">Torna alla mappa</a>
+    <span class="foot-sep">·</span>
+    <span class="foot-note">Contenuti originali non modificati</span>
+  </div>
+</footer>
+
+<!-- ===================== VIEWER FULL-SCREEN ===================== -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vw-mod" hidden>
+  <div class="vw-bar vw-top">
+    <button class="vw-btn vw-close" id="vw-close" aria-label="Chiudi (Esc)">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="vw-titles">
+      <strong id="vw-mod">Modulo</strong>
+      <span id="vw-topic">Argomento</span>
+    </div>
+    <div class="vw-tools">
+      <button class="vw-btn" id="vw-zoom" aria-label="Adatta / 100%" title="Adatta / 100%">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.6" cy="8.6" r="5.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.6 12.6 17 17M6 8.6h5.2M8.6 6v5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <a class="vw-btn vw-pdflink" id="vw-pdf" target="_blank" rel="noopener" aria-label="Apri la pagina nel PDF originale" title="PDF originale (pagina)">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11 3h6v6M17 3l-7.4 7.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12.4V16a1.6 1.6 0 0 1-1.6 1.6H4.6A1.6 1.6 0 0 1 3 16V7.2A1.6 1.6 0 0 1 4.6 5.6H8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="vw-stage" id="vw-stage">
+    <img id="vw-img" alt="" draggable="false">
+    <div class="vw-fallback" id="vw-fallback" hidden>
+      <p class="vf-title">Anteprima non disponibile</p>
+      <p class="vf-text" id="vw-fallback-text">La pagina non è ancora stata convertita in immagine.</p>
+      <a class="btn btn-primary" id="vw-fallback-pdf" target="_blank" rel="noopener">Apri la pagina nel PDF</a>
+    </div>
+    <button class="vw-nav vw-prev" id="vw-prev" aria-label="Slide precedente">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5 8 12l6.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="vw-nav vw-next" id="vw-next" aria-label="Slide successiva">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5 16 12l-6.5 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div class="vw-bar vw-bottom">
+    <div class="vw-pos">
+      <span id="vw-cur">1</span><span class="vw-of">/</span><span id="vw-total">1</span>
+      <em id="vw-title" class="vw-slidetitle"></em>
+    </div>
+    <input type="range" id="vw-range" min="1" max="1" value="1" step="1" aria-label="Vai alla slide">
+    <div class="vw-hint">← → per navigare · Esc per chiudere</div>
+  </div>
+</div>
+
+<!-- ===================== HELP ===================== -->
+<div class="modal" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+  <div class="modal-card">
+    <button class="modal-x" id="help-close" aria-label="Chiudi">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <h2 id="help-title">Come si usa</h2>
+    <ol class="help-list">
+      <li><b>Mappa orbitale</b> — ogni nodo è un modulo. Passa il mouse per i dettagli, clicca per aprirlo.</li>
+      <li><b>Percorso gerarchico</b> — dentro il modulo trovi gli argomenti in ordine; selezionane uno per vedere le slide.</li>
+      <li><b>Slide full-screen</b> — clicca una slide per aprirla; naviga con le frecce, chiudi con Esc.</li>
+      <li><b>Ricerca globale</b> — premi <kbd>/</kbd> e scrivi: cerca in titoli, argomenti e testo delle slide.</li>
+    </ol>
+    <p class="help-foot" id="help-foot"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

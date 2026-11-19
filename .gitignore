@@ -1,0 +1,18 @@
+logs/
+*.log
+.DS_Store
+Thumbs.db
+
+# Media pesanti: i video originali dell'archivio (19 MP4, 4.35 GB, 10 file
+# oltre 100 MB) non devono MAI entrare nel repository: GitHub rifiuta
+# qualunque file piu' grande di 100 MB. Il sito li referenzia con il solo
+# percorso relativo, senza copiarli in content/.
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Cache Python
+__pycache__/
+*.pyc

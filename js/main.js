@@ -15,6 +15,18 @@ let info = null;
 /** slide da aprire nel visore appena il modulo è montato (ricerca → slide) */
 let pendingSlide = null;
 
+/* ---------------- titoli scheda ---------------- */
+// Il titolo del browser segue sempre il manifest: la home usa "Mappa orbitale · <corso>",
+// il modulo usa "<modulo> · <corso>". Un unico punto di verita' evita che il router
+// sovrascriva il titolo impostato al boot con una stringa fissa.
+function courseTitle() {
+  return window.__manifest?.course?.title || "Dispense";
+}
+
+function homeTitle() {
+  return `Mappa orbitale · ${courseTitle()}`;
+}
+
 /* ---------------- home ---------------- */
 function renderHome() {
   const m = modules();
@@ -69,7 +81,7 @@ function openModule(mod, topicId) {
 function renderModuleView(mod, topicId) {
   showView(VIEW_MOD);
   renderModule(mod, topicId);
-  document.title = `${mod.title} · Dispense`;
+  document.title = `${mod.title} · ${courseTitle()}`;
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   if (pendingSlide) {
     const p = pendingSlide;
@@ -101,7 +113,7 @@ function route() {
   }
   pendingSlide = null;
   showView(VIEW_HOME);
-  document.title = "Mappa orbitale · Dispense del corso";
+  document.title = homeTitle();
   if (!orbit) renderHome();
   else setTimeout(() => orbit.layout(), 30);
 }
@@ -131,8 +143,8 @@ async function boot() {
     const course = manifest.course || {};
     if (course.title) {
       $("#brand-title").textContent = course.title;
-      document.title = `${course.title} · Mappa orbitale`;
     }
+    document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
     $("#home-title").textContent = course.title ? `Mappa orbitale · ${course.title}` : "Mappa orbitale dei moduli";
     if (course.subtitle) {

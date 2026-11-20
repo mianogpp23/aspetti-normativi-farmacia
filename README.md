@@ -48,8 +48,10 @@ python3 scripts/scan.py --only <slug>  # un singolo modulo
 ```
 
 Lo scanner legge `config.json` (`source` = cartella radice dell'archivio), individua
-ricorsivamente PDF e video, estrae i titoli dalle pagine, raggruppa le pagine in argomenti,
+ricorsivamente i PDF, estrae i titoli dalle pagine, raggruppa le pagine in argomenti,
 copia i PDF in `content/pdf/` e genera le immagini WebP delle slide.
+I video originali (19 MP4) **non fanno parte del sito**: non vengono copiati, non
+vengono referenziati e il manifest pubblicato non ne contiene alcun metadato.
 L'archivio originale non viene mai modificato: nessun file è spostato, rinominato o cancellato.
 
 ## Avvio locale
@@ -66,7 +68,8 @@ Il sito usa solo percorsi relativi, quindi funziona sia in radice sia in sottoca
 
 **Il repository GitHub corrisponde a questa cartella** (`piattaforma-didattica/`), non
 all’archivio: i video originali (19 MP4, 4.35 GB, 10 file oltre i 100 MB) restano
-*fuori* dal repository per costruzione e non possono mai far fallire un push.
+*fuori* dal repository per costruzione, non sono pubblicati e non possono mai far
+fallire un push.
 Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi online.
 
 ```bash
@@ -86,7 +89,7 @@ relativi, quindi funziona anche se ospitato in una sottocartella).
 
 ## Contenuto attuale
 
-19 moduli · 18 PDF · 725 slide · 120 argomenti · 19 video (video non copiati nel sito).
+19 moduli · 18 PDF · 725 slide · 120 argomenti (i video non fanno parte del sito).
 
 ## Note operative
 

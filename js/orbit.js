@@ -1,6 +1,6 @@
 /* orbit.js — mappa orbitale: core, anelli, nodi, raggi, rotazione */
 
-import { $, el, esc, svgEl, clamp, fmtDuration } from "./utils.js";
+import { $, el, esc, svgEl, clamp } from "./utils.js";
 import { pagesOf, topicsOf } from "./data.js";
 
 const RING_FRACTIONS = [0.46, 0.73, 1.0];
@@ -97,11 +97,11 @@ export function createOrbit({ stage, info, onOpen }) {
         const stagger = ringIdx * (Math.PI / cnt) * 0.62;
         const node = { mod, ring: ringIdx, angle: (k / cnt) * Math.PI * 2 - Math.PI / 2 + stagger, d };
 
-        const wrap = el("div", { class: "mnode" + (p ? "" : " has-video-only") });
+        const wrap = el("div", { class: "mnode" + (p ? "" : " has-no-pdf") });
         const dot = el("button", {
           class: "mnode-dot",
           type: "button",
-          "aria-label": `${mod.n}. ${mod.title}${p ? ` — ${p} slide` : " — solo video"}`,
+          "aria-label": `${mod.n}. ${mod.title}${p ? ` — ${p} slide` : " — senza dispense"}`,
           title: mod.title,
           style: `width:${d}px;height:${d}px`,
         }, String(mod.n).padStart(2, "0"));
@@ -380,11 +380,9 @@ export function createInfoPanel(box, onOpen) {
     if (!body) return;
     const p = pagesOf(mod);
     const topics = topicsOf(mod);
-    const dur = fmtDuration(mod?.video?.duration);
     const tags = [];
-    tags.push(p ? `${p} slide` : "solo video");
+    tags.push(p ? `${p} slide` : "nessuna dispense");
     if (topics.length) tags.push(`${topics.length} argomenti`);
-    if (dur) tags.push(`video ${dur}`);
 
     body.innerHTML = `
       <p class="oi-eyebrow">Modulo ${String(mod.n).padStart(2, "0")}</p>

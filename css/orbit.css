@@ -94,7 +94,7 @@
   transition:transform .28s var(--ease-out), box-shadow .3s var(--ease), border-color .25s, background .3s, color .2s;
   cursor:pointer;
 }
-.mnode.has-video-only .mnode-dot{border-color:rgba(123,107,255,.44);color:#5443c9}
+.mnode.has-no-pdf .mnode-dot{border-color:rgba(123,107,255,.44);color:#5443c9}
 .mnode.is-active .mnode-dot,
 .mnode-dot:hover,
 .mnode-dot:focus-visible{

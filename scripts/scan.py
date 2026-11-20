@@ -744,33 +744,10 @@ def process_module(mod: dict, opts: dict) -> dict:
             shutil.copy2(src, dest)
         pdf_out = f"content/pdf/{mod['id']}.pdf"
 
-    # video: riferimento, mai copiato (troppo grande per la pubblicazione)
-    videos = []
-    for v in mod["videos"]:
-        vp = Path(v)
-        published = CONTENT_DIR / "video" / f"{mod['id']}{vp.suffix.lower()}"
-        dur = None
-        try:
-            import subprocess
-
-            probe = subprocess.run(
-                ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of",
-                 "default=nw=1:nk=1", str(vp)],
-                capture_output=True, text=True, timeout=20,
-            )
-            if probe.returncode == 0 and probe.stdout.strip():
-                dur = int(float(probe.stdout.strip()))
-        except Exception:
-            dur = None
-        videos.append(
-            {
-                "file": vp.name,
-                "bytes": vp.stat().st_size,
-                "duration": dur,
-                "published": published.exists(),
-                "url": f"content/video/{mod['id']}{vp.suffix.lower()}" if published.exists() else None,
-            }
-        )
+    # I video NON fanno parte del sito pubblicato: i 19 MP4 originali (4.35 GB,
+    # 10 file oltre il limite di 100 MB di GitHub) restano nell'archivio e non
+    # vengono copiati ne' referenziati. Il manifest pubblicato non contiene
+    # quindi alcun metadato video: nessun link morto verso file non pubblicati.
 
     notes = []
     for npath in mod["notes"]:
@@ -831,8 +808,6 @@ def process_module(mod: dict, opts: dict) -> dict:
             "h": pdf_meta_list[0]["h"] if pdf_meta_list else 0,
             "files": pdf_meta_list,
         },
-        "video": videos[0] if videos else None,
-        "videos": videos,
         "notes": notes,
         "topics": topic_children,
         "has_topics": bool(topic_children),
@@ -968,7 +943,6 @@ def main() -> int:
         "modulesWithSlides": sum(1 for m in results if m["has_slides"]),
         "pdfs": sum(len(m["pdf"]["files"]) for m in results),
         "pages": sum(m["pdf"]["pages"] for m in results),
-        "videos": sum(len(m["videos"]) for m in results),
         "imageBytes": sum(m["render"]["full_bytes"] for m in results),
         "renderedImages": sum(m["render"]["rendered"] for m in results),
         "pdfBytes": sum(m["pdf"]["bytes"] for m in results),

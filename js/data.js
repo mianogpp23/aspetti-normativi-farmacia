@@ -63,12 +63,9 @@ export function topicAt(mod, n) {
 
 export function moduleStats(mod) {
   const pages = pagesOf(mod);
-  const vids = mod?.videos?.length || (mod?.video ? 1 : 0);
   return {
     pages,
     topics: (mod?.topics || []).length,
-    videos: vids,
-    duration: mod?.video?.duration || null,
     bytes: mod?.pdf?.bytes || null,
   };
 }

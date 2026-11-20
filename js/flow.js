@@ -6,7 +6,6 @@ import { pagesOf, topicsOf, slideTitle, thumbUrl, pdfUrl, pdfPageUrl } from "./d
 const ICON_PDF = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.8h5l3 3V14a.4.4 0 0 1-.4.4H4.4A.4.4 0 0 1 4 14V2.2a.4.4 0 0 1 .4-.4Z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M9 1.9v3h3" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>`;
 const ICON_LAYERS = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.9 1.9 5 8 8.1 14.1 5 8 1.9Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M2 8.4 8 11.5l6-3.1M2 11.4 8 14.5l6-3.1" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>`;
 const ICON_PEOPLE = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.4" r="2.7" fill="none" stroke="currentColor" stroke-width="1.35"/><path d="M2.6 13.2c.6-2.5 2.8-3.9 5.4-3.9s4.8 1.4 5.4 3.9" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"/></svg>`;
-const ICON_PLAY = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6.6 5.5 10.6 8l-4 2.5v-5Z" fill="currentColor"/></svg>`;
 const ICON_ZOOM = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2h8v8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M14 2 8.4 7.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M11.6 10.4V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5.6a1 1 0 0 1 1-1h2.6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>`;
 const ICON_EYE = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6.2 10-6.2S22 12 22 12s-3.8 6.2-10 6.2S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>`;
 
@@ -21,7 +20,6 @@ export function renderModule(mod, topicId) {
   ctx.mod = mod;
   const topics = topicsOf(mod);
   const pages = pagesOf(mod);
-  const vids = mod.videos?.length || (mod.video ? 1 : 0);
 
   $("#crumb-cur").textContent = mod.title;
   $("#mod-eyebrow").textContent = `Modulo ${String(mod.n).padStart(2, "0")}`;
@@ -29,9 +27,8 @@ export function renderModule(mod, topicId) {
 
   const chips = [];
   if (mod.lecturers?.length) chips.push(`<span class="mchip">${ICON_PEOPLE}${esc(mod.lecturers.join(" · "))}</span>`);
-  chips.push(`<span class="mchip">${ICON_PDF}${pages ? `${pages} pagine` : "nessun PDF"}</span>`);
+  chips.push(`<span class="mchip">${ICON_PDF}${pages ? `${pages} pagine` : "nessuna dispense"}</span>`);
   if (topics.length && pages) chips.push(`<span class="mchip">${ICON_LAYERS}${topics.length} argomenti</span>`);
-  if (vids) chips.push(`<span class="mchip">${ICON_PLAY}${vids} video</span>`);
   if (pages && mod.has_topics === false)
     chips.push(`<span class="mchip is-empty" title="Il PDF contiene prevalentemente immagini: gli argomenti non sono ricavabili dal testo">deck prevalentemente visivo</span>`);
   $("#mod-meta").innerHTML = chips.join("");
@@ -60,14 +57,14 @@ export function renderModule(mod, topicId) {
   if (scrollerEl) scrollerEl.hidden = false;
   $("#rail-sub").textContent = pages
     ? `${topics.length ? `${topics.length} argomenti in sequenza · ` : ""}${pages} slide totali`
-    : "Modulo senza PDF: solo materiale video";
+    : "Modulo senza PDF delle dispense";
 
   if (!pages) {
     const scroller = $(".flow-rail-scroll");
     if (scroller) scroller.hidden = true;
     $("#flow-detail").innerHTML = emptyState(
       "Nessuna slide da mostrare",
-      "Questo modulo dell'archivio contiene solo materiale video: il PDF delle dispense non è presente."
+      "Questo modulo dell'archivio non contiene un PDF delle dispense: non ci sono pagine da mostrare."
     );
     return;
   }

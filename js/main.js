@@ -1,6 +1,6 @@
 /* main.js — bootstrap, router hash, viste */
 
-import { $, $$, el, esc, toast, fmtDuration } from "./utils.js";
+import { $, $$, el, esc, toast } from "./utils.js";
 import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicsOf, topicAt } from "./data.js";
 import { createOrbit, createInfoPanel } from "./orbit.js";
 import { mountFlow, renderModule } from "./flow.js";
@@ -24,7 +24,6 @@ function renderHome() {
     ["Moduli", totals.modules],
     ["Slide", totals.pages],
     ["Argomenti", totals.topics],
-    ["Video", totals.videos],
   ].map(([k, v]) => `<li class="stat"><b>${v}</b><span>${k}</span></li>`).join("");
 
   buildModuleList();
@@ -42,7 +41,6 @@ function totalsOf() {
     modules: t.modules ?? modules().length,
     pages: t.pages ?? modules().reduce((a, x) => a + pagesOf(x), 0),
     topics: t.topics ?? modules().reduce((a, x) => a + (x.topics?.length || 0), 0),
-    videos: t.videos ?? modules().reduce((a, x) => a + (x.videos?.length || (x.video ? 1 : 0)), 0),
     pdfBytes: t.pdfBytes || 0,
   };
 }
@@ -55,7 +53,7 @@ function buildModuleList() {
     const card = el("a", { class: "ml-card", href: `#/m/${mod.id}` }, `
       <span class="ml-n">M${String(mod.n).padStart(2, "0")}</span>
       <span class="ml-t">${esc(mod.title)}</span>
-      <span class="ml-m">${st.pages ? `${st.pages} slide` : "solo video"}${st.topics ? ` · ${st.topics} argomenti` : ""}${st.duration ? ` · video ${fmtDuration(st.duration)}` : ""}</span>`);
+      <span class="ml-m">${st.pages ? `${st.pages} slide` : "nessuna dispense"}${st.topics ? ` · ${st.topics} argomenti` : ""}</span>`);
     box.appendChild(card);
   });
 }
@@ -145,7 +143,7 @@ async function boot() {
 
     const t = totalsOf();
     $("#foot-meta").textContent = `${t.modules} moduli · ${t.pages} slide · ${t.topics} argomenti`;
-    $("#help-foot").textContent = `${manifest.sourceName || "Archivio didattico"} — ${t.pages} pagine convertite, ${t.videos} video, contenuti originali intatti.`;
+    $("#help-foot").textContent = `${manifest.sourceName || "Archivio didattico"} — ${t.pages} pagine convertite, contenuti originali intatti.`;
 
     buildIndex();
     initSearch({

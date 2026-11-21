@@ -1,11 +1,18 @@
-import sys
+import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+import pymupdf
 
-from apply_update_slide import append_pdf_page, load_update, render_slide_images
+from scripts.apply_update_slide import (
+    append_pdf_page,
+    apply,
+    check,
+    load_update,
+    render_slide_images,
+)
 
 FIXTURES = Path(tempfile.mkdtemp(prefix="globo-update-fixtures-"))
 TMP = Path(tempfile.mkdtemp(prefix="globo-update-render-"))
@@ -101,6 +108,115 @@ class RenderTest(unittest.TestCase):
         before = pymupdf.open(pdf).page_count
         append_pdf_page(pdf, UPDATE)
         self.assertEqual(pymupdf.open(pdf).page_count, before)
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+MODULE_ID = "gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al"
+
+
+def make_content_fixture(pages: int, with_search_entry: bool = False) -> Path:
+    root = Path(tempfile.mkdtemp(prefix="globo-update-apply-"))
+    content = root / "content"
+    content.mkdir()
+    for name in ("manifest.json", "search.json", "scan-report.json"):
+        shutil.copy(REPO_ROOT / "content" / name, content / name)
+
+    manifest_path = content / "manifest.json"
+    report_path = content / "scan-report.json"
+    search_path = content / "search.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    search = json.loads(search_path.read_text(encoding="utf-8"))
+    module = next(m for m in manifest["modules"] if m["id"] == MODULE_ID)
+    report_module = next(m for m in report["modules"] if m["id"] == MODULE_ID)
+
+    pdf_path = root / module["pdf"]["path"]
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    doc = pymupdf.open()
+    for _ in range(pages):
+        doc.new_page(width=720, height=405.36)
+    doc.save(pdf_path)
+    doc.close()
+
+    pdf_bytes = pdf_path.stat().st_size
+    module["pdf"]["pages"] = pages
+    module["pdf"]["bytes"] = pdf_bytes
+    module["pdf"]["files"][0]["pages"] = pages
+    module["pdf"]["files"][0]["bytes"] = pdf_bytes
+    module["render"]["rendered"] = pages
+    module["render"]["expected"] = pages
+    module["slides"] = module["slides"][:pages]
+    manifest["totals"]["pages"] += pages - 84
+    manifest["totals"]["renderedImages"] += pages - 84
+    manifest["totals"]["pdfBytes"] += pdf_bytes - 3992511
+    report_module["pages"] = pages
+    report_module["rendered"] = pages
+    report["totals"]["pages"] = manifest["totals"]["pages"]
+    report["totals"]["renderedImages"] = manifest["totals"]["renderedImages"]
+    report["totals"]["pdfBytes"] = manifest["totals"]["pdfBytes"]
+
+    if with_search_entry:
+        for text in ("vecchia voce", "voce esistente"):
+            search.append(
+                {"m": MODULE_ID, "n": 85, "t": "Vecchia voce", "x": text}
+            )
+
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+    report_path.write_text(json.dumps(report, ensure_ascii=False), encoding="utf-8")
+    search_path.write_text(json.dumps(search, ensure_ascii=False), encoding="utf-8")
+    (content / "slides" / MODULE_ID).mkdir(parents=True, exist_ok=True)
+    (content / "thumbs" / MODULE_ID).mkdir(parents=True, exist_ok=True)
+    return root
+
+
+def _load_json(path: Path):
+    with path.open(encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+class ApplyTest(unittest.TestCase):
+    def test_apply_is_idempotent_and_updates_manifest_search_report(self):
+        root = make_content_fixture(pages=84)
+        stats = apply(root)
+        self.assertEqual(stats, {"slide": 85, "pages": 85})
+
+        manifest = _load_json(root / "content/manifest.json")
+        module = next(m for m in manifest["modules"] if m["id"] == MODULE_ID)
+        self.assertEqual(module["pdf"]["pages"], 85)
+        self.assertEqual(module["slides"][-1]["n"], 85)
+        topic = next(t for t in module["topics"] if t["id"] == "t11")
+        self.assertEqual(topic["to"], 85)
+        self.assertEqual(topic["count"], 6)
+
+        search = _load_json(root / "content/search.json")
+        hits = [x for x in search if x["m"] == MODULE_ID and x["n"] == 85]
+        self.assertEqual(len(hits), 1)
+        self.assertIn("stupefacenti non ssn", hits[0]["t"].lower())
+
+        report = _load_json(root / "content/scan-report.json")
+        self.assertEqual(report["totals"]["pages"], 726)
+
+        apply(root)
+        manifest2 = _load_json(root / "content/manifest.json")
+        module2 = next(m for m in manifest2["modules"] if m["id"] == MODULE_ID)
+        search2 = _load_json(root / "content/search.json")
+        self.assertEqual(module2["pdf"]["pages"], 85)
+        self.assertEqual(
+            len([x for x in search2 if x["m"] == MODULE_ID and x["n"] == 85]), 1
+        )
+
+    def test_apply_replaces_existing_search_entry(self):
+        root = make_content_fixture(pages=85, with_search_entry=True)
+        apply(root)
+        search = _load_json(root / "content/search.json")
+        self.assertEqual(
+            len([x for x in search if x["m"] == MODULE_ID and x["n"] == 85]), 1
+        )
+
+    def test_check_reports_missing_slide(self):
+        root = make_content_fixture(pages=84)
+        problems = check(root)
+        self.assertTrue(any("0085.webp" in problem for problem in problems))
 
 
 if __name__ == "__main__":

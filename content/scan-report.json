@@ -1,19 +1,19 @@
 {
- "generatedAt": "2026-11-20T06:49:06+0100",
+ "generatedAt": "2026-11-21T08:50:58+01:00",
  "source": "FARMACISTA: ASPETTI NORMATIVI E PRATICO-OPERATIVI PER IL TIROCINIO E PER L’ESERCIZIO DELLA PROFESSIONE",
  "elapsedSeconds": 7.2,
  "totals": {
   "modules": 19,
   "modulesWithSlides": 18,
   "pdfs": 18,
-  "pages": 725,
-  "imageBytes": 59016832,
-  "renderedImages": 725,
-  "pdfBytes": 43850680,
+  "pages": 726,
+  "imageBytes": 59136052,
+  "renderedImages": 726,
+  "pdfBytes": 43853097,
   "topics": 120
  },
- "manifestBytes": 74947,
- "searchBytes": 349540,
+ "manifestBytes": 75044,
+ "searchBytes": 350580,
  "modules": [
   {
    "id": "dispositivi-medici-e-presidi-medico-chirurgici",
@@ -42,9 +42,9 @@
   {
    "id": "gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al",
    "title": "Gestione dei medicinali uso umano e disciplina di dispensazione al pubblico",
-   "pages": 84,
+   "pages": 85,
    "topics": 11,
-   "rendered": 84,
+   "rendered": 85,
    "elapsed": 0.68
   },
   {

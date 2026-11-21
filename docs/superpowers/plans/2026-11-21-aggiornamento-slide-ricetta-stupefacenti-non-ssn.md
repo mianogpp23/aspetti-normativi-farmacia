@@ -81,7 +81,7 @@ class LoadUpdateTest(unittest.TestCase):
 
 - [ ] **Step 2: esegui il test e verifica che fallisca**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide.LoadUpdateTest -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide.LoadUpdateTest -v`
 Expected: FAIL con `ImportError`/`NameError` perché `load_update` non esiste ancora.
 
 - [ ] **Step 3: implementa il Markdown sorgente**
@@ -94,7 +94,7 @@ In `scripts/apply_update_slide.py`: firma esatta; analizza le tre sezioni; solle
 
 - [ ] **Step 5: esegui il test e verifica che passi**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide.LoadUpdateTest -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide.LoadUpdateTest -v`
 Expected: PASS (2 test).
 
 - [ ] **Step 6: commit**
@@ -133,7 +133,7 @@ class RenderTest(unittest.TestCase):
 
 - [ ] **Step 2: esegui i test e verifica che falliscano**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide.RenderTest -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide.RenderTest -v`
 Expected: FAIL perché le funzioni non esistono.
 
 - [ ] **Step 3: implementa `render_slide_images(update: dict, out_slide: Path, out_thumb: Path) -> None`**
@@ -146,7 +146,7 @@ Apri con `fitz.open(pdf_path)`; se `page_count >= 85` ritorna subito; altrimenti
 
 - [ ] **Step 5: esegui i test e verifica che passino**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide.RenderTest -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide.RenderTest -v`
 Expected: PASS (2 test).
 
 - [ ] **Step 6: commit**
@@ -205,7 +205,7 @@ class ApplyTest(unittest.TestCase):
 
 - [ ] **Step 2: esegui i test e verifica che falliscano**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide.ApplyTest -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide.ApplyTest -v`
 Expected: FAIL perché `apply` e `check` non esistono.
 
 - [ ] **Step 3: implementa `apply(root: Path) -> dict`**
@@ -222,7 +222,7 @@ Argparse con `--check` e `--root PATH` (default: root del repo). Stampa i proble
 
 - [ ] **Step 6: esegui tutti i test e verifica che passino**
 
-Run: `python3 -m unittest scripts.test_apply_update_slide -v`  
+Run: `python3 -m unittest scripts.test_apply_update_slide -v`
 Expected: PASS (7 test).
 
 - [ ] **Step 7: commit**
@@ -241,12 +241,12 @@ git commit -m "feat: applica slide 85 in modo idempotente con check"
 
 - [ ] **Step 1: applica la slide al content reale**
 
-Run: `python3 scripts/apply_update_slide.py`  
+Run: `python3 scripts/apply_update_slide.py`
 Expected: stampa `{'slide': 85, 'pages': 85}`; nessun errore.
 
 - [ ] **Step 2: verifica con la modalità check**
 
-Run: `python3 scripts/apply_update_slide.py --check`  
+Run: `python3 scripts/apply_update_slide.py --check`
 Expected: exit 0, nessun problema stampato.
 
 - [ ] **Step 3: verifica integrità dei file**

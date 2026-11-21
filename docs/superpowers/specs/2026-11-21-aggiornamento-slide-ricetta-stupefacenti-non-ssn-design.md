@@ -1,7 +1,7 @@
 # Aggiunta slide: ricetta elettronica stupefacenti non SSN (23 novembre 2026)
 
-Data: 2026-11-21  
-Stato: design approvato (approccio 1)  
+Data: 2026-11-21
+Stato: design approvato (approccio 1)
 Branch: `aggiornamento-slide-ricetta-stupefacenti-2026` da `origin/main = 10a960e`
 
 ## Contesto

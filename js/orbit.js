@@ -361,6 +361,7 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
   let targetScale = scale;
   let raf = 0;
   let dragging = false;
+  let panning = false;
   let dragPointer = null;
   let dragStart = null;
   let moved = 0;
@@ -692,9 +693,10 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     if (e.button !== 0 && e.pointerType === "mouse") return;
     if (e.target.closest(".rm-zoom")) return;
     dragging = true;
+    panning = Boolean(e.shiftKey);
     moved = 0;
     dragPointer = e.pointerId;
-    dragStart = { x: e.clientX, y: e.clientY, rotation: targetRotation };
+    dragStart = { x: e.clientX, y: e.clientY, rotation: targetRotation, cx, cy };
     stage.classList.add("is-dragging");
     try {
       viewport.setPointerCapture(e.pointerId);
@@ -707,19 +709,29 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     const pts = Array.from(pinch.positions.values());
     if (pts.length < 2) return;
     const [a, b] = pts;
+    const center = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
     const dist = Math.hypot(b.x - a.x, b.y - a.y);
     if (!pinch.startDist) {
       pinch.startDist = dist;
       pinch.startScale = targetScale;
       pinch.startRotation = targetRotation;
       pinch.startAngle = Math.atan2(b.y - a.y, b.x - a.x);
+      pinch.lastCenter = center;
       return;
     }
+    if (pinch.lastCenter) {
+      cx += center.x - pinch.lastCenter.x;
+      cy += center.y - pinch.lastCenter.y;
+      const maxDrift = Math.min(W, H) * 0.65;
+      cx = clamp(cx, W / 2 - maxDrift, W / 2 + maxDrift);
+      cy = clamp(cy, H / 2 - maxDrift, H / 2 + maxDrift);
+    }
+    pinch.lastCenter = center;
     const ratio = dist / pinch.startDist;
     const nextScale = clamp(pinch.startScale * ratio, MIN_SCALE, MAX_SCALE);
     const angle = Math.atan2(b.y - a.y, b.x - a.x);
     targetRotation = pinch.startRotation + (angle - pinch.startAngle);
-    zoomAt({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, nextScale);
+    zoomAt(center, nextScale);
   }
 
   function onPointerMove(e) {
@@ -733,7 +745,15 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     }
     if (!dragging || e.pointerId !== dragPointer) return;
     const dx = e.clientX - dragStart.x;
-    moved = Math.max(moved, Math.abs(dx), Math.abs(e.clientY - dragStart.y));
+    const dy = e.clientY - dragStart.y;
+    moved = Math.max(moved, Math.abs(dx), Math.abs(dy));
+    if (panning) {
+      const maxDrift = Math.min(W, H) * 0.75;
+      cx = clamp(dragStart.cx + dx, W / 2 - maxDrift, W / 2 + maxDrift);
+      cy = clamp(dragStart.cy + dy, H / 2 - maxDrift, H / 2 + maxDrift);
+      requestRender();
+      return;
+    }
     const delta = (dx / Math.max(W, 320)) * Math.PI * 1.25;
     targetRotation = dragStart.rotation + delta;
     requestRender();
@@ -747,6 +767,7 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     }
     if (e.pointerId !== dragPointer) return;
     dragging = false;
+    panning = false;
     dragPointer = null;
     stage.classList.remove("is-dragging");
   }

@@ -63,20 +63,20 @@
     </div>
 
     <div class="orbit-wrap">
-      <div class="orbit-stage" id="orbit-stage">
-        <noscript><p class="notice">Serve JavaScript per visualizzare la mappa orbitale.</p></noscript>
+      <div class="orbit-stage" id="orbit-stage" aria-live="polite">
+        <noscript><p class="notice">Serve JavaScript per visualizzare la mappa interattiva.</p></noscript>
       </div>
 
       <aside class="orbit-info" id="orbit-info" aria-live="polite">
-        <p class="oi-hint" id="oi-hint">Passa sopra un nodo per i dettagli, clicca per aprire il modulo.</p>
+        <p class="oi-hint" id="oi-hint">Trascina la mappa per ruotare, usa la rotella per ingrandire. Passa su un nodo per i dettagli, clicca per aprire il modulo.</p>
         <div class="oi-body" id="oi-body" hidden></div>
       </aside>
     </div>
 
     <div class="orbit-legend">
-      <span class="lg"><i class="dot d1"></i>modulo con dispense</span>
-      <span class="lg"><i class="dot d2"></i>modulo senza dispense</span>
-      <span class="lg"><i class="dot d3"></i>dimensione = numero di slide</span>
+      <span class="lg"><i class="dot d1"></i>colore = modulo</span>
+      <span class="lg"><i class="dot d2"></i>dimensione = pagine</span>
+      <span class="lg"><i class="dot d3"></i>trascina / zoom / click</span>
       <button class="linkish" id="btn-list" type="button">Vista elenco</button>
     </div>
 
@@ -88,7 +88,7 @@
     <nav class="crumbs" aria-label="Percorso">
       <a href="#/" class="crumb-link">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.8 3.4 5.2 8l4.6 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Mappa orbitale
+        Mappa moduli
       </a>
       <span class="crumb-sep">/</span>
       <span class="crumb-cur" id="crumb-cur">Modulo</span>

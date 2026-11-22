@@ -1,410 +1,642 @@
-/* orbit.js — mappa orbitale: core, anelli, nodi, raggi, rotazione */
+/* orbit.js — mappa radiale interattiva (sostituisce la vecchia mappa orbitale) */
 
-import { $, el, esc, svgEl, clamp } from "./utils.js";
-import { pagesOf, topicsOf } from "./data.js";
+import { svgEl, clamp } from "./utils.js";
+import { moduleStats, pagesOf } from "./data.js";
 
-const RING_FRACTIONS = [0.46, 0.73, 1.0];
-const COMPACT_FRACTIONS = [0.58, 1.0];
-const SPEEDS = [2.4, -1.8, 1.25]; // gradi / secondo
-const LABEL_W = 116;
+const TAU = Math.PI * 2;
+const PALETTE = [
+  { a: "#ff6b4a", b: "#ff9a3c", glow: "rgba(255,107,74,.34)" },
+  { a: "#ff4fa3", b: "#ff7ad9", glow: "rgba(255,79,163,.32)" },
+  { a: "#7c5cff", b: "#b07cff", glow: "rgba(124,92,255,.32)" },
+  { a: "#2f8cff", b: "#46d3ff", glow: "rgba(47,140,255,.32)" },
+  { a: "#00bfa6", b: "#4be3c2", glow: "rgba(0,191,166,.30)" },
+  { a: "#35c759", b: "#a3e635", glow: "rgba(53,199,89,.28)" },
+  { a: "#f59e0b", b: "#ffd166", glow: "rgba(245,158,11,.30)" },
+  { a: "#ef476f", b: "#ff7b54", glow: "rgba(239,71,111,.30)" },
+  { a: "#06b6d4", b: "#67e8f9", glow: "rgba(6,182,212,.30)" },
+  { a: "#8b5cf6", b: "#22d3ee", glow: "rgba(139,92,246,.28)" },
+];
 
-export function createOrbit({ stage, info, onOpen }) {
-  let nodes = [];
-  let rings = [];
-  let svg = null;
-  let lineGroup = null;
-  let ringGroup = null;
-  let geom = { cx: 0, cy: 0, maxR: 200, radii: [] };
-  let coreHalf = 90;
-  let angles = [0, 0, 0];
-  let raf = 0;
-  let last = 0;
-  let paused = false;
-  let dragging = false;
-  let lastX = 0;
-  let hoverId = null;
-  let bound = false;
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function colorFor(i) {
+  return PALETTE[i % PALETTE.length];
+}
 
-  /* ---------------- costruzione ---------------- */
-  function build(modules, manifest) {
-    stage.querySelectorAll(".mnode, .orbit-svg, .orbit-core").forEach((n) => n.remove());
+function shortLabel(title, max = 44) {
+  const t = String(title || "").replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  return `${t.slice(0, max - 1).trimEnd()}…`;
+}
 
-    svg = svgEl("svg", { class: "orbit-svg", "aria-hidden": "true" });
-    const defs = svgEl("defs");
-    defs.innerHTML = `
-      <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#2f6bff" stop-opacity=".22"/>
-        <stop offset="55%" stop-color="#22c7e6" stop-opacity=".10"/>
-        <stop offset="100%" stop-color="#22c7e6" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="spokeGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0">
-        <stop offset="0%" stop-color="#2f6bff" stop-opacity=".55"/>
-        <stop offset="100%" stop-color="#22c7e6" stop-opacity=".8"/>
-      </linearGradient>`;
-    svg.appendChild(defs);
-    ringGroup = svgEl("g", { class: "orbit-rings" });
-    lineGroup = svgEl("g", { class: "orbit-spokes" });
-    const glow = svgEl("circle", { class: "orbit-core-glow", cx: 0, cy: 0, r: 0 });
-    svg.append(glow, ringGroup, lineGroup);
-    stage.appendChild(svg);
+function nodeRadius(pages, minP, maxP, compact) {
+  const minR = compact ? 28 : 34;
+  const maxR = compact ? 44 : 56;
+  if (maxP <= minP) return (minR + maxR) / 2;
+  const t = (pages - minP) / (maxP - minP);
+  return minR + t * (maxR - minR);
+}
 
-    // core
-    const core = el("div", { class: "orbit-core" }, `
-      <div class="core-inner">
-        <span class="core-kicker">Corso</span>
-        <strong class="core-title">${esc(manifest?.course?.title || "Dispense")}</strong>
-        <span class="core-sub">${manifest?.totals?.pages ?? 0} slide · ${modules.length} moduli</span>
-      </div>`);
-    stage.appendChild(core);
+function clearEl(node) {
+  while (node.firstChild) node.removeChild(node.firstChild);
+}
 
-    // anelli
-    const compact = stage.clientWidth < 640;
-    const ringCount = compact ? 2 : modules.length <= 6 ? 1 : modules.length <= 12 ? 2 : 3;
-    rings = [];
-    ringGroup.innerHTML = "";
-    for (let i = 0; i < ringCount; i++) {
-      const c = svgEl("circle", { class: "orbit-ring", r: 0, cx: 0, cy: 0 });
-      c.dataset.ring = String(i);
-      ringGroup.appendChild(c);
-      rings.push(c);
+function make(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function makeSvgIconPeople() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  const c = document.createElementNS(svg.namespaceURI, "circle");
+  c.setAttribute("cx", "8");
+  c.setAttribute("cy", "5.4");
+  c.setAttribute("r", "2.7");
+  c.setAttribute("fill", "none");
+  c.setAttribute("stroke", "currentColor");
+  c.setAttribute("stroke-width", "1.35");
+  const p = document.createElementNS(svg.namespaceURI, "path");
+  p.setAttribute("d", "M2.6 13.2c.6-2.5 2.8-3.9 5.4-3.9s4.8 1.4 5.4 3.9");
+  p.setAttribute("fill", "none");
+  p.setAttribute("stroke", "currentColor");
+  p.setAttribute("stroke-width", "1.35");
+  p.setAttribute("stroke-linecap", "round");
+  svg.append(c, p);
+  return svg;
+}
+
+export function createInfoPanel(box, onOpen) {
+  const hint = box.querySelector(".oi-hint");
+  const body = box.querySelector(".oi-body");
+  function show(mod) {
+    const stats = moduleStats(mod);
+    const topics = (mod.topics || []).slice(0, 4);
+    const c = colorFor((mod.n || 1) - 1);
+    hint.hidden = true;
+    body.hidden = false;
+    box.classList.add("is-open");
+    clearEl(body);
+
+    const eyebrow = make("p", "oi-eyebrow");
+    const dot = make("span", "oi-dot");
+    dot.style.setProperty("--dot-a", c.a);
+    dot.style.setProperty("--dot-b", c.b);
+    eyebrow.append(dot, document.createTextNode(`Modulo ${String(mod.n).padStart(2, "0")}`));
+
+    const title = make("h3", "oi-title", mod.title);
+    body.append(eyebrow, title);
+
+    if (mod.lecturers?.length) {
+      const people = make("p", "oi-people");
+      people.append(makeSvgIconPeople());
+      const span = make("span", "", mod.lecturers.join(" · "));
+      people.appendChild(span);
+      body.appendChild(people);
     }
 
-    // distribuzione proporzionale al raggio
-    const fracs = (compact ? COMPACT_FRACTIONS : RING_FRACTIONS).slice(0, ringCount);
-    const wsum = fracs.reduce((a, b) => a + b, 0);
-    const counts = fracs.map((f) => Math.max(1, Math.round((modules.length * f) / wsum)));
-    let diff = modules.length - counts.reduce((a, b) => a + b, 0);
-    let guard = 0;
-    while (diff !== 0 && guard++ < 50) {
-      const i = diff > 0 ? counts.indexOf(Math.min(...counts)) : counts.indexOf(Math.max(...counts));
-      counts[i] += diff > 0 ? 1 : -1;
-      diff = modules.length - counts.reduce((a, b) => a + b, 0);
-    }
+    const tags = make("div", "oi-tags");
+    tags.appendChild(make("span", "oi-tag", stats.pages ? `${stats.pages} pagine` : "senza PDF"));
+    if (stats.topics) tags.appendChild(make("span", "oi-tag", `${stats.topics} argomenti`));
+    tags.appendChild(make("span", "oi-tag", mod.has_slides ? "slide disponibili" : "contenuto non slide"));
+    body.appendChild(tags);
 
-    // nodi
-    nodes = [];
-    let cursor = 0;
-    stage.querySelectorAll(".mnode").forEach((n) => n.remove());
-    const frag = document.createDocumentFragment();
-    counts.forEach((cnt, ringIdx) => {
-      for (let k = 0; k < cnt && cursor < modules.length; k++, cursor++) {
-        const mod = modules[cursor];
-        const p = pagesOf(mod);
-        const d = Math.round(compact
-          ? clamp(27 + 13 * Math.sqrt(p / 100), 27, 40)
-          : clamp(34 + 20 * Math.sqrt(p / 100), 34, 56));
-        const stagger = ringIdx * (Math.PI / cnt) * 0.62;
-        const node = { mod, ring: ringIdx, angle: (k / cnt) * Math.PI * 2 - Math.PI / 2 + stagger, d };
-
-        const wrap = el("div", { class: "mnode" + (p ? "" : " has-no-pdf") });
-        const dot = el("button", {
-          class: "mnode-dot",
-          type: "button",
-          "aria-label": `${mod.n}. ${mod.title}${p ? ` — ${p} slide` : " — senza dispense"}`,
-          title: mod.title,
-          style: `width:${d}px;height:${d}px`,
-        }, String(mod.n).padStart(2, "0"));
-        // l'etichetta e' volutamente compatta (2 righe): il titolo completo
-        // resta disponibile nel tooltip, nell'aria-label del nodo e nel pannello.
-        const label = el("span", { class: "mnode-label", title: mod.title },
-          `<span class="lbl-n">${String(mod.n).padStart(2, "0")}</span>${esc(shortLabel(mod))}`);
-
-        wrap.append(dot, label);
-        node.el = wrap;
-        node.dot = dot;
-        node.label = label;
-        node.spoke = svgEl("line", { class: "orbit-spoke", "stroke-linecap": "round" });
-        lineGroup.appendChild(node.spoke);
-
-        dot.addEventListener("mouseenter", () => setHover(mod.id));
-        dot.addEventListener("focus", () => { setHover(mod.id); nudgePause(3200); });
-        dot.addEventListener("mouseleave", () => setHover(null));
-        dot.addEventListener("blur", () => setHover(null));
-        dot.addEventListener("click", (e) => {
-          e.preventDefault();
-          // su schermo piccolo il primo tocco evidenzia il nodo e mostra i dettagli
-          if (stage.clientWidth < 640) { setHover(mod.id); return; }
-          onOpen(mod);
-        });
-
-        nodes.push(node);
-        frag.appendChild(wrap);
+    if (topics.length) {
+      const topicsWrap = make("div", "oi-topics");
+      for (const t of topics) {
+        const btn = make("button", "oi-topic");
+        btn.type = "button";
+        btn.dataset.topic = t.id;
+        const b = make("b", "", String(t.from).padStart(2, "0"));
+        const span = make("span", "", t.title);
+        btn.append(b, span);
+        btn.addEventListener("click", () => onOpen(mod, btn.dataset.topic));
+        topicsWrap.appendChild(btn);
       }
-    });
-    stage.appendChild(frag);
+      body.appendChild(topicsWrap);
+    }
 
-    // interazioni di trascinamento
-    if (!bound) {
-      bound = true;
-      stage.addEventListener("pointerdown", (e) => {
-        if (e.target.closest(".mnode-dot")) return;
-        dragging = true;
-        lastX = e.clientX;
-        stage.style.cursor = "grabbing";
+    const cta = make("button", "btn btn-primary oi-cta", "Apri modulo");
+    cta.type = "button";
+    cta.addEventListener("click", () => onOpen(mod));
+    body.appendChild(cta);
+  }
+  function reset() {
+    hint.hidden = false;
+    body.hidden = true;
+    clearEl(body);
+    box.classList.remove("is-open");
+  }
+  return { show, reset };
+}
+
+export function createOrbit({ stage, info, onOpen, infoPanel }) {
+  stage.classList.add("rm-stage");
+  clearEl(stage);
+
+  const bg = make("div", "rm-bg");
+  bg.setAttribute("aria-hidden", "true");
+  bg.append(make("div", "rm-bg-grid"), make("div", "rm-bg-glow rm-bg-glow-a"), make("div", "rm-bg-glow rm-bg-glow-b"));
+
+  const viewport = make("div", "rm-viewport");
+  viewport.setAttribute("aria-label", "Mappa interattiva dei moduli");
+  const world = make("div", "rm-world");
+  const svg = svgEl("svg", { class: "rm-svg", "aria-hidden": "true" });
+  const nodesLayer = make("div", "rm-nodes");
+  const core = make("button", "rm-core");
+  core.type = "button";
+  core.setAttribute("aria-label", "Apri panoramica corso");
+  core.append(make("span", "rm-core-ring"), make("span", "rm-core-ring rm-core-ring-2"));
+  const coreInner = make("span", "rm-core-inner");
+  coreInner.append(
+    make("span", "rm-core-kicker", "Percorso formativo"),
+    make("span", "rm-core-title", "Farmacista"),
+    make("span", "rm-core-sub", "aspetti normativi"),
+    make("span", "rm-core-meta", ""),
+  );
+  core.appendChild(coreInner);
+  world.append(svg, nodesLayer, core);
+  viewport.appendChild(world);
+
+  const hud = make("div", "rm-hud");
+  hud.setAttribute("aria-hidden", "true");
+  const hudA = make("div", "rm-hud-chip");
+  hudA.append(make("span", "rm-hud-dot"), document.createTextNode("Trascina per ruotare"));
+  const hudB = make("div", "rm-hud-chip");
+  hudB.append(make("span", "rm-hud-dot rm-hud-dot-b"), document.createTextNode("Rotella per zoom"));
+  hud.append(hudA, hudB);
+
+  const zoomWrap = make("div", "rm-zoom");
+  zoomWrap.setAttribute("aria-label", "Controlli zoom mappa");
+  const zoomIn = make("button", "rm-zoom-btn", "+");
+  zoomIn.type = "button";
+  zoomIn.dataset.zoom = "in";
+  zoomIn.setAttribute("aria-label", "Zoom avanti");
+  const zoomOut = make("button", "rm-zoom-btn", "−");
+  zoomOut.type = "button";
+  zoomOut.dataset.zoom = "out";
+  zoomOut.setAttribute("aria-label", "Zoom indietro");
+  const zoomReset = make("button", "rm-zoom-btn rm-zoom-reset", "↺");
+  zoomReset.type = "button";
+  zoomReset.dataset.zoom = "reset";
+  zoomReset.setAttribute("aria-label", "Reimposta vista");
+  zoomWrap.append(zoomIn, zoomOut, zoomReset);
+
+  stage.append(bg, viewport, hud, zoomWrap);
+
+  const coreMeta = core.querySelector(".rm-core-meta");
+  const zoomBtns = [zoomIn, zoomOut, zoomReset];
+
+  let modules = [];
+  let nodes = [];
+  let activeId = null;
+  let W = 0;
+  let H = 0;
+  let cx = 0;
+  let cy = 0;
+  let baseRadius = 220;
+  let rotation = -Math.PI / 2;
+  let scale = 1;
+  let targetRotation = rotation;
+  let targetScale = scale;
+  let raf = 0;
+  let dragging = false;
+  let dragPointer = null;
+  let dragStart = null;
+  let moved = 0;
+  let pinch = null;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MIN_SCALE = 0.55;
+  const MAX_SCALE = 2.2;
+
+  let panel = null;
+  if (infoPanel && typeof infoPanel.show === "function") panel = infoPanel;
+  else if (info && typeof info.show === "function") panel = info;
+  const infoBox = info && typeof info.querySelector === "function" ? info : null;
+
+  function infoShow(mod) {
+    if (panel) {
+      panel.show(mod);
+      return;
+    }
+    if (!infoBox) return;
+    const hint = infoBox.querySelector(".oi-hint");
+    const body = infoBox.querySelector(".oi-body");
+    if (hint) hint.hidden = false;
+    if (body) body.hidden = true;
+  }
+  function infoReset() {
+    if (panel) {
+      panel.reset();
+      return;
+    }
+    if (!infoBox) return;
+    const hint = infoBox.querySelector(".oi-hint");
+    const body = infoBox.querySelector(".oi-body");
+    if (hint) hint.hidden = false;
+    if (body) {
+      body.hidden = true;
+      clearEl(body);
+    }
+    infoBox.classList.remove("is-open");
+  }
+
+  function setWorldTransform(immediate = false) {
+    if (immediate) {
+      rotation = targetRotation;
+      scale = targetScale;
+    }
+    world.style.transform = `translate(${cx}px, ${cy}px) rotate(${rotation}rad) scale(${scale})`;
+    world.style.setProperty("--inv-scale", String(1 / scale));
+    world.style.setProperty("--inv-rot", `${-rotation}rad`);
+  }
+
+  function animate() {
+    raf = 0;
+    const ds = targetScale - scale;
+    const dr = targetRotation - rotation;
+    if (Math.abs(ds) < 0.0005 && Math.abs(dr) < 0.0005) {
+      setWorldTransform(true);
+      return;
+    }
+    const k = reduceMotion ? 1 : 0.18;
+    scale += ds * k;
+    rotation += dr * k;
+    setWorldTransform(true);
+    raf = requestAnimationFrame(animate);
+  }
+
+  function requestRender(immediate = false) {
+    if (immediate || reduceMotion) {
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      setWorldTransform(true);
+      return;
+    }
+    if (!raf) raf = requestAnimationFrame(animate);
+  }
+
+  function updateHud() {
+    stage.classList.toggle("is-compact", W < 720);
+  }
+
+  function drawRings(coreR, compact) {
+    clearEl(svg);
+    const defs = svgEl("defs");
+    const grad = svgEl("radialGradient", { id: "rm-core-glow", cx: "50%", cy: "50%", r: "50%" });
+    grad.appendChild(svgEl("stop", { offset: "0%", "stop-color": "rgba(255,255,255,.95)" }));
+    grad.appendChild(svgEl("stop", { offset: "55%", "stop-color": "rgba(99,179,255,.20)" }));
+    grad.appendChild(svgEl("stop", { offset: "100%", "stop-color": "rgba(99,179,255,0)" }));
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+
+    svg.appendChild(svgEl("circle", {
+      cx: 0, cy: 0, r: baseRadius + (compact ? 52 : 72), class: "rm-orbit-ring rm-orbit-ring-outer",
+    }));
+    svg.appendChild(svgEl("circle", { cx: 0, cy: 0, r: baseRadius, class: "rm-orbit-ring" }));
+    svg.appendChild(svgEl("circle", {
+      cx: 0, cy: 0, r: coreR + (compact ? 24 : 34), class: "rm-orbit-ring rm-orbit-ring-inner",
+    }));
+    svg.appendChild(svgEl("circle", {
+      cx: 0, cy: 0, r: coreR + (compact ? 46 : 64), fill: "url(#rm-core-glow)", class: "rm-core-glow",
+    }));
+
+    for (const node of nodes) {
+      const c = colorFor((node.mod.n || 1) - 1);
+      node.path = svgEl("path", { class: "rm-link", stroke: c.a, "data-id": node.mod.id });
+      node.path.style.setProperty("--link-color", c.a);
+      svg.appendChild(node.path);
+    }
+  }
+
+  function layout() {
+    const rect = stage.getBoundingClientRect();
+    W = rect.width;
+    H = rect.height;
+    if (W === 0 || H === 0) return;
+    cx = W / 2;
+    cy = H / 2;
+    updateHud();
+    const compact = W < 720;
+    const minDim = Math.min(W, H);
+    const coreR = compact ? 68 : 92;
+    baseRadius = clamp(minDim * (compact ? 0.34 : 0.36), compact ? 135 : 190, compact ? 210 : 320);
+    world.style.width = `${W}px`;
+    world.style.height = `${H}px`;
+    svg.setAttribute("viewBox", `${-W / 2} ${-H / 2} ${W} ${H}`);
+    svg.setAttribute("width", String(W));
+    svg.setAttribute("height", String(H));
+    core.style.setProperty("--core-size", `${coreR * 2}px`);
+
+    const pages = modules.map((m) => pagesOf(m) || 0);
+    const minP = Math.min(...pages, 0);
+    const maxP = Math.max(...pages, 1);
+    const count = modules.length || 1;
+    const step = TAU / count;
+
+    drawRings(coreR, compact);
+
+    for (let i = 0; i < nodes.length; i += 1) {
+      const node = nodes[i];
+      const m = node.mod;
+      const r = nodeRadius(pagesOf(m) || 0, minP, maxP, compact);
+      const angle = -Math.PI / 2 + i * step;
+      const jitter = (i % 2 === 0 ? 1 : -1) * (compact ? 8 : 14) * (i % 3 === 0 ? 1 : 0.45);
+      const dist = baseRadius + jitter;
+      const x = Math.cos(angle) * dist;
+      const y = Math.sin(angle) * dist;
+      node.x = x;
+      node.y = y;
+      node.r = r;
+      node.angle = angle;
+      node.el.style.setProperty("--x", `${x}px`);
+      node.el.style.setProperty("--y", `${y}px`);
+      node.el.style.setProperty("--nr", `${r * 2}px`);
+      node.el.style.setProperty("--label-w", `${compact ? 108 : 136}px`);
+      node.path.setAttribute("d", `M 0 0 Q ${x * 0.45} ${y * 0.45} ${x} ${y}`);
+    }
+    requestRender(true);
+  }
+
+  function setActive(id) {
+    activeId = id;
+    for (const node of nodes) {
+      const on = node.mod.id === id;
+      node.el.classList.toggle("is-active", on);
+      node.el.setAttribute("aria-pressed", on ? "true" : "false");
+      node.path.classList.toggle("is-active", on);
+      node.path.classList.toggle("is-dim", Boolean(id) && !on);
+    }
+  }
+
+  function clearHover() {
+    for (const node of nodes) {
+      node.el.classList.remove("is-hover");
+      node.path.classList.remove("is-hover");
+      if (!activeId) node.path.classList.remove("is-dim");
+    }
+  }
+
+  function hoverNode(mod) {
+    for (const node of nodes) {
+      const on = node.mod.id === mod.id;
+      node.el.classList.toggle("is-hover", on);
+      node.path.classList.toggle("is-hover", on);
+      if (!activeId) node.path.classList.toggle("is-dim", !on);
+    }
+    infoShow(mod);
+  }
+
+  function highlight(id) {
+    const node = nodes.find((n) => n.mod.id === id);
+    if (!node) return;
+    setActive(id);
+    if (W < 720) {
+      const desired = -Math.PI / 2 - node.angle;
+      let delta = desired - targetRotation;
+      delta = ((delta + Math.PI) % TAU + TAU) % TAU - Math.PI;
+      targetRotation += delta;
+      requestRender();
+    }
+  }
+
+  function build(mods, manifest) {
+    modules = mods || [];
+    clearEl(nodesLayer);
+    nodes = [];
+    activeId = null;
+    coreMeta.textContent = `${manifest?.totals?.modules || modules.length} moduli · ${manifest?.totals?.pages || 0} pagine`;
+
+    core.onclick = () => {
+      setActive(null);
+      infoReset();
+    };
+
+    const count = modules.length || 1;
+    for (let i = 0; i < modules.length; i += 1) {
+      const mod = modules[i];
+      const c = colorFor((mod.n || 1) - 1);
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rm-node";
+      btn.dataset.id = mod.id;
+      btn.style.setProperty("--c-a", c.a);
+      btn.style.setProperty("--c-b", c.b);
+      btn.style.setProperty("--c-glow", c.glow);
+      btn.setAttribute("aria-label", `Apri modulo ${mod.n}: ${mod.title}`);
+      btn.setAttribute("aria-pressed", "false");
+
+      const glow = make("span", "rm-node-glow");
+      glow.setAttribute("aria-hidden", "true");
+      const circle = make("span", "rm-node-circle");
+      circle.append(
+        make("span", "rm-node-num", String(mod.n).padStart(2, "0")),
+        make("span", "rm-node-pages", pagesOf(mod) ? `${pagesOf(mod)}p` : "—"),
+      );
+      const label = make("span", "rm-node-label");
+      const labelText = make("span", "rm-node-label-text", shortLabel(mod.title, 44));
+      label.appendChild(labelText);
+      btn.append(glow, circle, label);
+
+      btn.addEventListener("click", (e) => {
+        if (moved > 8) return;
+        e.stopPropagation();
+        setActive(mod.id);
+        onOpen(mod);
       });
-      window.addEventListener("pointermove", (e) => {
-        if (!dragging) return;
-        const dx = e.clientX - lastX;
-        lastX = e.clientX;
-        const delta = (dx / Math.max(140, geom.maxR)) * 26;
-        angles = angles.map((a) => a + delta);
-        draw();
+      btn.addEventListener("mouseenter", () => {
+        if (!dragging) hoverNode(mod);
       });
-      window.addEventListener("pointerup", () => { dragging = false; stage.style.cursor = ""; });
+      btn.addEventListener("focus", () => hoverNode(mod));
+      btn.addEventListener("mouseleave", () => {
+        if (activeId) {
+          const activeNode = nodes.find((n2) => n2.mod.id === activeId);
+          if (activeNode) infoShow(activeNode.mod);
+          return;
+        }
+        clearHover();
+      });
+      btn.addEventListener("blur", () => {
+        if (!activeId) clearHover();
+      });
+
+      nodesLayer.appendChild(btn);
+      nodes.push({ mod, el: btn, x: 0, y: 0, r: 40, angle: -Math.PI / 2 + i * (TAU / count), path: svgEl("path") });
     }
 
     layout();
-    info.reset();
-    start();
   }
 
-  function shortLabel(mod) {
-    const t = mod.label || mod.title || "";
-    return t.length > 46 ? t.slice(0, 44).replace(/[\s,;:.-]+$/, "") + "…" : t;
+  function onPointerDown(e) {
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    if (e.target.closest(".rm-zoom")) return;
+    dragging = true;
+    moved = 0;
+    dragPointer = e.pointerId;
+    dragStart = { x: e.clientX, y: e.clientY, rotation: targetRotation };
+    stage.classList.add("is-dragging");
+    try {
+      viewport.setPointerCapture(e.pointerId);
+    } catch {
+      // ignore
+    }
   }
 
-  /* ---------------- geometria ---------------- */
-  function layout() {
-    const w = stage.clientWidth;
-    const h = stage.clientHeight;
-    if (!w || !h) return;
-    const cx = w / 2;
-    const cy = h / 2;
-    const compact = w < 640;
-    // spazio per nodo + etichetta su tutti i lati
-    const padX = compact ? 52 : 86;
-    const padY = compact ? 56 : 78;
-    const maxR = Math.max(72, Math.min(w / 2 - padX, h / 2 - padY));
-    const fracs = (compact ? COMPACT_FRACTIONS : RING_FRACTIONS).slice(0, Math.max(1, rings.length));
-    const radii = fracs.map((f) => Math.max(compact ? 58 : 72, maxR * f));
-    geom = { cx, cy, maxR, radii };
+  function applyPinch() {
+    const pts = Array.from(pinch.positions.values());
+    if (pts.length < 2) return;
+    const [a, b] = pts;
+    const dist = Math.hypot(b.x - a.x, b.y - a.y);
+    if (!pinch.startDist) {
+      pinch.startDist = dist;
+      pinch.startScale = targetScale;
+      pinch.startRotation = targetRotation;
+      pinch.startAngle = Math.atan2(b.y - a.y, b.x - a.x);
+      return;
+    }
+    const ratio = dist / pinch.startDist;
+    const nextScale = clamp(pinch.startScale * ratio, MIN_SCALE, MAX_SCALE);
+    const angle = Math.atan2(b.y - a.y, b.x - a.x);
+    targetRotation = pinch.startRotation + (angle - pinch.startAngle);
+    zoomAt({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, nextScale);
+  }
 
-    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
-    const glow = svg.querySelector(".orbit-core-glow");
-    glow.setAttribute("cx", cx);
-    glow.setAttribute("cy", cy);
-    glow.setAttribute("r", maxR * 1.5);
+  function onPointerMove(e) {
+    if (pinch && pinch.ids.has(e.pointerId)) {
+      pinch.positions.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      applyPinch();
+      return;
+    }
+    if (!dragging || e.pointerId !== dragPointer) return;
+    const dx = e.clientX - dragStart.x;
+    moved = Math.max(moved, Math.abs(dx), Math.abs(e.clientY - dragStart.y));
+    const delta = (dx / Math.max(W, 320)) * Math.PI * 1.25;
+    targetRotation = dragStart.rotation + delta;
+    requestRender();
+  }
 
-    rings.forEach((c, i) => {
-      const r = radii[Math.min(i, radii.length - 1)];
-      c.setAttribute("cx", cx);
-      c.setAttribute("cy", cy);
-      c.setAttribute("r", r);
-    });
-    stage.classList.toggle("is-compact", compact);
-    stage.querySelectorAll(".mnode-label").forEach((l) => {
-      l.style.width = `${compact ? 96 : LABEL_W}px`;
-    });
-    // dimensioni etichette memorizzate: evitano reflow durante l'animazione
-    nodes.forEach((n) => {
-      n.lw = n.label.offsetWidth || (compact ? 96 : LABEL_W);
-      n.lh = n.label.offsetHeight || 28;
-      n.cand = 0;
-    });
-    // ingombro reale del core (per non farci cadere sopra le etichette)
-    const coreEl = stage.querySelector(".orbit-core");
-    if (coreEl) {
-      coreHalf = Math.max(60, coreEl.offsetWidth / 2 + 10);
+  function onPointerUp(e) {
+    if (pinch && pinch.ids.has(e.pointerId)) {
+      pinch.positions.delete(e.pointerId);
+      pinch.ids.delete(e.pointerId);
+      if (pinch.ids.size < 2) pinch = null;
+    }
+    if (e.pointerId !== dragPointer) return;
+    dragging = false;
+    dragPointer = null;
+    stage.classList.remove("is-dragging");
+  }
+
+  function zoomAt(point, nextScale) {
+    const rect = stage.getBoundingClientRect();
+    const px = point.x - rect.left;
+    const py = point.y - rect.top;
+    const prev = targetScale;
+    const clamped = clamp(nextScale, MIN_SCALE, MAX_SCALE);
+    if (Math.abs(clamped - prev) < 0.0001) return;
+    const dx = px - cx;
+    const dy = py - cy;
+    const ratio = clamped / prev;
+    cx = px - dx * ratio;
+    cy = py - dy * ratio;
+    const maxDrift = Math.min(W, H) * 0.45;
+    cx = clamp(cx, W / 2 - maxDrift, W / 2 + maxDrift);
+    cy = clamp(cy, H / 2 - maxDrift, H / 2 + maxDrift);
+    targetScale = clamped;
+    requestRender();
+  }
+
+  viewport.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".rm-zoom")) return;
+    if (pinch) {
+      pinch.ids.add(e.pointerId);
+      pinch.positions.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pinch.ids.size >= 2) pinch.startDist = 0;
     } else {
-      coreHalf = 90;
+      pinch = { ids: new Set([e.pointerId]), positions: new Map([[e.pointerId, { x: e.clientX, y: e.clientY }]]), startDist: 0 };
     }
-    draw();
-  }
+    onPointerDown(e);
+  });
+  viewport.addEventListener("pointermove", onPointerMove);
+  viewport.addEventListener("pointerup", onPointerUp);
+  viewport.addEventListener("pointercancel", onPointerUp);
+  viewport.addEventListener("lostpointercapture", () => {
+    dragging = false;
+    stage.classList.remove("is-dragging");
+  });
 
-  /* ---------------- disegno ---------------- */
-  function draw() {
-    const { cx, cy, radii } = geom;
-    nodes.forEach((n) => {
-      const r = radii[Math.min(n.ring, radii.length - 1)] || 200;
-      const a = n.angle + ((angles[n.ring] || 0) * Math.PI) / 180;
-      const x = cx + Math.cos(a) * r;
-      const y = cy + Math.sin(a) * r;
-      n.el.style.transform = `translate(${x}px, ${y}px)`;
-      n.spoke.setAttribute("x1", cx);
-      n.spoke.setAttribute("y1", cy);
-      n.spoke.setAttribute("x2", x);
-      n.spoke.setAttribute("y2", y);
-      n.x = x;
-      n.y = y;
-      n.a = a;
+  viewport.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const factor = Math.exp(-e.deltaY * 0.0015);
+    zoomAt({ x: e.clientX, y: e.clientY }, targetScale * factor);
+  }, { passive: false });
+
+  viewport.addEventListener("dblclick", (e) => {
+    if (e.target.closest(".rm-node, .rm-core, .rm-zoom")) return;
+    const next = targetScale > 1.2 ? 1 : clamp(targetScale * 1.5, MIN_SCALE, MAX_SCALE);
+    zoomAt({ x: e.clientX, y: e.clientY }, next);
+  });
+
+  for (const btn of zoomBtns) {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const act = btn.dataset.zoom;
+      const center = {
+        x: stage.getBoundingClientRect().left + W / 2,
+        y: stage.getBoundingClientRect().top + H / 2,
+      };
+      if (act === "in") zoomAt(center, targetScale * 1.2);
+      if (act === "out") zoomAt(center, targetScale / 1.2);
+      if (act === "reset") {
+        cx = W / 2;
+        cy = H / 2;
+        targetScale = 1;
+        targetRotation = -Math.PI / 2;
+        requestRender();
+      }
     });
-    placeLabels();
   }
 
-  /* Risoluzione collisioni etichette: ogni etichetta prova più posizioni
-     candidate e sceglie la prima libera da nodi, etichette e core. */
-  function placeLabels() {
-    const dots = nodes.map((n) => ({
-      x1: n.x - n.d / 2, x2: n.x + n.d / 2,
-      y1: n.y - n.d / 2, y2: n.y + n.d / 2,
-      n,
-    }));
-    const core = {
-      x1: geom.cx - coreHalf, x2: geom.cx + coreHalf,
-      y1: geom.cy - coreHalf, y2: geom.cy + coreHalf,
+  stage.tabIndex = 0;
+  stage.setAttribute("role", "region");
+  stage.setAttribute("aria-label", "Mappa radiale dei moduli. Trascina per ruotare, usa rotella o tasti più/meno per zoom.");
+  stage.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      targetRotation -= 0.12;
+      requestRender();
+    }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      targetRotation += 0.12;
+      requestRender();
+    }
+    const center = {
+      x: stage.getBoundingClientRect().left + W / 2,
+      y: stage.getBoundingClientRect().top + H / 2,
     };
-    const placed = [];
-
-    for (const n of nodes) {
-      const ux = Math.cos(n.a);
-      const uy = Math.sin(n.a);
-      const tx = -uy;
-      const ty = ux;
-      const base = n.d / 2 + 11;
-      const cands = [
-        { x: ux * base, y: uy * base },
-        { x: ux * (base + 30), y: uy * (base + 30) },
-        { x: tx * (base + 14), y: ty * (base + 14) },
-        { x: -tx * (base + 14), y: -ty * (base + 14) },
-        { x: ux * (base + 58), y: uy * (base + 58) },
-        { x: tx * (base + 46), y: ty * (base + 46) },
-        { x: -tx * (base + 46), y: -ty * (base + 46) },
-      ];
-      const w = n.lw || LABEL_W;
-      const h = n.lh || 28;
-
-      let chosen = null;
-      // prima prova la posizione corrente (stabilità durante l'animazione)
-      const order = [n.cand || 0, ...cands.map((_, i) => i).filter((i) => i !== (n.cand || 0))];
-      for (const i of order) {
-        const c = cands[i];
-        if (!c) continue;
-        const rect = {
-          x1: n.x + c.x - w / 2, x2: n.x + c.x + w / 2,
-          y1: n.y + c.y - h / 2, y2: n.y + c.y + h / 2,
-        };
-        if (rect.x1 < 2 || rect.y1 < 2 ||
-            rect.x2 > stage.clientWidth - 2 || rect.y2 > stage.clientHeight - 2) continue;
-        if (overlaps(rect, dots, n) || overlaps(rect, [core], null) || overlaps(rect, placed, null)) continue;
-        chosen = { i, rect, c };
-        break;
-      }
-      if (!chosen) {
-        const c = cands[0];
-        chosen = { i: 0, c, rect: {
-          x1: n.x + c.x - w / 2, x2: n.x + c.x + w / 2,
-          y1: n.y + c.y - h / 2, y2: n.y + c.y + h / 2,
-        } };
-      }
-      n.cand = chosen.i;
-      placed.push(chosen.rect);
-      n.label.style.transform =
-        `translate(-50%, -50%) translate(${chosen.c.x.toFixed(1)}px, ${chosen.c.y.toFixed(1)}px)`;
-      n.lx = n.x + chosen.c.x;
-      n.ly = n.y + chosen.c.y;
+    if (e.key === "+" || e.key === "=") {
+      e.preventDefault();
+      zoomAt(center, targetScale * 1.15);
     }
-  }
-
-  function overlaps(rect, others, except) {
-    for (const o of others) {
-      if (except && o.n === except) continue;
-      if (rect.x1 < o.x2 && rect.x2 > o.x1 && rect.y1 < o.y2 && rect.y2 > o.y1) return true;
+    if (e.key === "-" || e.key === "_") {
+      e.preventDefault();
+      zoomAt(center, targetScale / 1.15);
     }
-    return false;
-  }
+    if (e.key === "0") {
+      e.preventDefault();
+      cx = W / 2;
+      cy = H / 2;
+      targetScale = 1;
+      targetRotation = -Math.PI / 2;
+      requestRender();
+    }
+  });
 
-  /* ---------------- animazione ---------------- */
-  function start() {
-    if (reduced) return;
-    cancelAnimationFrame(raf);
-    last = performance.now();
-    const tick = (t) => {
-      const dt = Math.min(0.05, (t - last) / 1000);
-      last = t;
-      if (!paused && !dragging && !document.hidden) {
-        let changed = false;
-        angles = angles.map((a, i) => {
-          const sp = SPEEDS[i % SPEEDS.length];
-          if (!sp) return a;
-          changed = true;
-          return a + sp * dt;
-        });
-        if (changed) draw();
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-  }
+  const ro = new ResizeObserver(() => layout());
+  ro.observe(stage);
+  requestAnimationFrame(layout);
 
-  function nudgePause(ms) {
-    paused = true;
-    clearTimeout(nudgePause._t);
-    nudgePause._t = setTimeout(() => { paused = false; }, ms);
-  }
-
-  /* ---------------- hover ---------------- */
-  function setHover(id) {
-    if (hoverId === id) return;
-    hoverId = id;
-    nodes.forEach((n) => {
-      const on = n.mod.id === id;
-      n.el.classList.toggle("is-active", on);
-      n.spoke.classList.toggle("is-on", on);
-      n.spoke.classList.toggle("is-dim", Boolean(id) && !on);
-    });
-    const hovered = nodes.find((n) => n.mod.id === id);
-    rings.forEach((c, i) => c.classList.toggle("is-hover", Boolean(hovered) && hovered.ring === i));
-    if (id) { paused = true; info.show(hovered.mod); } else { info.reset(); }
-  }
-
-  /* ---------------- resize ---------------- */
-  let ro = null;
-  if ("ResizeObserver" in window) {
-    ro = new ResizeObserver(() => layout());
-    ro.observe(stage);
-  } else {
-    window.addEventListener("resize", layout);
-  }
-
-  return {
-    build,
-    layout,
-    highlight(id) { setHover(id); },
-    get nodes() { return nodes; },
-  };
-}
-
-/* pannello informativo laterale */
-export function createInfoPanel(box, onOpen) {
-  const hint = $("#oi-hint", box);
-  const body = $("#oi-body", box);
-
-  function reset() {
-    if (hint) hint.hidden = false;
-    if (body) { body.hidden = true; body.innerHTML = ""; }
-    box.classList.remove("is-open");
-  }
-
-  function show(mod) {
-    if (!body) return;
-    const p = pagesOf(mod);
-    const topics = topicsOf(mod);
-    const tags = [];
-    tags.push(p ? `${p} slide` : "nessuna dispense");
-    if (topics.length) tags.push(`${topics.length} argomenti`);
-
-    body.innerHTML = `
-      <p class="oi-eyebrow">Modulo ${String(mod.n).padStart(2, "0")}</p>
-      <h3 class="oi-title">${esc(mod.title)}</h3>
-      ${mod.lecturers?.length ? `<p class="oi-people">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5.4" r="2.7" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.6 13.2c.6-2.5 2.8-3.9 5.4-3.9s4.8 1.4 5.4 3.9" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-        ${esc(mod.lecturers.join(" · "))}</p>` : ""}
-      <div class="oi-tags">${tags.map((t) => `<span class="oi-tag">${esc(t)}</span>`).join("")}</div>
-      ${topics.length ? `<div class="oi-topics" role="list">${topics.slice(0, 6).map((t) => `
-        <button class="oi-topic" type="button" data-topic="${esc(t.id)}" role="listitem">
-          <b>${t.from}</b><span>${esc(t.title)}</span>
-        </button>`).join("")}</div>` : ""}
-      <button class="btn btn-primary oi-cta" type="button" id="oi-open">Apri il modulo</button>`;
-
-    body.querySelector("#oi-open")?.addEventListener("click", () => onOpen(mod));
-    body.querySelectorAll(".oi-topic").forEach((b) => {
-      b.addEventListener("click", () => onOpen(mod, b.dataset.topic));
-    });
-    body.hidden = false;
-    if (hint) hint.hidden = true;
-    box.classList.add("is-open");
-  }
-
-  return { show, reset };
+  return { build, layout, highlight, nodes };
 }

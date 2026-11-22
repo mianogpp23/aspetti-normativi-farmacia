@@ -693,7 +693,7 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     if (e.button !== 0 && e.pointerType === "mouse") return;
     if (e.target.closest(".rm-zoom")) return;
     dragging = true;
-    panning = Boolean(e.shiftKey);
+    panning = !e.shiftKey;
     moved = 0;
     dragPointer = e.pointerId;
     dragStart = { x: e.clientX, y: e.clientY, rotation: targetRotation, cx, cy };

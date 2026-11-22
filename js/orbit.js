@@ -28,8 +28,8 @@ function shortLabel(title, max = 44) {
 }
 
 function nodeRadius(pages, minP, maxP, compact) {
-  const minR = compact ? 28 : 34;
-  const maxR = compact ? 44 : 56;
+  const minR = compact ? 30 : 36;
+  const maxR = compact ? 44 : 54;
   if (maxP <= minP) return (minR + maxR) / 2;
   const t = (pages - minP) / (maxP - minP);
   return minR + t * (maxR - minR);
@@ -65,6 +65,166 @@ function makeSvgIconPeople() {
   p.setAttribute("stroke-linecap", "round");
   svg.append(c, p);
   return svg;
+}
+
+function estimateLabelLines(text, labelW, fontSize) {
+  const avgChar = fontSize * 0.58;
+  const maxChars = Math.max(6, Math.floor((labelW - 20) / avgChar));
+  const words = String(text || "").trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return 1;
+  let lines = 1;
+  let line = "";
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length <= maxChars) {
+      line = next;
+    } else if (line) {
+      lines += 1;
+      line = word;
+    } else {
+      line = word;
+    }
+  }
+  return Math.min(3, Math.max(1, lines));
+}
+
+function footRadiusForNode(nodeR, labelW, labelH, gap) {
+  const halfW = labelW / 2;
+  const down = nodeR + gap + labelH;
+  return Math.sqrt(halfW * halfW + down * down);
+}
+
+function ringCountFor(n) {
+  if (n <= 8) return 1;
+  if (n <= 14) return 2;
+  if (n <= 22) return 3;
+  return 4;
+}
+
+function distributeToRings(items, coreR) {
+  const n = items.length;
+  if (n === 0) return { rings: [], maxFoot: coreR };
+  const maxFoot = Math.max(...items.map((it) => it.footR));
+  const minRingR = coreR + maxFoot + 18;
+  const ringGap = Math.max(86, maxFoot * 1.25);
+  const ringCount = ringCountFor(n);
+  const caps = [];
+  let capSum = 0;
+  for (let i = 0; i < ringCount; i += 1) {
+    const r = minRingR + i * ringGap;
+    const cap = Math.max(4, Math.floor((TAU * r) / (maxFoot * 2 + 14)));
+    caps.push(cap);
+    capSum += cap;
+  }
+  // Scale caps down to n while keeping at least 3 on non-empty rings
+  while (capSum > n && capSum > ringCount * 3) {
+    let maxIdx = 0;
+    for (let i = 1; i < caps.length; i += 1) if (caps[i] > caps[maxIdx]) maxIdx = i;
+    if (caps[maxIdx] <= 3) break;
+    caps[maxIdx] -= 1;
+    capSum -= 1;
+  }
+  // If not enough capacity, extend outer ring
+  while (capSum < n) {
+    caps[caps.length - 1] += 1;
+    capSum += 1;
+  }
+
+  const rings = [];
+  let cursor = 0;
+  for (let i = 0; i < ringCount; i += 1) {
+    const count = Math.min(caps[i], n - cursor);
+    if (count <= 0) continue;
+    rings.push({ radius: minRingR + i * ringGap, count, offset: i * 0.37 });
+    cursor += count;
+  }
+  if (cursor < n && rings.length) rings[rings.length - 1].count += n - cursor;
+  return { rings, maxFoot };
+}
+
+function assignRingPositions(items, rings) {
+  let idx = 0;
+  for (const ring of rings) {
+    const step = TAU / ring.count;
+    for (let j = 0; j < ring.count && idx < items.length; j += 1) {
+      const angle = -Math.PI / 2 + ring.offset + j * step;
+      const it = items[idx];
+      it.ringR = ring.radius;
+      it.homeAngle = angle;
+      it.x = Math.cos(angle) * ring.radius;
+      it.y = Math.sin(angle) * ring.radius;
+      idx += 1;
+    }
+  }
+}
+
+function resolveCollisions(items, coreR, worldHalfW, worldHalfH) {
+  const pad = 10;
+  const corePad = coreR + 26;
+  const iterations = 120;
+  for (let iter = 0; iter < iterations; iter += 1) {
+    let moved = false;
+    for (let i = 0; i < items.length; i += 1) {
+      const a = items[i];
+      // Keep away from core
+      let da = Math.hypot(a.x, a.y) || 0.001;
+      const minA = corePad + a.footR;
+      if (da < minA) {
+        const push = (minA - da) / da;
+        a.x += a.x * push;
+        a.y += a.y * push;
+        da = minA;
+        moved = true;
+      }
+      // Soft pull to ring radius
+      const ringTarget = a.ringR || da;
+      const dr = da - ringTarget;
+      if (Math.abs(dr) > 2) {
+        const pull = dr * 0.018 / da;
+        a.x -= a.x * pull;
+        a.y -= a.y * pull;
+      }
+    }
+    for (let i = 0; i < items.length; i += 1) {
+      for (let j = i + 1; j < items.length; j += 1) {
+        const a = items[i];
+        const b = items[j];
+        let dx = b.x - a.x;
+        let dy = b.y - a.y;
+        let dist = Math.hypot(dx, dy);
+        const minDist = a.footR + b.footR + pad;
+        if (dist < minDist) {
+          if (dist < 0.001) {
+            const ang = (i * 2.399963 + j * 0.7);
+            dx = Math.cos(ang);
+            dy = Math.sin(ang);
+            dist = 1;
+          }
+          const overlap = (minDist - dist) / 2;
+          const ux = dx / dist;
+          const uy = dy / dist;
+          a.x -= ux * overlap;
+          a.y -= uy * overlap;
+          b.x += ux * overlap;
+          b.y += uy * overlap;
+          moved = true;
+        }
+      }
+    }
+    // Bounds: keep label/node within stage at scale 1
+    for (const a of items) {
+      const margin = 10;
+      const minX = -worldHalfW + a.footR + margin;
+      const maxX = worldHalfW - a.footR - margin;
+      const minY = -worldHalfH + a.footR + margin;
+      const maxY = worldHalfH - a.footR - margin;
+      if (a.x < minX) { a.x = minX; moved = true; }
+      if (a.x > maxX) { a.x = maxX; moved = true; }
+      if (a.y < minY) { a.y = minY; moved = true; }
+      if (a.y > maxY) { a.y = maxY; moved = true; }
+    }
+    if (!moved && iter > 20) break;
+  }
 }
 
 export function createInfoPanel(box, onOpen) {
@@ -195,7 +355,6 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
   let H = 0;
   let cx = 0;
   let cy = 0;
-  let baseRadius = 220;
   let rotation = -Math.PI / 2;
   let scale = 1;
   let targetRotation = rotation;
@@ -207,8 +366,8 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
   let moved = 0;
   let pinch = null;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const MIN_SCALE = 0.55;
-  const MAX_SCALE = 2.2;
+  const MIN_SCALE = 0.45;
+  const MAX_SCALE = 2.4;
 
   let panel = null;
   if (infoPanel && typeof infoPanel.show === "function") panel = infoPanel;
@@ -281,7 +440,7 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     stage.classList.toggle("is-compact", W < 720);
   }
 
-  function drawRings(coreR, compact) {
+  function drawRings(coreR, ringRadii) {
     clearEl(svg);
     const defs = svgEl("defs");
     const grad = svgEl("radialGradient", { id: "rm-core-glow", cx: "50%", cy: "50%", r: "50%" });
@@ -291,15 +450,18 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     defs.appendChild(grad);
     svg.appendChild(defs);
 
+    for (let i = ringRadii.length - 1; i >= 0; i -= 1) {
+      const rr = ringRadii[i];
+      svg.appendChild(svgEl("circle", {
+        cx: 0, cy: 0, r: rr,
+        class: i === ringRadii.length - 1 ? "rm-orbit-ring rm-orbit-ring-outer" : "rm-orbit-ring",
+      }));
+    }
     svg.appendChild(svgEl("circle", {
-      cx: 0, cy: 0, r: baseRadius + (compact ? 52 : 72), class: "rm-orbit-ring rm-orbit-ring-outer",
+      cx: 0, cy: 0, r: coreR + 30, class: "rm-orbit-ring rm-orbit-ring-inner",
     }));
-    svg.appendChild(svgEl("circle", { cx: 0, cy: 0, r: baseRadius, class: "rm-orbit-ring" }));
     svg.appendChild(svgEl("circle", {
-      cx: 0, cy: 0, r: coreR + (compact ? 24 : 34), class: "rm-orbit-ring rm-orbit-ring-inner",
-    }));
-    svg.appendChild(svgEl("circle", {
-      cx: 0, cy: 0, r: coreR + (compact ? 46 : 64), fill: "url(#rm-core-glow)", class: "rm-core-glow",
+      cx: 0, cy: 0, r: coreR + 56, fill: "url(#rm-core-glow)", class: "rm-core-glow",
     }));
 
     for (const node of nodes) {
@@ -315,46 +477,104 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
     W = rect.width;
     H = rect.height;
     if (W === 0 || H === 0) return;
+    const compact = W < 720;
+    const narrow = W < 520;
+    updateHud();
+
+    // Generous world so multi-ring layout has room; viewport crops/zooms.
+    const worldW = Math.max(W, compact ? 980 : 1280);
+    const worldH = Math.max(H, compact ? 980 : 1180);
     cx = W / 2;
     cy = H / 2;
-    updateHud();
-    const compact = W < 720;
-    const minDim = Math.min(W, H);
-    const coreR = compact ? 68 : 92;
-    baseRadius = clamp(minDim * (compact ? 0.34 : 0.36), compact ? 135 : 190, compact ? 210 : 320);
-    world.style.width = `${W}px`;
-    world.style.height = `${H}px`;
-    svg.setAttribute("viewBox", `${-W / 2} ${-H / 2} ${W} ${H}`);
-    svg.setAttribute("width", String(W));
-    svg.setAttribute("height", String(H));
+    world.style.width = `${worldW}px`;
+    world.style.height = `${worldH}px`;
+    svg.setAttribute("viewBox", `${-worldW / 2} ${-worldH / 2} ${worldW} ${worldH}`);
+    svg.setAttribute("width", String(worldW));
+    svg.setAttribute("height", String(worldH));
+
+    let coreR = 92;
+    if (compact) coreR = 72;
+    if (narrow) coreR = 60;
     core.style.setProperty("--core-size", `${coreR * 2}px`);
 
     const pages = modules.map((m) => pagesOf(m) || 0);
     const minP = Math.min(...pages, 0);
     const maxP = Math.max(...pages, 1);
-    const count = modules.length || 1;
-    const step = TAU / count;
 
-    drawRings(coreR, compact);
+    let labelW = 140;
+    if (compact) labelW = 122;
+    if (narrow) labelW = 110;
+    const fontSize = narrow ? 10 : 11;
+    const lineH = fontSize * 1.25 + 2;
+    const labelGap = 10;
+    const nodePad = 8;
 
-    for (let i = 0; i < nodes.length; i += 1) {
-      const node = nodes[i];
-      const m = node.mod;
-      const r = nodeRadius(pagesOf(m) || 0, minP, maxP, compact);
-      const angle = -Math.PI / 2 + i * step;
-      const jitter = (i % 2 === 0 ? 1 : -1) * (compact ? 8 : 14) * (i % 3 === 0 ? 1 : 0.45);
-      const dist = baseRadius + jitter;
-      const x = Math.cos(angle) * dist;
-      const y = Math.sin(angle) * dist;
-      node.x = x;
-      node.y = y;
-      node.r = r;
-      node.angle = angle;
-      node.el.style.setProperty("--x", `${x}px`);
-      node.el.style.setProperty("--y", `${y}px`);
-      node.el.style.setProperty("--nr", `${r * 2}px`);
-      node.el.style.setProperty("--label-w", `${compact ? 108 : 136}px`);
-      node.path.setAttribute("d", `M 0 0 Q ${x * 0.45} ${y * 0.45} ${x} ${y}`);
+    const items = nodes.map((node) => {
+      const p = pagesOf(node.mod) || 0;
+      const r = nodeRadius(p, minP, maxP, compact);
+      const label = shortLabel(node.mod.title, 52);
+      const lines = estimateLabelLines(label, labelW, fontSize, lineH);
+      const labelH = Math.max(30, lines * lineH + 12);
+      const footR = footRadiusForNode(r, labelW, labelH, labelGap) + nodePad;
+      return { node, r, labelW, labelH, footR, p };
+    });
+
+    const { rings } = distributeToRings(items, coreR);
+    assignRingPositions(items, rings);
+
+    // Expand rings if needed to fit inside world bounds
+    const worldHalfW = worldW / 2;
+    const worldHalfH = worldH / 2;
+    const maxFoot = Math.max(...items.map((it) => it.footR), 60);
+    const boundR = Math.min(worldHalfW, worldHalfH) - maxFoot - 16;
+    const outerNeeded = rings.length ? rings[rings.length - 1].radius : coreR + maxFoot + 40;
+    if (outerNeeded > boundR && rings.length) {
+      const inner = coreR + maxFoot + 24;
+      const span = Math.max(1, rings.length - 1);
+      for (let i = 0; i < rings.length; i += 1) {
+        rings[i].radius = inner + (i / span) * Math.max(0, boundR - inner);
+      }
+      assignRingPositions(items, rings);
+    }
+
+    resolveCollisions(items, coreR, worldHalfW, worldHalfH);
+
+    const ringRadii = rings.map((r) => r.radius);
+    drawRings(coreR, ringRadii);
+
+    for (const it of items) {
+      const node = it.node;
+      const c = colorFor((node.mod.n || 1) - 1);
+      node.x = it.x;
+      node.y = it.y;
+      node.r = it.r;
+      node.footR = it.footR;
+      node.angle = Math.atan2(it.y, it.x);
+      node.el.style.setProperty("--x", `${it.x}px`);
+      node.el.style.setProperty("--y", `${it.y}px`);
+      node.el.style.setProperty("--nr", `${it.r * 2}px`);
+      node.el.style.setProperty("--label-w", `${labelW}px`);
+      node.el.style.setProperty("--c-a", c.a);
+      node.el.style.setProperty("--c-b", c.b);
+      node.el.style.setProperty("--c-glow", c.glow);
+      node.path.setAttribute("d", `M 0 0 Q ${it.x * 0.45} ${it.y * 0.45} ${it.x} ${it.y}`);
+    }
+
+    // Fit initial view so the whole layout is visible
+    const extent = Math.max(
+      coreR + 30,
+      ...items.map((it) => Math.max(Math.abs(it.x) + it.footR, Math.abs(it.y) + it.footR)),
+    );
+    const fitPad = compact ? 24 : 36;
+    const rawFit = Math.min((W - fitPad * 2) / (extent * 2), (H - fitPad * 2) / (extent * 2));
+    const fitScale = clamp(rawFit, 0.2, 1);
+    if (!dragging && !pinch) {
+      targetScale = fitScale;
+      scale = fitScale;
+      targetRotation = -Math.PI / 2;
+      rotation = -Math.PI / 2;
+      cx = W / 2;
+      cy = H / 2;
     }
     requestRender(true);
   }

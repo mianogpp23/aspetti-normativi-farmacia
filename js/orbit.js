@@ -723,10 +723,13 @@ export function createOrbit({ stage, info, onOpen, infoPanel }) {
   }
 
   function onPointerMove(e) {
-    if (pinch && pinch.ids.has(e.pointerId)) {
+    if (pinch && pinch.ids.size >= 2 && pinch.ids.has(e.pointerId)) {
       pinch.positions.set(e.pointerId, { x: e.clientX, y: e.clientY });
       applyPinch();
       return;
+    }
+    if (pinch && pinch.ids.has(e.pointerId)) {
+      pinch.positions.set(e.pointerId, { x: e.clientX, y: e.clientY });
     }
     if (!dragging || e.pointerId !== dragPointer) return;
     const dx = e.clientX - dragStart.x;

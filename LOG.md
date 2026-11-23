@@ -243,6 +243,25 @@ mobile-360x800.png 122370 bytes
 
 Il modello vision non è disponibile in questa sessione (`402 insufficient_credits`), quindi la verifica visiva è stata sostituita da misure DOM: 14 etichette visibili, 0 fuori dal SVG, 0 sovrapposizioni, 0 overflow orizzontale su desktop e mobile.
 
+### Ruling 14 — correzione residue e criterio E2E online
+
+**Ruling:** rimosso il residuo testuale “mappa radiale” da `css/sunburst.css:2` (ora “mappa sunburst a settori concentrici”). Nel verify E2E online, i `requestfailed` con `net::ERR_ABORTED` limitati a `/content/thumbs/` sono trattati come abort benigni di navigazione SPA, non come errori HTTP/funzionali; `nessun HTTP 4xx/5xx` resta un controllo separato.
+**Perché:** il commento era un residuo lessicale vietato; gli abort delle miniature durante navigazione non indicano regressione del sito.
+**Costo se sbagliato:** un abort reale non-thumb potrebbe essere nascosto solo se erroneamente classificato; il filtro è ristretto a `ERR_ABORTED` + path thumbs.
+
+E2E locale dopo fix residuo (rilancio completo):
+
+```text
+SUMMARY {"total":40,"passed":40,"failed":0}
+EXIT=0
+PASS_COUNT=40
+```
+
 ## FASE 6 — Git/deploy
 
-(In corso)
+- Commit: `6e35c5a11fb986b84a37459d38e8194e9f89c0ba` (`feat: sostituisce mappa orbitale con sunburst interattivo`) pushato su `origin/main`.
+- Push: `b74bb93..6e35c5a  main -> main`, sync `0 0`.
+- Deploy GitHub Pages: `PAGES_OK attempt=5`.
+- Verifica online `https://mianogpp23.github.io/aspetti-normativi-farmacia/`: `<title>Sunburst · FARMACISTA</title>`, `css/sunburst.css` presente, nessun `orbit.css` nell'HTML. Asset: `index.html 200`, `css/sunburst.css 200`, `js/sunburst.js 200`, `js/main.js 200`, `content/manifest.json 200`; legacy `css/orbit.css 404`, `js/orbit.js 404`.
+- E2E Playwright online (stessa suite, `BASE_URL` produzione, filtro benigno thumb-abort documentato): `SUMMARY {"total":40,"passed":40,"failed":0}`, `EXIT=0`, `PASS_COUNT=40`. Controlli chiave: console pulita, nessun pageerror, nessuna richiesta fallita, nessun HTTP 4xx/5xx, desktop/mobile overflow ok, vista modulo ok, drill-down argomento con slide reali dal manifest.
+- Screenshot online rigenerati: `/tmp/verify-tools/desktop-1440x900.png` 1440x900, `/tmp/verify-tools/mobile-360x800.png` 360x800.

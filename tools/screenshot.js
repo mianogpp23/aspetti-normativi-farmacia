@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* screenshot.js — catture viewport 1440x900, 768x1024 e 360x800 della libreria. */
+/* screenshot.js — catture viewport della board vista elenco: desktop, tablet e mobile. */
 
 import { mkdir } from "node:fs/promises";
 import { BASE_URL, OUT_DIR, CHROMIUM, results } from "./verify-env.js";
@@ -29,14 +29,13 @@ try {
     });
     page.on("pageerror", (err) => results.pageErrors.push(`${shot.name}: ${String(err)}`));
     await page.goto(`${BASE_URL}#/`, { waitUntil: "networkidle", timeout: 60000 });
-    await page.waitForSelector("#lib-shelves .lib-book", { state: "attached", timeout: 20000 });
-    if (shot.mobile) {
+    await page.waitForSelector("#module-list", { state: "attached", timeout: 20000 });
+    if (!shot.mobile || await page.locator("#module-list").isHidden()) {
       await page.click("#btn-list");
-      await page.waitForSelector("#lib-layout:not([hidden])", { state: "attached", timeout: 20000 });
     }
-    await page.waitForSelector("#lib-shelves .lib-book", { state: "visible", timeout: 20000 });
+    await page.waitForSelector("#kb-board .kb-card", { state: "visible", timeout: 20000 });
     if (shot.name.startsWith("desktop")) {
-      await page.locator("#lib-shelves .lib-book").first().click();
+      await page.locator(".kb-card-main").first().click();
     }
     await page.waitForTimeout(250);
     await page.screenshot({ path: `${OUT_DIR}/${shot.name}`, fullPage: false });

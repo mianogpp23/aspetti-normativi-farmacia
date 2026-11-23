@@ -1,8 +1,9 @@
 /* main.js — bootstrap, router hash, viste */
 
 import { $, toast } from "./utils.js";
-import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicAt } from "./data.js";
+import { loadManifest, loadSearch, modules, getModule, pagesOf, topicAt } from "./data.js";
 import { createLibrary } from "./library.js";
+import { createKanban } from "./kanban.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -11,9 +12,12 @@ const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
 
 let library = null;
-/** slide da aprire nel visore appena il modulo è montato (ricerca → slide) */
+let kanban = null;
+/** slide da aprire nel visore appena il modulo è montato (ricerca/board → slide) */
 let pendingSlide = null;
-let listInitialized = false;
+let viewMode = "map";
+let trackedModuleId = null;
+let lastTrackedSlide = null;
 
 function h(tag, attrs = {}, text) {
   const n = document.createElement(tag);
@@ -34,15 +38,85 @@ function courseTitle() {
 }
 
 function homeTitle() {
-  return `Libreria · ${courseTitle()}`;
+  return `${viewMode === "list" ? "Board" : "Libreria"} · ${courseTitle()}`;
 }
 
 /* ---------------- viste ---------------- */
-function setListView(showList) {
-  $("#module-list").hidden = !showList;
-  $("#lib-layout").hidden = showList;
-  $("#btn-list").textContent = showList ? "Vista libreria" : "Vista elenco";
-  if (!showList) requestAnimationFrame(() => library?.layout());
+const VIEW_KEY = "farmacista:v1:view";
+
+function loadViewMode() {
+  try {
+    const saved = localStorage.getItem(VIEW_KEY);
+    if (saved === "map" || saved === "list") return saved;
+  } catch { /* localStorage non disponibile: usa il predefinito. */ }
+  return window.matchMedia("(max-width: 640px)").matches ? "list" : "map";
+}
+
+function saveViewMode(mode) {
+  try { localStorage.setItem(VIEW_KEY, mode); } catch { /* stato solo in sessione. */ }
+}
+
+function setViewMode(mode) {
+  viewMode = mode === "list" ? "list" : "map";
+  saveViewMode(viewMode);
+  const list = viewMode === "list";
+  $("#module-list").hidden = !list;
+  $("#lib-layout").hidden = list;
+  $("#btn-map").setAttribute("aria-pressed", String(!list));
+  $("#btn-list").setAttribute("aria-pressed", String(list));
+  $("#home-title").textContent = list ? `Board · ${courseTitle()}` : `Libreria · ${courseTitle()}`;
+  $("#home-sub").textContent = list
+    ? "Tre colonne per seguire i moduli: apri le slide, continua da dove eri e segna i completamenti."
+    : "Ogni modulo è un volume: scegli un libro dallo scaffale, consulta la scheda e apri il percorso di argomenti e slide.";
+  if (list) kanban?.render();
+  else requestAnimationFrame(() => library?.layout());
+  if (!$(VIEW_HOME).hidden) document.title = homeTitle();
+}
+
+function initKanban() {
+  if (kanban) return;
+  kanban = createKanban({
+    board: $("#kb-board"),
+    filter: $("#kb-filter"),
+    sort: $("#kb-sort-select"),
+    count: $("#kb-count"),
+    summary: $("#kb-summary"),
+    live: $("#kb-live"),
+    reset: $("#kb-reset"),
+    confirm: $("#kb-confirm"),
+    confirmYes: $("#kb-confirm-yes"),
+    confirmNo: $("#kb-confirm-no"),
+    onSlide: (mod, n) => {
+      const topic = topicAt(mod, n);
+      pendingSlide = { id: mod.id, n, source: "kanban" };
+      openModule(mod, topic ? topic.id : null);
+    },
+    onOpenModule: (mod, topicId) => openModule(mod, topicId),
+  });
+}
+
+function syncProgressFromViewer() {
+  if (!kanban || !trackedModuleId || !viewer.isOpen()) return;
+  const mod = getModule(trackedModuleId);
+  if (!mod) return;
+  const current = Number(viewer.current()?.n);
+  if (!Number.isInteger(current) || current < 1 || current === lastTrackedSlide) return;
+  lastTrackedSlide = current;
+  kanban.recordSlide(mod, current);
+}
+
+function initViewerTracking() {
+  $("#vw-stage")?.addEventListener("click", syncProgressFromViewer);
+  // Il visore registra il proprio pointerup al primo open(): differire al frame successivo
+  // evita di leggere la pagina vecchia prima dello swipe di viewer.js.
+  $("#vw-stage")?.addEventListener("pointerup", () => requestAnimationFrame(syncProgressFromViewer));
+  $("#vw-range")?.addEventListener("input", syncProgressFromViewer);
+  $("#vw-range")?.addEventListener("change", syncProgressFromViewer);
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "ArrowLeft", "PageDown", "PageUp", "Home", "End", " "].includes(e.key)) {
+      requestAnimationFrame(syncProgressFromViewer);
+    }
+  });
 }
 
 function totalsOf() {
@@ -55,20 +129,6 @@ function totalsOf() {
   };
 }
 
-function buildModuleList() {
-  const box = $("#module-list");
-  const cards = modules().map((mod) => {
-    const st = moduleStats(mod);
-    const card = h("a", { class: "ml-card", href: `#/m/${mod.id}` });
-    card.appendChild(h("span", { class: "ml-n" }, `M${String(mod.n).padStart(2, "0")}`));
-    card.appendChild(h("span", { class: "ml-t" }, mod.title));
-    const meta = st.pages ? `${st.pages} slide` : "nessuna dispensa";
-    card.appendChild(h("span", { class: "ml-m" }, st.topics ? `${meta} · ${st.topics} argomenti` : meta));
-    return card;
-  });
-  box.replaceChildren(...cards);
-}
-
 function renderHome() {
   const totals = totalsOf();
   const stats = [["Moduli", totals.modules], ["Slide", totals.pages], ["Argomenti", totals.topics]];
@@ -78,8 +138,8 @@ function renderHome() {
     li.appendChild(h("span", {}, label));
     return li;
   }));
-  buildModuleList();
 
+  initKanban();
   if (!library) {
     library = createLibrary({
       stage: $("#lib-stage"),
@@ -89,18 +149,19 @@ function renderHome() {
       controls: $("#lib-controls"),
       legend: $("#lib-legend"),
       live: $("#lib-live"),
-      onSlide: (mod, n) => viewer.open(mod, n),
+      onSlide: (mod, n) => {
+        trackedModuleId = mod.id;
+        lastTrackedSlide = n;
+        viewer.open(mod, n);
+        kanban?.recordSlide(mod, n);
+      },
       onOpenModule: (mod, topicId) => openModule(mod, topicId),
     });
   }
   library.render(window.__manifest);
   const state = library.state();
   $("#lib-count").textContent = `${state.modules} volumi · ${state.shelves} scaffali`;
-
-  if (!listInitialized) {
-    listInitialized = true;
-    setListView(window.matchMedia("(max-width: 640px)").matches);
-  }
+  setViewMode(viewMode);
 }
 
 /* ---------------- modulo ---------------- */
@@ -116,10 +177,18 @@ function renderModuleView(mod, topicId) {
   renderModule(mod, topicId);
   document.title = `${mod.title} · ${courseTitle()}`;
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  trackedModuleId = mod.id;
+  lastTrackedSlide = null;
   if (pendingSlide) {
     const p = pendingSlide;
     pendingSlide = null;
-    if (p.id === mod.id) requestAnimationFrame(() => viewer.open(mod, p.n));
+    if (p.id === mod.id) {
+      requestAnimationFrame(() => {
+        viewer.open(mod, p.n);
+        lastTrackedSlide = p.n;
+        if (p.source !== "kanban") kanban?.recordSlide(mod, p.n);
+      });
+    }
   }
 }
 
@@ -174,11 +243,10 @@ async function boot() {
     await loadSearch();
 
     const course = manifest.course || {};
+    viewMode = loadViewMode();
     if (course.title) $("#brand-title").textContent = course.title;
     document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
-    $("#home-title").textContent = course.title ? `Libreria · ${course.title}` : "La libreria del corso";
-    if (course.subtitle) $("#home-sub").textContent = `Una libreria di volumi: ${course.subtitle}`;
 
     const input = $("#search-input");
     input.placeholder = `Cerca in ${manifest.totals?.pages ?? 0} slide, argomenti, moduli…`;
@@ -193,7 +261,7 @@ async function boot() {
         if (!mod || !sel) return;
         if (sel.kind === "slide") {
           const topic = mod.topics?.length ? topicAt(mod, sel.n) : null;
-          pendingSlide = { id: mod.id, n: sel.n };
+          pendingSlide = { id: mod.id, n: sel.n, source: "search" };
           openModule(mod, topic ? topic.id : null);
         } else if (sel.kind === "topic") {
           pendingSlide = null;
@@ -203,19 +271,27 @@ async function boot() {
           openModule(mod, null);
         }
       },
-      onQuery: (value) => library?.setQuery(value || ""),
+      onQuery: (value) => {
+        library?.setQuery(value || "");
+        kanban?.setQuery(value || "");
+      },
     });
     mountFlow({
-      onSlide: (mod, n) => viewer.open(mod, n),
+      onSlide: (mod, n) => {
+        trackedModuleId = mod.id;
+        lastTrackedSlide = n;
+        viewer.open(mod, n);
+        kanban?.recordSlide(mod, n);
+      },
       onTopic: (mod, topicId) => {
         history.replaceState(null, "", `#/m/${mod.id}/${topicId}`);
       },
     });
     initHelp();
+    initViewerTracking();
 
-    $("#btn-list").addEventListener("click", () => {
-      setListView($("#module-list").hidden);
-    });
+    $("#btn-map").addEventListener("click", () => setViewMode("map"));
+    $("#btn-list").addEventListener("click", () => setViewMode("list"));
 
     window.addEventListener("hashchange", route);
     renderHome();

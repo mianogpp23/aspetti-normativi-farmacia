@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Libreria · FARMACISTA</title>
-<meta name="description" content="Piattaforma didattica interattiva: una libreria di volumi, uno per modulo, su scaffali dinamici, con percorsi per argomenti e lettura full-screen delle dispense in PDF.">
+<title>Board · FARMACISTA</title>
+<meta name="description" content="Piattaforma didattica interattiva: board Kanban dei moduli con avanzamento, ricerca e aperture delle slide, più la libreria visiva del corso.">
 <meta name="color-scheme" content="light">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/library.css">
+<link rel="stylesheet" href="css/kanban.css">
 <link rel="stylesheet" href="css/flow.css">
 <link rel="stylesheet" href="css/viewer.css">
 </head>
@@ -56,9 +57,13 @@
   <section class="view" id="view-home" aria-labelledby="home-title">
     <div class="home-head">
       <p class="eyebrow" id="home-eyebrow">Archivio didattico</p>
-      <h1 id="home-title">La libreria del corso</h1>
-      <p class="home-sub" id="home-sub">Ogni modulo è un volume: scegli un libro dallo scaffale, consulta la scheda e apri il percorso di argomenti e slide.</p>
+      <h1 id="home-title">Il corso, a colpo d’occhio</h1>
+      <p class="home-sub" id="home-sub">Scegli la libreria visiva oppure la board: moduli, avanzamento e prossime slide in un unico posto.</p>
       <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
+      <div class="view-switch" id="view-switch" role="group" aria-label="Seleziona la vista">
+        <button id="btn-map" type="button" aria-pressed="false">Mappa</button>
+        <button id="btn-list" type="button" aria-pressed="false">Elenco</button>
+      </div>
     </div>
 
     <div class="lib-layout" id="lib-layout">
@@ -94,11 +99,39 @@
 
     <p class="sr-only" id="lib-live" aria-live="polite"></p>
 
-    <div class="lib-footbar">
-      <button class="linkish" id="btn-list" type="button">Vista elenco</button>
-    </div>
+    <section class="kanban-shell" id="module-list" aria-labelledby="kb-heading" hidden>
+      <h2 class="sr-only" id="kb-heading">Board di avanzamento dei moduli</h2>
 
-    <div class="module-list" id="module-list" hidden></div>
+      <div class="kb-toolbar">
+        <div class="kb-filter-wrap">
+          <label for="kb-filter">Filtra moduli e argomenti</label>
+          <input id="kb-filter" type="search" placeholder="Filtra per modulo o argomento…" autocomplete="off">
+        </div>
+        <div class="kb-sort">
+          <label for="kb-sort-select">Ordina per</label>
+          <select id="kb-sort-select">
+            <option value="course">Ordine del corso</option>
+            <option value="progress">Avanzamento</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="kb-progress-summary" id="kb-summary">— moduli in board</p>
+      <div class="kb-board" id="kb-board" data-testid="kanban-board"></div>
+
+      <div class="kb-foot">
+        <p id="kb-count">— moduli</p>
+        <button class="kb-reset" id="kb-reset" type="button">Azzera progressi</button>
+      </div>
+
+      <div class="kb-confirm" id="kb-confirm" role="group" aria-label="Conferma azzeramento progressi" hidden>
+        <p>Azzerrare tutti i progressi registrati? L’operazione non può essere annullata.</p>
+        <button id="kb-confirm-yes" type="button">Conferma</button>
+        <button id="kb-confirm-no" type="button">Annulla</button>
+      </div>
+
+      <p class="sr-only" id="kb-live" aria-live="polite"></p>
+    </section>
   </section>
 
   <!-- ===================== MODULE · FLUSSO GERARCHICO ===================== -->

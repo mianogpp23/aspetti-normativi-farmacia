@@ -1,11 +1,15 @@
-# Piattaforma didattica libreria — FARMACISTA
+# Piattaforma didattica — FARMACISTA
 
 Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'archivio delle
 dispense PDF in un ambiente didattico navigabile:
 
-- **Libreria interattiva** (`#/`): un volume per modulo su scaffali calcolati dalla
+- **Board Kanban** (`#/`, vista *Elenco*): una card per modulo in tre colonne di stato,
+  con avanzamento calcolato dalle slide aperte, filtri, ordinamento, override completato,
+  continuazione dall'ultima slide e navigazione da tastiera.
+- **Libreria interattiva** (`#/`, vista *Mappa*): un volume per modulo su scaffali calcolati dalla
   larghezza disponibile; scheda di dettaglio, legenda, navigazione con frecce, ricerca
-  con evidenziazione, doppio clic per aprire il modulo e vista elenco.
+  con evidenziazione e doppio clic per aprire il modulo. Il selettore *Mappa | Elenco*
+  ricorda la scelta; sotto `640px` la board è la vista predefinita.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,
@@ -19,13 +23,15 @@ piattaforma-didattica/
 ├── favicon.svg
 ├── config.json          # sorgente + titolo del corso (usato da scripts/scan.py)
 ├── css/
-│   ├── app.css          # design system (token, topbar, ricerca, modali, elenco)
+│   ├── app.css          # design system (token, topbar, ricerca, modali)
+│   ├── kanban.css       # board della vista elenco (colonne, card, filtri)
 │   ├── library.css      # libreria interattiva (volumi, scaffali, responsive)
 │   ├── flow.css         # percorso gerarchico del modulo
 │   └── viewer.css       # visore a schermo intero
 ├── js/
 │   ├── utils.js         # helper DOM/format
 │   ├── data.js          # unico livello di accesso ai dati (manifest)
+│   ├── kanban.js        # board, progressi e interazioni della vista elenco
 │   ├── library.js       # libreria interattiva + interazioni
 │   ├── flow.js          # argomenti → sotto-argomenti → slide
 │   ├── viewer.js        # visore full-screen
@@ -77,7 +83,7 @@ Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi onlin
 ```bash
 git init -b main          # già presente in questa cartella
 git add .
-git commit -m "feat: piattaforma didattica libreria interattiva"
+git commit -m "feat: sostituisci vista elenco con board Kanban"
 git remote add origin git@github.com:utente/nome-repo.git
 git push -u origin main
 ```
@@ -96,7 +102,7 @@ relativi, quindi funziona anche se ospitato in una sottocartella).
 ## Verifica
 
 ```bash
-node --check js/library.js && node --check js/main.js
+node --check js/kanban.js && node --check js/main.js && node --check tools/e2e.js
 node tools/check-links.js
 node tools/e2e.js
 node tools/screenshot.js
@@ -104,7 +110,8 @@ node tools/screenshot.js
 
 Gli screenshot vengono scritti in `/tmp/verify-tools` (desktop 1440×900,
 tablet 768×1024, mobile 360×800). `BASE_URL` può puntare al sito pubblicato
-per ripetere le stesse verifiche online.
+per ripetere le stesse verifiche online. La suite E2E copre colonne, colori,
+progressi, override, ricerca, ordinamento, tastiera, persistenza e mobile.
 
 ## Note operative
 

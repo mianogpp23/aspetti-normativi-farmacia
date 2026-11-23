@@ -1,11 +1,12 @@
-# Piattaforma didattica sunburst — FARMACISTA
+# Piattaforma didattica universo — FARMACISTA
 
 Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'archivio delle
 dispense PDF in un ambiente didattico navigabile:
 
-- **Sunburst interattivo** (`#/`): corso al centro, moduli nell'anello interno e argomenti
-  in quello esterno; clic per ingrandire fino alle slide, legenda numerata, rotazione con
-  pulsanti o `Shift` + trascinamento, vista elenco.
+- **Universo interattivo** (`#/`): il corso è il nucleo, i moduli sono pianeti su tre orbite,
+  gli argomenti sono lune e le slide satelliti; clic per avvicinarti fino alle slide,
+  legenda numerata, rotazione con pulsanti o `Shift` + trascinamento, pausa del moto,
+  vista elenco.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,
@@ -20,13 +21,13 @@ piattaforma-didattica/
 ├── config.json          # sorgente + titolo del corso (usato da scripts/scan.py)
 ├── css/
 │   ├── app.css          # design system (token, topbar, ricerca, modali, elenco)
-│   ├── sunburst.css     # mappa sunburst
+│   ├── universe.css     # mappa dell'universo (pianeti, lune, satelliti)
 │   ├── flow.css         # percorso gerarchico del modulo
 │   └── viewer.css       # visore a schermo intero
 ├── js/
 │   ├── utils.js         # helper DOM/format
 │   ├── data.js          # unico livello di accesso ai dati (manifest)
-│   ├── sunburst.js      # sunburst SVG + interazioni
+│   ├── universe.js      # universo SVG + interazioni
 │   ├── flow.js          # argomenti → sotto-argomenti → slide
 │   ├── viewer.js        # visore full-screen
 │   ├── search.js        # ricerca globale (moduli, argomenti, slide)
@@ -76,7 +77,7 @@ Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi onlin
 ```bash
 git init -b main          # già presente in questa cartella
 git add .
-git commit -m "feat: piattaforma didattica sunburst"
+git commit -m "feat: piattaforma didattica universo"
 git remote add origin git@github.com:utente/nome-repo.git
 git push -u origin main
 ```

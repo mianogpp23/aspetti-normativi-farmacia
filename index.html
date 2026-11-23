@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sunburst · FARMACISTA</title>
-<meta name="description" content="Piattaforma didattica interattiva: mappa sunburst dei moduli, percorsi gerarchici e lettura full-screen delle dispense in PDF.">
+<title>Universo · FARMACISTA</title>
+<meta name="description" content="Piattaforma didattica interattiva: i moduli come pianeti, gli argomenti come lune, percorsi gerarchici e lettura full-screen delle dispense in PDF.">
 <meta name="color-scheme" content="light">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/sunburst.css">
+<link rel="stylesheet" href="css/universe.css">
 <link rel="stylesheet" href="css/flow.css">
 <link rel="stylesheet" href="css/viewer.css">
 </head>
@@ -19,7 +19,7 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#/" aria-label="Torna alla mappa sunburst">
+    <a class="brand" href="#/" aria-label="Torna alla mappa dell'universo">
       <span class="brand-glyph" aria-hidden="true">
         <svg viewBox="0 0 40 40" fill="none">
           <circle cx="20" cy="20" r="5" fill="var(--brand)"/>
@@ -31,7 +31,7 @@
       </span>
       <span class="brand-text">
         <strong id="brand-title">Dispense del corso</strong>
-        <small id="brand-sub">Mappa sunburst interattiva</small>
+        <small id="brand-sub">Universo interattivo dei moduli</small>
       </span>
     </a>
 
@@ -51,12 +51,12 @@
 
 <main id="main">
 
-  <!-- ===================== HOME · SUNBURST ===================== -->
+  <!-- ===================== HOME · UNIVERSO ===================== -->
   <section class="view" id="view-home" aria-labelledby="home-title">
     <div class="home-head">
       <p class="eyebrow" id="home-eyebrow">Archivio didattico</p>
-      <h1 id="home-title">Sunburst dei moduli</h1>
-      <p class="home-sub" id="home-sub">Il corso al centro, i moduli nel primo anello, gli argomenti in quello esterno. Clicca un settore per ingrandire fino alle singole slide.</p>
+      <h1 id="home-title">L'universo dei moduli</h1>
+      <p class="home-sub" id="home-sub">Il corso al centro, i moduli come pianeti e gli argomenti come lune. Clicca un pianeta per avvicinarti fino alle singole slide.</p>
       <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
     </div>
 
@@ -69,25 +69,26 @@
 
       <div class="sun-card">
         <div class="sun-viewbar">
-          <nav class="sun-crumbs" id="sun-crumbs" data-testid="sun-crumbs" aria-label="Percorso sunburst"></nav>
-          <div class="sun-controls" id="sun-controls" aria-label="Controlli mappa">
+          <nav class="sun-crumbs" id="sun-crumbs" data-testid="sun-crumbs" aria-label="Percorso universo"></nav>
+          <div class="sun-controls" id="sun-controls" aria-label="Controlli universo">
             <button class="sun-ctrl" type="button" data-action="rotate-left" aria-label="Ruota a sinistra di 30 gradi" title="Ruota a sinistra (30°)">↺</button>
             <button class="sun-ctrl" type="button" data-action="rotate-right" aria-label="Ruota a destra di 30 gradi" title="Ruota a destra (30°)">↻</button>
+            <button class="sun-ctrl" type="button" data-action="toggle-motion" aria-label="Metti in pausa il movimento dei pianeti" aria-pressed="false" title="Pausa / riprendi il movimento">⏸</button>
             <button class="sun-ctrl" type="button" data-action="out" aria-label="Riduci">−</button>
             <button class="sun-ctrl" type="button" data-action="in" aria-label="Ingrandisci">+</button>
             <button class="sun-ctrl" type="button" data-action="reset" aria-label="Ricentra">Ricentra</button>
           </div>
         </div>
 
-        <div class="sun-stage" id="sun-stage" data-testid="sun-stage" role="group" aria-label="Sunburst del corso" aria-live="polite">
-          <p class="sr-only" role="img" aria-label="Mappa sunburst interattiva: moduli e argomenti del corso"></p>
+        <div class="sun-stage" id="sun-stage" data-testid="sun-stage" role="group" aria-label="Universo del corso" aria-live="polite">
+          <p class="sr-only" role="img" aria-label="Mappa dell'universo: moduli come pianeti e argomenti come lune"></p>
           <noscript><p class="notice">Serve JavaScript per visualizzare la mappa interattiva.</p></noscript>
-          <svg class="sun-svg" id="sun-svg" data-testid="sun-svg" viewBox="0 0 730 730" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mappa sunburst: moduli e argomenti"></svg>
+          <svg class="sun-svg" id="sun-svg" data-testid="sun-svg" viewBox="0 0 730 730" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Universo: pianeti e lune del corso"></svg>
           <div class="sun-tooltip" data-testid="sun-tooltip" role="status" hidden></div>
           <p class="sr-only" id="sun-rotation-status" data-testid="sun-rotation-status" aria-live="polite"></p>
         </div>
 
-        <p class="sun-help"><strong>Come si usa:</strong> clicca un modulo per ingrandire, poi un argomento fino alle slide. Passa il mouse per il nome completo. Ruota con <kbd>↺</kbd>/<kbd>↻</kbd> oppure trascina con <kbd>Shift</kbd> + mouse. Con la tastiera usa <kbd>Tab</kbd>, <kbd>Invio</kbd> per aprire, <kbd>Esc</kbd> per tornare indietro.</p>
+        <p class="sun-help"><strong>Come si usa:</strong> clicca un pianeta per avvicinarti, poi una luna fino alle slide. Passa il mouse per il nome completo. Ruota con <kbd>↺</kbd>/<kbd>↻</kbd>, trascina con <kbd>Shift</kbd> + mouse o metti in pausa il moto con <kbd>⏸</kbd>. Con la tastiera usa <kbd>Tab</kbd>, <kbd>Invio</kbd> per aprire, <kbd>Esc</kbd> per tornare indietro.</p>
       </div>
     </div>
 
@@ -103,7 +104,7 @@
     <nav class="crumbs" aria-label="Percorso">
         <a href="#/" class="crumb-link">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.8 3.4 5.2 8l4.6 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Sunburst
+        Universo
       </a>
       <span class="crumb-sep">/</span>
       <span class="crumb-cur" id="crumb-cur">Modulo</span>
@@ -141,9 +142,9 @@
 
 <footer class="site-foot">
   <div class="foot-inner">
-    <span id="foot-meta">Archivio didattico · sunburst</span>
+    <span id="foot-meta">Archivio didattico · universo</span>
     <span class="foot-sep">·</span>
-    <a href="#/" class="foot-link">Torna al sunburst</a>
+    <a href="#/" class="foot-link">Torna all'universo</a>
     <span class="foot-sep">·</span>
     <span class="foot-note">Contenuti originali non modificati</span>
   </div>
@@ -202,7 +203,7 @@
     </button>
     <h2 id="help-title">Come si usa</h2>
     <ol class="help-list">
-      <li><b>Sunburst</b> — il corso è al centro, i moduli formano l'anello interno e gli argomenti quello esterno. Clicca per ingrandire; usa ↺/↻ o trascina con Shift per ruotare.</li>
+      <li><b>Universo</b> — il corso è il nucleo, i moduli sono pianeti su tre orbite e gli argomenti sono lune. Clicca per avvicinarti; usa ↺/↻ o trascina con Shift per ruotare.</li>
       <li><b>Percorso gerarchico</b> — dal modulo puoi scendere agli argomenti e alle slide; <kbd>Esc</kbd> torna al livello superiore.</li>
       <li><b>Slide full-screen</b> — clicca una slide per aprirla; naviga con le frecce, chiudi con Esc.</li>
       <li><b>Ricerca globale</b> — premi <kbd>/</kbd> e scrivi: cerca in titoli, argomenti e testo delle slide.</li>

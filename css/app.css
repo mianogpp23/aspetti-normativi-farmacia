@@ -5,7 +5,7 @@
 
 :root{
   /* I nomi blu-* restano per compatibilità con flow.css e viewer.css;
-     i valori seguono la nuova palette Sunburst. */
+     i valori seguono la palette del prodotto. */
   --blue-900:#1F2933;
   --blue-800:#2B3742;
   --blue-700:#3D4A55;
@@ -117,7 +117,7 @@ ul,ol{padding:0;list-style:none}
   font-size:14px;box-shadow:var(--shadow-xs);
   transition:border-color .2s var(--ease),background .2s;
 }
-#search-input::placeholder{color:var(--ink-4)}
+#search-input::placeholder{color:var(--ink-3)}
 #search-input:focus{outline:none;border-color:var(--brand);background:#fff}
 #search-input:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
 .search-kbd{
@@ -220,7 +220,7 @@ ul,ol{padding:0;list-style:none}
 .foot-link{color:var(--brand-strong);font-weight:600}
 .foot-link:hover{color:var(--brand)}
 .foot-sep{opacity:.45}
-.foot-note{color:var(--ink-4)}
+.foot-note{color:var(--ink-3)}
 
 /* ---------------- modal ---------------- */
 .modal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:20px;background:rgba(31,41,51,.36);animation:fade-in .2s var(--ease-out)}

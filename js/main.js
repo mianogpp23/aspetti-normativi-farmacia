@@ -2,7 +2,7 @@
 
 import { $, toast } from "./utils.js";
 import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicAt } from "./data.js";
-import { createSunburst } from "./sunburst.js";
+import { createUniverse } from "./universe.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -34,7 +34,7 @@ function courseTitle() {
 }
 
 function homeTitle() {
-  return `Sunburst · ${courseTitle()}`;
+  return `Universo · ${courseTitle()}`;
 }
 
 /* ---------------- viste ---------------- */
@@ -83,7 +83,7 @@ function renderHome() {
   buildModuleList();
 
   if (!sun) {
-    sun = createSunburst({
+    sun = createUniverse({
       stage: $("#sun-stage"),
       info: $("#sun-detail"),
       crumbs: $("#sun-crumbs"),
@@ -174,7 +174,7 @@ async function boot() {
     if (course.title) $("#brand-title").textContent = course.title;
     document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
-    $("#home-title").textContent = course.title ? `Sunburst · ${course.title}` : "Sunburst dei moduli";
+    $("#home-title").textContent = course.title ? `Universo · ${course.title}` : "L'universo dei moduli";
     if (course.subtitle) $("#home-sub").textContent = course.subtitle;
 
     const input = $("#search-input");

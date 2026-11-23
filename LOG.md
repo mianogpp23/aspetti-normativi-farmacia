@@ -297,3 +297,21 @@ Screenshot rigenerati dalla corsa locale: `desktop-1440x900.png` 275535 byte, `m
 - GitHub Pages: `PAGES_OK attempt=6`; HTML pubblicato contiene `data-action="rotate-left"` e `data-action="rotate-right"`.
 - E2E online completo: `SUMMARY {"total":45,"passed":45,"failed":0}`, `EXIT=0`, `PASS_COUNT=45`; console pulita (0 errori/warning), 0 pageerror, 0 richieste fallite, 0 HTTP 4xx/5xx; tutte le 5 assertion sulla rotazione passate anche online.
 - Screenshot online rigenerati: `desktop-1440x900.png` 276821 byte, `mobile-360x800.png` 120406 byte, entrambi `PNG image data` 1440x900 e 360x800.
+
+### Ruling — restyling dell'universo (nuova richiesta Telegram)
+
+**Decisione:** il sunburst è stato sostituito da un sistema solare navigabile: il corso resta al centro come nucleo, i 19 moduli diventano pianeti su tre orbite, gli argomenti diventano lune e le slide satelliti. La shell prodotto (topbar, ricerca, vista elenco, lettore PDF, router `#/`) resta invariata; cambia solo il palcoscenico della mappa. Modalità Operate: il mondo presta palette, densità e la signature move del moto orbitale, non la struttura di navigazione.
+
+**Motivazione della deroga:** `impeccable context` ha segnalato `NO_PRODUCT_MD`, `BUILD_INIT_REQUIRED` e `MANUAL_DETECTOR_REQUIRED`. La missione vieta domande, quindi ho usato come product truth il repo stesso (README, manifest, titoli e contenuti esistenti) e ho eseguito il detector manuale a UI finita. Nessun dato o PDF è stato modificato.
+
+**Costo se sbagliato:** l'utente potrebbe aver voluto solo una rotazione delle vecchie fette; in quel caso il ripristino è disponibile dalla storia git senza force push.
+
+**Rename e rimozione:** `css/sunburst.css` → `css/universe.css` con `git mv`, poi riscritto; `js/universe.js` è un nuovo modulo SVG + JavaScript vanilla; `js/sunburst.js` è stato rimosso con `git rm` perché la destinazione del `git mv` esisteva già e non volevo sovrascrivere la nuova implementazione. Vecchio codice recuperabile dalla storia git.
+
+**Correzioni emerse dalle verifiche:** la fase iniziale dei pianeti includeva un jitter `idx * 7` che faceva sovrapporsi due etichette (`Dispositivi me…` e `Prodotti cosme…`); rimossa, ora la fase è uniforme per anello. Le etichette dei pianeti usano testo chiaro su sfondo spaziale, non il colore calcolato sul pianeta, perché quest'ultimo produceva testo scuro su sfondo scuro. La regola `.sr-only` è stata ripristinata in `css/universe.css` per il live region della rotazione.
+
+**Fresh-context review:** due finding P2 reali corretti: (1) il centro diceva sempre “19 mondi” anche se il manifest cambia, ora usa `model.length`; (2) con `prefers-reduced-motion` il pulsante pausa partiva dallo stato sbagliato e poteva essere commutato senza effetto, ora si sincronizza, si disabilita e annuncia “Movimento disattivato dalle preferenze di sistema”.
+
+**Tooling e verifica locale:** `node --check` su tutti i file `js/*.js` → `SYNTAX_OK`; E2E Playwright completo aggiornato per il nuovo DOM (`universe-body`, `universe-center`, `orbit-track`, `data-rotation`, `toggle-motion`) → `SUMMARY {"total":55,"passed":55,"failed":0}`, `EXIT=0`, `PASS_COUNT=55`; console 0 errori/warning, 0 pageerror, 0 richieste fallite, 0 HTTP 4xx/5xx. Nuove assertion verdi: `nucleo: conteggio mondi dal manifest — 19 mondi da esplorare` e `prefers-reduced-motion: controllo coerente — {"disabled":true,"pressed":"true","label":"Movimento disattivato dalle preferenze di sistema"}`. Screenshot locali `desktop-1440x900.png` e `mobile-360x800.png`, entrambi `PNG image data` alle dimensioni richieste.
+
+**Detector manuale:** primo `impeccable detect --json index.html css/universe.css js/universe.js js/main.js` → 6 warning; due contrasti bassi (`--ink-4` su placeholder di ricerca e footer) corretti portando quei testi a `--ink-3` (4,77:1 su bianco). Rilanci finali su `index.html css/app.css css/universe.css js/universe.js js/main.js` → 4 warning residui, tutti pre-esistenti e fuori dal surface universo: `<img id="vw-img">` senza `src` nel visore, padding di `flow`/`vw-bar`, glow del visore. Nessun finding introdotto dal nuovo universo; dopo ogni modifica CSS l'E2E completa è stata rilanciata.

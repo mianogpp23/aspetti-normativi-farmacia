@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* serve.js — server statico minimale per la verifica locale della mappa mentale. */
+/* serve.js — server statico minimale per la verifica locale della libreria interattiva. */
 
 import http from "node:http";
 import { createReadStream } from "node:fs";
@@ -64,5 +64,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`mappa mentale: http://${HOST}:${PORT}/ (root: ${ROOT})`);
+  console.log(`libreria: http://${HOST}:${PORT}/ (root: ${ROOT})`);
 });

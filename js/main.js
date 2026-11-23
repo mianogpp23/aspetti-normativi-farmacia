@@ -2,7 +2,7 @@
 
 import { $, toast } from "./utils.js";
 import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicAt } from "./data.js";
-import { createMindMap } from "./mindmap.js";
+import { createLibrary } from "./library.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -10,7 +10,7 @@ import { buildIndex, initSearch } from "./search.js";
 const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
 
-let mind = null;
+let library = null;
 /** slide da aprire nel visore appena il modulo è montato (ricerca → slide) */
 let pendingSlide = null;
 let listInitialized = false;
@@ -34,15 +34,15 @@ function courseTitle() {
 }
 
 function homeTitle() {
-  return `Mappa mentale · ${courseTitle()}`;
+  return `Libreria · ${courseTitle()}`;
 }
 
 /* ---------------- viste ---------------- */
 function setListView(showList) {
   $("#module-list").hidden = !showList;
-  $("#mind-layout").hidden = showList;
-  $("#btn-list").textContent = showList ? "Vista mappa" : "Vista elenco";
-  if (!showList) requestAnimationFrame(() => mind?.layout());
+  $("#lib-layout").hidden = showList;
+  $("#btn-list").textContent = showList ? "Vista libreria" : "Vista elenco";
+  if (!showList) requestAnimationFrame(() => library?.layout());
 }
 
 function totalsOf() {
@@ -70,7 +70,6 @@ function buildModuleList() {
 }
 
 function renderHome() {
-  const m = modules();
   const totals = totalsOf();
   const stats = [["Moduli", totals.modules], ["Slide", totals.pages], ["Argomenti", totals.topics]];
   $("#stat-row").replaceChildren(...stats.map(([label, value]) => {
@@ -79,21 +78,24 @@ function renderHome() {
     li.appendChild(h("span", {}, label));
     return li;
   }));
-  $("#mind-legend-count").textContent = String(m.length);
   buildModuleList();
 
-  if (!mind) {
-    mind = createMindMap({
-      stage: $("#mind-stage"),
-      info: $("#mind-detail"),
-      crumbs: $("#mind-crumbs"),
-      controls: $("#mind-controls"),
-      legend: $("#mind-legend"),
+  if (!library) {
+    library = createLibrary({
+      stage: $("#lib-stage"),
+      shelves: $("#lib-shelves"),
+      info: $("#lib-info"),
+      crumbs: $("#lib-crumbs"),
+      controls: $("#lib-controls"),
+      legend: $("#lib-legend"),
+      live: $("#lib-live"),
       onSlide: (mod, n) => viewer.open(mod, n),
       onOpenModule: (mod, topicId) => openModule(mod, topicId),
     });
   }
-  mind.build(m, window.__manifest);
+  library.render(window.__manifest);
+  const state = library.state();
+  $("#lib-count").textContent = `${state.modules} volumi · ${state.shelves} scaffali`;
 
   if (!listInitialized) {
     listInitialized = true;
@@ -145,7 +147,7 @@ function route() {
   pendingSlide = null;
   showView(VIEW_HOME);
   document.title = homeTitle();
-  if (mind) setTimeout(() => mind.layout(), 30);
+  if (library) setTimeout(() => library.layout(), 30);
   else renderHome();
 }
 
@@ -175,8 +177,8 @@ async function boot() {
     if (course.title) $("#brand-title").textContent = course.title;
     document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
-    $("#home-title").textContent = course.title ? `Mappa mentale · ${course.title}` : "Mappa mentale del corso";
-    if (course.subtitle) $("#home-sub").textContent = course.subtitle;
+    $("#home-title").textContent = course.title ? `Libreria · ${course.title}` : "La libreria del corso";
+    if (course.subtitle) $("#home-sub").textContent = `Una libreria di volumi: ${course.subtitle}`;
 
     const input = $("#search-input");
     input.placeholder = `Cerca in ${manifest.totals?.pages ?? 0} slide, argomenti, moduli…`;
@@ -201,7 +203,7 @@ async function boot() {
           openModule(mod, null);
         }
       },
-      onQuery: (value) => mind?.setQuery(value || ""),
+      onQuery: (value) => library?.setQuery(value || ""),
     });
     mountFlow({
       onSlide: (mod, n) => viewer.open(mod, n),

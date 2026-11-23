@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* screenshot.js — catture viewport 1440x900 e 360x800 della mappa mentale. */
+/* screenshot.js — catture viewport 1440x900, 768x1024 e 360x800 della libreria. */
 
 import { mkdir } from "node:fs/promises";
 import { BASE_URL, OUT_DIR, CHROMIUM, results } from "./verify-env.js";
@@ -13,23 +13,36 @@ const browser = await chromium.launch({
   args: ["--no-sandbox", "--disable-dev-shm-usage"],
 });
 
-try {
-  const desktop = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
-  desktop.on("pageerror", (err) => results.pageErrors.push(`desktop: ${String(err)}`));
-  await desktop.goto(BASE_URL, { waitUntil: "networkidle", timeout: 60000 });
-  await desktop.waitForSelector('#mind-nodes .mind-node[data-kind="module"]', { timeout: 20000 });
-  await desktop.screenshot({ path: `${OUT_DIR}/desktop-1440x900.png`, fullPage: false });
-  console.log(`SCREENSHOT ${OUT_DIR}/desktop-1440x900.png`);
+const shots = [
+  { name: "desktop-1440x900.png", width: 1440, height: 900, mobile: false },
+  { name: "tablet-768x1024.png", width: 768, height: 1024, mobile: false },
+  { name: "mobile-360x800.png", width: 360, height: 800, mobile: true },
+];
 
-  const mobile = await browser.newPage({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
-  mobile.on("pageerror", (err) => results.pageErrors.push(`mobile: ${String(err)}`));
-  await mobile.goto(BASE_URL, { waitUntil: "networkidle", timeout: 60000 });
-  await mobile.waitForSelector("#module-list", { state: "attached", timeout: 20000 });
-  await mobile.click("#btn-list");
-  await mobile.waitForSelector('#mind-nodes .mind-node[data-kind="module"]', { state: "attached", timeout: 20000 });
-  await mobile.waitForTimeout(300);
-  await mobile.screenshot({ path: `${OUT_DIR}/mobile-360x800.png`, fullPage: false });
-  console.log(`SCREENSHOT ${OUT_DIR}/mobile-360x800.png`);
+try {
+  for (const shot of shots) {
+    const page = await browser.newPage({
+      viewport: { width: shot.width, height: shot.height },
+      deviceScaleFactor: 1,
+      isMobile: shot.mobile,
+      hasTouch: shot.mobile,
+    });
+    page.on("pageerror", (err) => results.pageErrors.push(`${shot.name}: ${String(err)}`));
+    await page.goto(`${BASE_URL}#/`, { waitUntil: "networkidle", timeout: 60000 });
+    await page.waitForSelector("#lib-shelves .lib-book", { state: "attached", timeout: 20000 });
+    if (shot.mobile) {
+      await page.click("#btn-list");
+      await page.waitForSelector("#lib-layout:not([hidden])", { state: "attached", timeout: 20000 });
+    }
+    await page.waitForSelector("#lib-shelves .lib-book", { state: "visible", timeout: 20000 });
+    if (shot.name.startsWith("desktop")) {
+      await page.locator("#lib-shelves .lib-book").first().click();
+    }
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: `${OUT_DIR}/${shot.name}`, fullPage: false });
+    console.log(`SCREENSHOT ${OUT_DIR}/${shot.name}`);
+    await page.close();
+  }
 } finally {
   await browser.close();
 }

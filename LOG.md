@@ -359,3 +359,45 @@ Reviewer read-only, un solo agente, `output=false`, missione vincolante senza do
 Commit `3273690023cf8cc4ccac81056182507bcb795f12` pushato su `origin/main` senza force push. Primo workflow `Deploy GitHub Pages` (`45223621562`) fallito per un errore transiente dell'API GitHub: l'artifact `github-pages` era stato caricato correttamente, ma `actions/deploy-pages@v5` non lo trovava al momento del lookup. Rerun dello stesso workflow completato con successo, senza nuovi commit o riscrittura della storia.
 
 Pages verificato: titolo `<title>Mappa mentale · FARMACISTA</title>`, `css/mindmap.css` e `js/mindmap.js` HTTP 200, `js/universe.js` e `css/universe.css` HTTP 404. check-links online: `CHECKED 80 risorse · 0 errori`, `EXIT=0`. E2E online: `SUMMARY {"total":42,"passed":42,"failed":0}`, `EXIT=0`, console/pageerror/richieste fallite/HTTP 4xx-5xx tutti a zero. Screenshot online in `/tmp/verify-tools-online/`: `desktop-1440x900.png` e `mobile-360x800.png`, entrambi `PNG image data` alle dimensioni richieste. `git rev-list --left-right --count origin/main...HEAD` → `0 0`, working tree pulito prima di questa registrazione.
+
+---
+
+## Libreria interattiva — FASE 0/1
+
+Missione: sostituire il modulo visuale della home con una libreria in cui ogni modulo del corso è un volume su uno scaffale. Nessuna domanda all'utente: le ambiguità sono state risolte con ruling espliciti e registrate qui.
+
+- **Ruling L1** — la richiesta si interrompe dopo «I volumi poggiano»: si assume che i volumi poggino sull'asse superiore dello scaffale, allineati alla base. Ogni scaffale ha una barra `#B9B2A3` alta `16px` e un filo `#9C9484` alto `5px` subito sotto.
+- **Ruling L2** — `layout12_libreria.png` non è presente in `/home/k10`: si usano le specifiche testuali e il design system live (`--bg:#F7F6F2`, `--ink:#1F2933`, font di sistema).
+- **Ruling L3** — `wiki_recall` ha restituito solo contesto storico (globo, deploy della mappa mentale, destinazione del repo): usato per i vincoli di deploy, non come evidenza live del codice.
+- **Ruling L4** — MWG `css-layout,accessibility,motion,form-factor-adaptation,card,single-line-overflow` recuperato in `/tmp/mwg-library-guide.md`; `impeccable context` → `EXISTING_VISUAL_SYSTEM`, `SCOPED_EXISTING_ALLOWED`. Non creare `PRODUCT.md`/`DESIGN.md`: questa è un'iterazione dell'implementazione esistente.
+- **Ruling L5** — sostituire solo `js/mindmap.js` e `css/mindmap.css` con `js/library.js` e `css/library.css`; restano invariati dati, router hash, vista elenco, lettore PDF, vista modulo e asset PDF.
+- **Ruling L6** — un volume per modulo da `manifest.modules`; larghezza da lunghezza del titolo (`108px`–`168px`), altezza dalla paginazione (`184px`–`238px`), palette a otto colori.
+- **Ruling L7** — scaffalatura dinamica: misurare `clientWidth`, sommare larghezze più gap `14px`, andare a capo quando non entra più un volume; ricalcolo via `ResizeObserver` e comando esplicito.
+- **Ruling L8** — click = selezione e scheda; doppio click/pulsante = apertura modulo; frecce = navigazione roving; `Esc` = deselezione; ricerca globale = evidenziazione e messaggio nella live region; nessuna animazione automatica.
+- **Ruling L9** — tool già presenti: adattare E2E ai selettori della libreria e screenshot ai tre viewport `1440×900`, `768×1024`, `360×800`; `check-links` resta tarato sui PDF dichiarati nel manifest.
+- **Ruling L10** — implementazione iniziale di `js/library.js` con API `render/layout/select/clear/focus/setQuery/state/destroy`, volumi generati dai dati e scaffali dinamici.
+- **Ruling L11** — root cause del STOP automatico su `js/library.js`: import più ampi del necessario; correzione minimale a `el, clamp, norm` e `modules, pagesOf, topicsOf`.
+- **Ruling L12** — scrittura e fix degli import non equivalgono a completamento: serve `node --check` verde, integrazione, tool verdi, browser reale e review finale prima di qualunque claim di successo.
+
+## Libreria interattiva — FASE 3/5
+
+- **Ruling L13** — `css/library.css` usa pannello `#EFEDE6`, bordo `18px`, volumi a larghezza variabile, asse `16px` `#B9B2A3` e filo `5px` `#9C9484`; transition limitate a `transform`/`box-shadow`/`filter` con `prefers-reduced-motion`.
+- **Ruling L14** — `index.html` convertito ai selettori `#lib-*`; titolo `Libreria · FARMACISTA`; rimossi i vecchi testi sulla mappa mentale. Successivamente corretti `aria-label` del brand e `.mind-footbar` → `.lib-footbar`.
+- **Ruling L15** — `js/main.js` integra `createLibrary` mantenendo router hash, vista elenco, visore e dati invariati; rimosso l'unused `const m = modules()`.
+- **Ruling L16** — `tools/e2e.js` riscritto per la libreria con 38 assert, inclusi stili richiesti, riempimento dinamico degli scaffali, tastiera, ricerca, visore e mobile.
+- **Ruling L17** — `tools/screenshot.js` riscritto per i tre viewport richiesti `1440×900`, `768×1024`, `360×800`.
+- **Ruling L18** — root cause del timeout E2E su mobile: la vista elenco è predefinita sotto i 640px, quindi i volumi esistevano ma non erano visibili. Fix minimo: cliccare `#btn-list` prima dell'attesa. Tutta la suite E2E è stata rilanciata: `SUMMARY {"total":38,"passed":38,"failed":0}`, `EXIT=0`.
+- **Ruling L19** — root cause del timeout screenshot: il primo `waitForSelector` chiedeva visibilità prima del toggle mobile. Fix: attesa `attached` iniziale, toggle, poi attesa `visible`. Screenshot rigenerati con `EXIT=0` e dimensioni verificate via `file`.
+- **Ruling L20** — vecchi file visuali `js/mindmap.js` e `css/mindmap.css` rimossi con `git rm`: sono tracciati, quindi la rimozione è reversibile dalla storia Git. Nessun PDF o file dati toccato.
+- **Ruling L21** — verifica visiva automatizzata con modello vision non disponibile (`402 insufficient_credits`): la conformità è stata verificata via DOM, stili calcolati, E2E reale e metadati PNG, senza inventare una valutazione visiva.
+- **Ruling L22** — `impeccable detect --json` riletto con parser Node: 6 finding, tutti `warning` pre-esistenti fuori dalla surface libreria (`img` del visore senza src, testo 11px, padding in `flow`/`vw-bar`, glow storico). Nessun finding attribuibile a `.lib-*`.
+- **Ruling L23** — `README.md` aggiornato con libreria, nuovi file e comandi di verifica; `LOG.md` usato come evidenza delle decisioni.
+- **Ruling L24** — verifica locale verde: `node --check` sui quattro file JS, check-links `CHECKED 80 risorse · 0 errori`, E2E `38/38`, screenshot tre viewport, detect senza finding sulla surface.
+
+## Libreria interattiva — review e verifica finale
+
+- **Fresh-context review** (read-only, `output=false`, una sola missione): nessun P0/P1; tre P2 concreti, tutti corretti.
+- **P2 — testo storico in `tools/serve.js`:** commento e messaggio di avvio dicevano “mappa mentale”. Sostituiti con “libreria interattiva” / “libreria”.
+- **P2 — race E2E mobile:** il click su `#btn-list` poteva arrivare prima del completamento di `boot()`. Aggiunta attesa `#lib-shelves .lib-book` in stato `attached` prima del click e attesa `visible` dopo; suite rilanciata due volte con esito identico.
+- **P2 — focus perso nel re-layout:** `renderShelves()` sostituiva i nodi e faceva cadere il focus su `<body>`, bloccando le frecce. Ora cattura `dataset.moduleId` dell'elemento attivo dentro lo scaffale e lo ripristina dopo `applyState()`. Nuovo assert E2E con ridimensionamento `1440→1100→1440`.
+- **Verifica locale finale:** `node --check` verde su `js/library.js`, `js/main.js`, `tools/e2e.js`, `tools/screenshot.js`, `tools/serve.js`; check-links `CHECKED 80 risorse · 0 errori`; E2E `SUMMARY {"total":39,"passed":39,"failed":0}` per due esecuzioni consecutive; screenshot `1440x900`, `768x1024`, `360x800` con `EXIT=0`; detector invariato a 6 warning pre-esistenti fuori surface; `git diff --check` pulito.

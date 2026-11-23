@@ -1,11 +1,11 @@
-# Piattaforma didattica mappa mentale — FARMACISTA
+# Piattaforma didattica libreria — FARMACISTA
 
 Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'archivio delle
 dispense PDF in un ambiente didattico navigabile:
 
-- **Mappa mentale orizzontale** (`#/`): il corso si dirama in moduli, argomenti e slide;
-  connettori SVG cubici, espansione/comprimi, ricerca con auto-espansione, zoom con
-  `Ctrl`/`⌘` + rotella, pan trascinando lo sfondo, legenda numerata e vista elenco.
+- **Libreria interattiva** (`#/`): un volume per modulo su scaffali calcolati dalla
+  larghezza disponibile; scheda di dettaglio, legenda, navigazione con frecce, ricerca
+  con evidenziazione, doppio clic per aprire il modulo e vista elenco.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,
@@ -20,13 +20,13 @@ piattaforma-didattica/
 ├── config.json          # sorgente + titolo del corso (usato da scripts/scan.py)
 ├── css/
 │   ├── app.css          # design system (token, topbar, ricerca, modali, elenco)
-│   ├── mindmap.css      # mappa mentale orizzontale (nodi, connettori, responsive)
+│   ├── library.css      # libreria interattiva (volumi, scaffali, responsive)
 │   ├── flow.css         # percorso gerarchico del modulo
 │   └── viewer.css       # visore a schermo intero
 ├── js/
 │   ├── utils.js         # helper DOM/format
 │   ├── data.js          # unico livello di accesso ai dati (manifest)
-│   ├── mindmap.js       # mappa mentale SVG + interazioni
+│   ├── library.js       # libreria interattiva + interazioni
 │   ├── flow.js          # argomenti → sotto-argomenti → slide
 │   ├── viewer.js        # visore full-screen
 │   ├── search.js        # ricerca globale (moduli, argomenti, slide)
@@ -77,7 +77,7 @@ Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi onlin
 ```bash
 git init -b main          # già presente in questa cartella
 git add .
-git commit -m "feat: piattaforma didattica mappa mentale"
+git commit -m "feat: piattaforma didattica libreria interattiva"
 git remote add origin git@github.com:utente/nome-repo.git
 git push -u origin main
 ```
@@ -92,6 +92,19 @@ relativi, quindi funziona anche se ospitato in una sottocartella).
 ## Contenuto attuale
 
 19 moduli · 18 PDF · 725 slide · 120 argomenti (i video non fanno parte del sito).
+
+## Verifica
+
+```bash
+node --check js/library.js && node --check js/main.js
+node tools/check-links.js
+node tools/e2e.js
+node tools/screenshot.js
+```
+
+Gli screenshot vengono scritti in `/tmp/verify-tools` (desktop 1440×900,
+tablet 768×1024, mobile 360×800). `BASE_URL` può puntare al sito pubblicato
+per ripetere le stesse verifiche online.
 
 ## Note operative
 

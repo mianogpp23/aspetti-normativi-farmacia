@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mappa mentale · FARMACISTA</title>
-<meta name="description" content="Piattaforma didattica interattiva: mappa mentale orizzontale dal corso ai moduli, agli argomenti e alle slide, con lettura full-screen delle dispense in PDF.">
+<title>Libreria · FARMACISTA</title>
+<meta name="description" content="Piattaforma didattica interattiva: una libreria di volumi, uno per modulo, su scaffali dinamici, con percorsi per argomenti e lettura full-screen delle dispense in PDF.">
 <meta name="color-scheme" content="light">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
-<link rel="stylesheet" href="css/mindmap.css">
+<link rel="stylesheet" href="css/library.css">
 <link rel="stylesheet" href="css/flow.css">
 <link rel="stylesheet" href="css/viewer.css">
 </head>
@@ -19,7 +19,7 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#/" aria-label="Torna alla mappa mentale">
+    <a class="brand" href="#/" aria-label="Torna alla libreria">
       <span class="brand-glyph" aria-hidden="true">
         <svg viewBox="0 0 40 40" fill="none">
           <rect x="3" y="14" width="10" height="12" rx="4" fill="var(--ink)"/>
@@ -32,7 +32,7 @@
       </span>
       <span class="brand-text">
         <strong id="brand-title">Dispense del corso</strong>
-        <small id="brand-sub">Mappa mentale del corso</small>
+        <small id="brand-sub">Libreria del corso</small>
       </span>
     </a>
 
@@ -52,51 +52,49 @@
 
 <main id="main">
 
-  <!-- ===================== HOME · MAPPA MENTALE ===================== -->
+  <!-- ===================== HOME · LIBRERIA INTERATTIVA ===================== -->
   <section class="view" id="view-home" aria-labelledby="home-title">
     <div class="home-head">
       <p class="eyebrow" id="home-eyebrow">Archivio didattico</p>
-      <h1 id="home-title">Mappa mentale del corso</h1>
-      <p class="home-sub" id="home-sub">Dal corso ai moduli, dagli argomenti alle singole slide: un percorso orizzontale da esplorare, espandere e cercare.</p>
+      <h1 id="home-title">La libreria del corso</h1>
+      <p class="home-sub" id="home-sub">Ogni modulo è un volume: scegli un libro dallo scaffale, consulta la scheda e apri il percorso di argomenti e slide.</p>
       <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
     </div>
 
-    <div class="mind-layout" id="mind-layout">
-      <aside class="mind-side" aria-label="Legenda e dettagli">
-        <div class="mind-side-head"><span>Moduli</span><b id="mind-legend-count">—</b></div>
-        <ol class="mind-legend" id="mind-legend" data-testid="mind-legend"></ol>
-        <div class="mind-detail" id="mind-detail" data-testid="mind-detail" aria-live="polite"></div>
+    <div class="lib-layout" id="lib-layout">
+      <aside class="lib-side" aria-label="Scheda volume e indice">
+        <div class="lib-card lib-info-card" id="lib-info" data-testid="lib-detail"></div>
+        <div class="lib-card lib-legend-card" id="lib-legend" data-testid="lib-legend"></div>
       </aside>
 
-      <div class="mind-card">
-        <div class="mind-viewbar">
-          <nav class="mind-crumbs" id="mind-crumbs" data-testid="mind-crumbs" aria-label="Percorso nella mappa"></nav>
-          <div class="mind-controls" id="mind-controls" aria-label="Controlli della mappa">
-            <button class="mind-ctrl" type="button" data-action="expand-all" aria-label="Espandi tutti i nodi" title="Espandi tutto">Espandi tutto</button>
-            <button class="mind-ctrl" type="button" data-action="collapse-all" aria-label="Comprimi tutti i nodi" title="Comprimi tutto">Comprimi tutto</button>
-            <button class="mind-ctrl" type="button" data-action="out" aria-label="Riduci la mappa">−</button>
-            <button class="mind-ctrl" type="button" data-action="in" aria-label="Ingrandisci la mappa">+</button>
-            <button class="mind-ctrl" type="button" data-action="reset" aria-label="Ripristina la vista">Ricentra</button>
+      <div class="lib-main">
+        <div class="lib-card">
+          <div class="lib-topline">
+            <nav class="lib-crumbs" id="lib-crumbs" data-testid="lib-crumbs" aria-label="Percorso nella libreria"></nav>
+            <div class="lib-controls" id="lib-controls" aria-label="Controlli della libreria">
+              <button class="lib-action" type="button" data-action="relayout">Ricomponi scaffali</button>
+              <button class="lib-action" type="button" data-action="clear">Deseleziona</button>
+              <button class="lib-action lib-action-primary" type="button" data-action="open-selected">Apri il volume</button>
+            </div>
+          </div>
+
+          <div class="lib-stage" id="lib-stage" data-testid="lib-stage" role="group" aria-label="Scaffali della libreria" tabindex="0">
+            <p class="sr-only">Libreria del corso: un volume per modulo, distribuito sugli scaffali in base alla larghezza disponibile.</p>
+            <noscript><p class="notice">Serve JavaScript per visualizzare la libreria interattiva.</p></noscript>
+            <div class="lib-shelves" id="lib-shelves" data-testid="lib-shelves"></div>
+          </div>
+
+          <div class="lib-bottom">
+            <p id="lib-count">— volumi · — scaffali</p>
+            <p><strong>Come si usa:</strong> clicca un volume per la scheda, doppio clic per aprirlo; frecce per navigare, Esc per deselezionare.</p>
           </div>
         </div>
-
-        <div class="mind-stage" id="mind-stage" data-testid="mind-stage" role="group" aria-label="Mappa mentale del corso" tabindex="0">
-          <p class="sr-only">Mappa mentale orizzontale: il corso, i moduli, gli argomenti e le slide come nodi collegati.</p>
-          <noscript><p class="notice">Serve JavaScript per visualizzare la mappa interattiva.</p></noscript>
-          <div class="mind-sizer" id="mind-sizer" aria-hidden="true"></div>
-          <div class="mind-world" id="mind-world">
-            <svg class="mind-links" id="mind-links" aria-hidden="true"></svg>
-            <div class="mind-tree" id="mind-nodes" role="tree" aria-label="Albero della mappa mentale"></div>
-          </div>
-          <div class="mind-tooltip" id="mind-tooltip" data-testid="mind-tooltip" role="status" hidden></div>
-          <p class="sr-only" id="mind-live" aria-live="polite"></p>
-        </div>
-
-        <p class="mind-help"><strong>Come si usa:</strong> clicca una pillola per aprire o chiudere il ramo; le slide si aprono nel visore. Usa <kbd>Espandi tutto</kbd> o <kbd>Comprimi tutto</kbd>. Con la tastiera: <kbd>Tab</kbd> per entrare, <kbd>Invio</kbd> per aprire, <kbd>frecce</kbd> per spostarti, <kbd>Esc</kbd> per chiudere. Per lo zoom usa <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + rotella; la rotella normale scorre la mappa.</p>
       </div>
     </div>
 
-    <div class="mind-footbar">
+    <p class="sr-only" id="lib-live" aria-live="polite"></p>
+
+    <div class="lib-footbar">
       <button class="linkish" id="btn-list" type="button">Vista elenco</button>
     </div>
 
@@ -108,7 +106,7 @@
     <nav class="crumbs" aria-label="Percorso">
       <a href="#/" class="crumb-link">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.8 3.4 5.2 8l4.6 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Mappa
+        Libreria
       </a>
       <span class="crumb-sep">/</span>
       <span class="crumb-cur" id="crumb-cur">Modulo</span>
@@ -146,9 +144,9 @@
 
 <footer class="site-foot">
   <div class="foot-inner">
-    <span id="foot-meta">Archivio didattico · mappa mentale</span>
+    <span id="foot-meta">Archivio didattico · libreria interattiva</span>
     <span class="foot-sep">·</span>
-    <a href="#/" class="foot-link">Torna alla mappa</a>
+    <a href="#/" class="foot-link">Torna alla libreria</a>
     <span class="foot-sep">·</span>
     <span class="foot-note">Contenuti originali non modificati</span>
   </div>
@@ -207,10 +205,10 @@
     </button>
     <h2 id="help-title">Come si usa</h2>
     <ol class="help-list">
-      <li><b>Mappa mentale</b> — il corso si dirama nei moduli, negli argomenti e nelle slide. Clicca una pillola per aprire o chiudere un ramo.</li>
+      <li><b>Libreria</b> — ogni modulo è un volume su uno scaffale. Clicca il libro per leggere la scheda; doppio clic per aprire il modulo.</li>
       <li><b>Percorso gerarchico</b> — dal modulo puoi scendere agli argomenti e alle slide; <kbd>Esc</kbd> torna al livello superiore.</li>
       <li><b>Slide full-screen</b> — clicca una slide per aprirla; naviga con le frecce, chiudi con Esc.</li>
-      <li><b>Ricerca globale</b> — premi <kbd>/</kbd> e scrivi: cerca in titoli, argomenti e testo delle slide; la mappa si espande sui risultati.</li>
+      <li><b>Ricerca globale</b> — premi <kbd>/</kbd> e scrivi: cerca in titoli, argomenti e testo delle slide; i volumi corrispondenti si evidenziano.</li>
     </ol>
     <p class="help-foot" id="help-foot"></p>
   </div>

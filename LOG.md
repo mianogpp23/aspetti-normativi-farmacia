@@ -401,3 +401,13 @@ Missione: sostituire il modulo visuale della home con una libreria in cui ogni m
 - **P2 — race E2E mobile:** il click su `#btn-list` poteva arrivare prima del completamento di `boot()`. Aggiunta attesa `#lib-shelves .lib-book` in stato `attached` prima del click e attesa `visible` dopo; suite rilanciata due volte con esito identico.
 - **P2 — focus perso nel re-layout:** `renderShelves()` sostituiva i nodi e faceva cadere il focus su `<body>`, bloccando le frecce. Ora cattura `dataset.moduleId` dell'elemento attivo dentro lo scaffale e lo ripristina dopo `applyState()`. Nuovo assert E2E con ridimensionamento `1440→1100→1440`.
 - **Verifica locale finale:** `node --check` verde su `js/library.js`, `js/main.js`, `tools/e2e.js`, `tools/screenshot.js`, `tools/serve.js`; check-links `CHECKED 80 risorse · 0 errori`; E2E `SUMMARY {"total":39,"passed":39,"failed":0}` per due esecuzioni consecutive; screenshot `1440x900`, `768x1024`, `360x800` con `EXIT=0`; detector invariato a 6 warning pre-esistenti fuori surface; `git diff --check` pulito.
+
+## Libreria interattiva — deploy e verifica online
+
+- Commit feature: `a19d3989bfb257c30225930ad2150d545820ec50` (`feat: piattaforma didattica libreria interattiva`), push normale su `origin/main`: `dcdc099..a19d398`. Nessun force push e nessuna riscrittura della storia.
+- Workflow Pages `45264268760` completato con `conclusion=success` per lo SHA `a19d3989bfb257c30225930ad2150d545820ec50`.
+- Online: `<title>Libreria · FARMACISTA</title>`; `css/library.css` e `js/library.js` HTTP 200; `css/mindmap.css` e `js/mindmap.js` HTTP 404.
+- check-links online: `CHECKED 80 risorse · 0 errori`, `EXIT=0`.
+- E2E online: `SUMMARY {"total":39,"passed":39,"failed":0}`, `EXIT=0`; console, pageerror, richieste fallite e HTTP 4xx/5xx tutti vuoti.
+- Screenshot online in `/tmp/verify-tools-online/`: `desktop-1440x900.png`, `tablet-768x1024.png`, `mobile-360x800.png`, tutti PNG validi alle dimensioni richieste.
+- `git rev-list --left-right --count origin/main...HEAD` → `0 0` prima della registrazione documentale finale.

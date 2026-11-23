@@ -290,3 +290,10 @@ PASS rotazione: Ricentra azzera angolo — angolo=0
 ```
 
 Screenshot rigenerati dalla corsa locale: `desktop-1440x900.png` 275535 byte, `mobile-360x800.png` 120406 byte, entrambi `PNG image data` alle dimensioni richieste.
+
+### Deploy e verifica online della rotazione
+
+- Commit: `bec3748bee7384c944b564134164b97b8a7d3f57` (`feat: aggiunge rotazione al sunburst`), pushato su `origin/main` (`543b6e4..bec3748`); `origin/main...HEAD` = `0 0`.
+- GitHub Pages: `PAGES_OK attempt=6`; HTML pubblicato contiene `data-action="rotate-left"` e `data-action="rotate-right"`.
+- E2E online completo: `SUMMARY {"total":45,"passed":45,"failed":0}`, `EXIT=0`, `PASS_COUNT=45`; console pulita (0 errori/warning), 0 pageerror, 0 richieste fallite, 0 HTTP 4xx/5xx; tutte le 5 assertion sulla rotazione passate anche online.
+- Screenshot online rigenerati: `desktop-1440x900.png` 276821 byte, `mobile-360x800.png` 120406 byte, entrambi `PNG image data` 1440x900 e 360x800.

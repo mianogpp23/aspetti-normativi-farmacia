@@ -103,8 +103,11 @@ function snippet(item, tokens) {
   return html;
 }
 
-export function initSearch({ onSelect }) {
+let onQuery = null;
+
+export function initSearch({ onSelect, onQuery: onQueryChange }) {
   onPick = onSelect;
+  onQuery = onQueryChange || null;
   const input = $("#search-input");
   const panel = $("#search-results");
   if (!input || !panel) return;
@@ -113,10 +116,12 @@ export function initSearch({ onSelect }) {
     panel.hidden = true;
     active = -1;
     input.setAttribute("aria-expanded", "false");
+    onQuery?.("");
   };
 
   const run = debounce(() => {
     const raw = input.value.trim();
+    onQuery?.(raw.length >= 2 ? raw : "");
     if (raw.length < 2) { close(); return; }
     const tokens = norm(raw).split(" ").filter((t) => t.length > 0);
     if (!tokens.length) { close(); return; }
@@ -219,6 +224,7 @@ function render(panel, tokens, raw) {
       const input = $("#search-input");
       input.setAttribute("aria-expanded", "false");
       input.blur();
+      onQuery?.("");
       // il tipo guida l'apertura: modulo → vista, argomento → flusso, slide → visore
       if (kind === "slide") onPick(mod, { kind, n: page });
       else if (kind === "topic") onPick(mod, { kind, topicId: btn.dataset.topic || null, n: page });

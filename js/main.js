@@ -1,8 +1,8 @@
 /* main.js — bootstrap, router hash, viste */
 
-import { $, $$, el, esc, toast } from "./utils.js";
-import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicsOf, topicAt } from "./data.js";
-import { createOrbit, createInfoPanel } from "./orbit.js";
+import { $, toast } from "./utils.js";
+import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicAt } from "./data.js";
+import { createSunburst } from "./sunburst.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -10,40 +10,39 @@ import { buildIndex, initSearch } from "./search.js";
 const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
 
-let orbit = null;
-let info = null;
+let sun = null;
 /** slide da aprire nel visore appena il modulo è montato (ricerca → slide) */
 let pendingSlide = null;
+let listInitialized = false;
+
+function h(tag, attrs = {}, text) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") n.className = v;
+    else n.setAttribute(k, v === true ? "" : String(v));
+  }
+  if (text !== undefined) n.textContent = String(text);
+  return n;
+}
 
 /* ---------------- titoli scheda ---------------- */
-// Il titolo del browser segue sempre il manifest: la home usa "Mappa orbitale · <corso>",
-// il modulo usa "<modulo> · <corso>". Un unico punto di verita' evita che il router
-// sovrascriva il titolo impostato al boot con una stringa fissa.
+// Il titolo del browser segue sempre il manifest; il router non sovrascrive
+// il titolo impostato al boot con una stringa fissa.
 function courseTitle() {
   return window.__manifest?.course?.title || "Dispense";
 }
 
 function homeTitle() {
-  return `Mappa orbitale · ${courseTitle()}`;
+  return `Sunburst · ${courseTitle()}`;
 }
 
-/* ---------------- home ---------------- */
-function renderHome() {
-  const m = modules();
-  const totals = totalsOf();
-
-  $("#stat-row").innerHTML = [
-    ["Moduli", totals.modules],
-    ["Slide", totals.pages],
-    ["Argomenti", totals.topics],
-  ].map(([k, v]) => `<li class="stat"><b>${v}</b><span>${k}</span></li>`).join("");
-
-  buildModuleList();
-  if (!orbit) {
-    info = createInfoPanel($("#orbit-info"), openModule);
-    orbit = createOrbit({ stage: $("#orbit-stage"), info, onOpen: openModule });
-  }
-  orbit.build(m, window.__manifest);
+/* ---------------- viste ---------------- */
+function setListView(showList) {
+  $("#module-list").hidden = !showList;
+  $("#sun-layout").hidden = showList;
+  $("#btn-list").textContent = showList ? "Vista mappa" : "Vista elenco";
+  if (!showList) requestAnimationFrame(() => sun?.layout());
 }
 
 function totalsOf() {
@@ -53,21 +52,52 @@ function totalsOf() {
     modules: t.modules ?? modules().length,
     pages: t.pages ?? modules().reduce((a, x) => a + pagesOf(x), 0),
     topics: t.topics ?? modules().reduce((a, x) => a + (x.topics?.length || 0), 0),
-    pdfBytes: t.pdfBytes || 0,
   };
 }
 
 function buildModuleList() {
   const box = $("#module-list");
-  box.innerHTML = "";
-  modules().forEach((mod) => {
+  const cards = modules().map((mod) => {
     const st = moduleStats(mod);
-    const card = el("a", { class: "ml-card", href: `#/m/${mod.id}` }, `
-      <span class="ml-n">M${String(mod.n).padStart(2, "0")}</span>
-      <span class="ml-t">${esc(mod.title)}</span>
-      <span class="ml-m">${st.pages ? `${st.pages} slide` : "nessuna dispense"}${st.topics ? ` · ${st.topics} argomenti` : ""}</span>`);
-    box.appendChild(card);
+    const card = h("a", { class: "ml-card", href: `#/m/${mod.id}` });
+    card.appendChild(h("span", { class: "ml-n" }, `M${String(mod.n).padStart(2, "0")}`));
+    card.appendChild(h("span", { class: "ml-t" }, mod.title));
+    const meta = st.pages ? `${st.pages} slide` : "nessuna dispensa";
+    card.appendChild(h("span", { class: "ml-m" }, st.topics ? `${meta} · ${st.topics} argomenti` : meta));
+    return card;
   });
+  box.replaceChildren(...cards);
+}
+
+function renderHome() {
+  const m = modules();
+  const totals = totalsOf();
+  const stats = [["Moduli", totals.modules], ["Slide", totals.pages], ["Argomenti", totals.topics]];
+  $("#stat-row").replaceChildren(...stats.map(([label, value]) => {
+    const li = h("li", { class: "stat" });
+    li.appendChild(h("b", {}, String(value)));
+    li.appendChild(h("span", {}, label));
+    return li;
+  }));
+  $("#sun-legend-count").textContent = String(m.length);
+  buildModuleList();
+
+  if (!sun) {
+    sun = createSunburst({
+      stage: $("#sun-stage"),
+      info: $("#sun-detail"),
+      crumbs: $("#sun-crumbs"),
+      controls: $("#sun-controls"),
+      onSlide: (mod, n) => viewer.open(mod, n),
+      onOpenModule: (mod) => openModule(mod),
+    });
+  }
+  sun.build(m, window.__manifest);
+
+  if (!listInitialized) {
+    listInitialized = true;
+    setListView(window.matchMedia("(max-width: 640px)").matches);
+  }
 }
 
 /* ---------------- modulo ---------------- */
@@ -114,8 +144,8 @@ function route() {
   pendingSlide = null;
   showView(VIEW_HOME);
   document.title = homeTitle();
-  if (!orbit) renderHome();
-  else setTimeout(() => orbit.layout(), 30);
+  if (sun) setTimeout(() => sun.layout(), 30);
+  else renderHome();
 }
 
 /* ---------------- help ---------------- */
@@ -141,15 +171,12 @@ async function boot() {
     await loadSearch();
 
     const course = manifest.course || {};
-    if (course.title) {
-      $("#brand-title").textContent = course.title;
-    }
+    if (course.title) $("#brand-title").textContent = course.title;
     document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
-    $("#home-title").textContent = course.title ? `Mappa orbitale · ${course.title}` : "Mappa orbitale dei moduli";
-    if (course.subtitle) {
-      $("#home-sub").textContent = course.subtitle;
-    }
+    $("#home-title").textContent = course.title ? `Sunburst · ${course.title}` : "Sunburst dei moduli";
+    if (course.subtitle) $("#home-sub").textContent = course.subtitle;
+
     const input = $("#search-input");
     input.placeholder = `Cerca in ${manifest.totals?.pages ?? 0} slide, argomenti, moduli…`;
 
@@ -162,12 +189,10 @@ async function boot() {
       onSelect: (mod, sel) => {
         if (!mod || !sel) return;
         if (sel.kind === "slide") {
-          // slide: si posiziona nel flusso sull'argomento che la contiene, poi apre il visore
-          const t = mod.topics?.length ? topicAt(mod, sel.n) : null;
+          const topic = mod.topics?.length ? topicAt(mod, sel.n) : null;
           pendingSlide = { id: mod.id, n: sel.n };
-          openModule(mod, t ? t.id : null);
+          openModule(mod, topic ? topic.id : null);
         } else if (sel.kind === "topic") {
-          // argomento: resta nel flusso gerarchico, senza aprire il visore
           pendingSlide = null;
           openModule(mod, sel.topicId || null);
         } else {
@@ -175,24 +200,18 @@ async function boot() {
           openModule(mod, null);
         }
       },
+      onQuery: (value) => sun?.setQuery(value || ""),
     });
     mountFlow({
       onSlide: (mod, n) => viewer.open(mod, n),
-      // l'argomento attivo resta condivisibile via URL (senza re-render)
       onTopic: (mod, topicId) => {
         history.replaceState(null, "", `#/m/${mod.id}/${topicId}`);
       },
     });
     initHelp();
 
-    // toggle vista elenco / orbitale
-    const list = $("#module-list");
     $("#btn-list").addEventListener("click", () => {
-      const show = list.hidden;
-      list.hidden = !show;
-      $("#orbit-stage").parentElement.hidden = show;
-      $("#btn-list").textContent = show ? "Vista orbitale" : "Vista elenco";
-      if (!show) setTimeout(() => orbit?.layout(), 40);
+      setListView($("#module-list").hidden);
     });
 
     window.addEventListener("hashchange", route);

@@ -259,9 +259,9 @@ PASS_COUNT=40
 
 ## FASE 6 — Git/deploy
 
-- Commit: `6e35c5a11fb986b84a37459d38e8194e9f89c0ba` (`feat: sostituisce mappa orbitale con sunburst interattivo`) pushato su `origin/main`.
-- Push: `b74bb93..6e35c5a  main -> main`, sync `0 0`.
-- Deploy GitHub Pages: `PAGES_OK attempt=5`.
+- Commit feature: `6e35c5a11fb986b84a37459d38e8194e9f89c0ba` (`feat: sostituisce mappa orbitale con sunburst interattivo`), pushato su `origin/main` (`b74bb93..6e35c5a`).
+- Commit finale docs/fix residuo: `20df6d0d06ce3868bc2f7cc8491ea5e7482ebb04` (`docs: registra verifica deploy e rimuove residuo commento`), pushato e sincronizzato `0 0`.
+- Deploy GitHub Pages: `PAGES_OK attempt=5` (feature) e `PAGES_OK attempt=5` (commit finale, commento `sunburst.css` aggiornato online).
 - Verifica online `https://mianogpp23.github.io/aspetti-normativi-farmacia/`: `<title>Sunburst · FARMACISTA</title>`, `css/sunburst.css` presente, nessun `orbit.css` nell'HTML. Asset: `index.html 200`, `css/sunburst.css 200`, `js/sunburst.js 200`, `js/main.js 200`, `content/manifest.json 200`; legacy `css/orbit.css 404`, `js/orbit.js 404`.
 - E2E Playwright online (stessa suite, `BASE_URL` produzione, filtro benigno thumb-abort documentato): `SUMMARY {"total":40,"passed":40,"failed":0}`, `EXIT=0`, `PASS_COUNT=40`. Controlli chiave: console pulita, nessun pageerror, nessuna richiesta fallita, nessun HTTP 4xx/5xx, desktop/mobile overflow ok, vista modulo ok, drill-down argomento con slide reali dal manifest.
 - Screenshot online rigenerati: `/tmp/verify-tools/desktop-1440x900.png` 1440x900, `/tmp/verify-tools/mobile-360x800.png` 360x800.

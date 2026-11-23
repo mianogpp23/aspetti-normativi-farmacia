@@ -303,6 +303,9 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
   let arcs = [];
   let raf = 0;
   let zoom = 1;
+  let rotation = 0;
+  let drag = null;
+  let suppressClickUntil = 0;
   let query = "";
   let hoverKey = null;
   let selectedKey = null;
@@ -310,6 +313,7 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
 
   const svg = $("svg", stage);
   const tooltip = $(".sun-tooltip", stage);
+  const rotationStatus = $("#sun-rotation-status", stage);
   const legendHost = stage.parentElement;
 
   function findModel(modId) {
@@ -443,15 +447,35 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
     }
   }
 
+  function rotorTransform() {
+    return `rotate(${rotation.toFixed(2)} ${C} ${C})`;
+  }
+
+  function updateRotor() {
+    svg?.querySelector(".sun-rotor")?.setAttribute("transform", rotorTransform());
+  }
+
+  function announceRotation() {
+    if (rotationStatus) rotationStatus.textContent = `Rotazione ${Math.round(rotation)} gradi.`;
+  }
+
+  function setRotation(value, announce = true) {
+    rotation = ((value % 360) + 360) % 360;
+    updateRotor();
+    if (announce) announceRotation();
+  }
+
   function draw(list) {
     if (!svg) return;
     const zoomTransform = `translate(${C} ${C}) scale(${zoom.toFixed(3)}) translate(${-C} ${-C})`;
     const center = list.find((a) => a.kind === "center");
     const root = s("g", { transform: zoomTransform });
+    const rotor = s("g", { class: "sun-rotor", transform: rotorTransform() });
     for (const a of list) {
       if (a.kind === "center") continue;
-      for (const node of sectorNodes(a)) root.appendChild(node);
+      for (const node of sectorNodes(a)) rotor.appendChild(node);
     }
+    root.appendChild(rotor);
     if (center) root.appendChild(centerNode(center));
     svg.setAttribute("data-level", level);
     stage.setAttribute("aria-label", `Sunburst: ${center ? center.label : "Corso"}. ${list.length - 1} settori visibili.`);
@@ -680,11 +704,50 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
   }
 
   /* ---------------- eventi ---------------- */
-  svg?.addEventListener("click", (e) => activate(arcFromEvent(e), e));
+  svg?.addEventListener("click", (e) => {
+    if (Date.now() < suppressClickUntil) {
+      suppressClickUntil = 0;
+      e.preventDefault();
+      return;
+    }
+    activate(arcFromEvent(e), e);
+  });
   svg?.addEventListener("pointerdown", (e) => {
+    if (e.button === 0 && e.shiftKey) {
+      const rect = svg.getBoundingClientRect();
+      drag = {
+        id: e.pointerId,
+        angle: Math.atan2(e.clientY - (rect.top + rect.height / 2), e.clientX - (rect.left + rect.width / 2)) * 180 / Math.PI,
+        start: rotation,
+        moved: false,
+      };
+      svg.setPointerCapture(e.pointerId);
+      svg.classList.add("is-rotating");
+      e.preventDefault();
+      return;
+    }
     const arc = arcFromEvent(e);
     if (e.pointerType === "touch" && arc) showTooltip(arc, e);
   });
+  svg?.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const rect = svg.getBoundingClientRect();
+    const angle = Math.atan2(e.clientY - (rect.top + rect.height / 2), e.clientX - (rect.left + rect.width / 2)) * 180 / Math.PI;
+    const delta = angle - drag.angle;
+    if (Math.abs(delta) > 2) drag.moved = true;
+    setRotation(drag.start + delta, false);
+  });
+  function endRotation(e) {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (drag.moved) suppressClickUntil = Date.now() + 300;
+    drag = null;
+    svg?.classList.remove("is-rotating");
+    if (svg?.hasPointerCapture?.(e.pointerId)) svg.releasePointerCapture(e.pointerId);
+    announceRotation();
+  }
+  svg?.addEventListener("pointerup", endRotation);
+  svg?.addEventListener("pointercancel", endRotation);
+  svg?.addEventListener("lostpointercapture", endRotation);
   svg?.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " " && e.key !== "Escape" && e.key !== "Backspace") return;
     e.preventDefault();
@@ -716,9 +779,11 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
     const btn = e.target.closest("[data-action]");
     if (!btn) return;
     const action = btn.dataset.action;
-    if (action === "in") zoom = Math.min(2.5, zoom + 0.2);
+    if (action === "rotate-left") setRotation(rotation - 30);
+    else if (action === "rotate-right") setRotation(rotation + 30);
+    else if (action === "in") zoom = Math.min(2.5, zoom + 0.2);
     else if (action === "out") zoom = Math.max(0.7, zoom - 0.2);
-    else zoom = 1;
+    else { zoom = 1; setRotation(0); }
     draw(arcs);
   });
 
@@ -774,6 +839,7 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
       }
       if (manifest?.course?.title) svg?.setAttribute("aria-label", `Sunburst del corso ${manifest.course.title}`);
       zoom = 1;
+      rotation = 0;
       goCourse();
     },
     layout() { draw(arcs); },
@@ -795,7 +861,7 @@ export function createSunburst({ stage, info, crumbs, controls, onSlide, onOpenM
     goTopic,
     goCourse,
     get state() {
-      return { level, modId: currentMod?.id || null, topicId: currentTopic?.id || null, zoom, sectors: arcs.length };
+      return { level, modId: currentMod?.id || null, topicId: currentTopic?.id || null, zoom, rotation, sectors: arcs.length };
     },
   };
 }

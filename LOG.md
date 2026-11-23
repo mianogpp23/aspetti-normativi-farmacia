@@ -265,3 +265,28 @@ PASS_COUNT=40
 - Verifica online `https://mianogpp23.github.io/aspetti-normativi-farmacia/`: `<title>Sunburst · FARMACISTA</title>`, `css/sunburst.css` presente, nessun `orbit.css` nell'HTML. Asset: `index.html 200`, `css/sunburst.css 200`, `js/sunburst.js 200`, `js/main.js 200`, `content/manifest.json 200`; legacy `css/orbit.css 404`, `js/orbit.js 404`.
 - E2E Playwright online (stessa suite, `BASE_URL` produzione, filtro benigno thumb-abort documentato): `SUMMARY {"total":40,"passed":40,"failed":0}`, `EXIT=0`, `PASS_COUNT=40`. Controlli chiave: console pulita, nessun pageerror, nessuna richiesta fallita, nessun HTTP 4xx/5xx, desktop/mobile overflow ok, vista modulo ok, drill-down argomento con slide reali dal manifest.
 - Screenshot online rigenerati: `/tmp/verify-tools/desktop-1440x900.png` 1440x900, `/tmp/verify-tools/mobile-360x800.png` 360x800.
+
+## FASE 7 — rotazione del sunburst
+
+### Ruling 15 — rotazione esplicita senza ripristinare pan/zoom liberi
+
+**Ruling:** aggiunti due pulsanti `↺`/`↻` (`±30°`, etichette accessibili “Ruota a sinistra/destra di 30 gradi”) e trascinamento con `Shift` + pulsante sinistro del mouse. La rotazione avviene su un gruppo `.sun-rotor` separato dal centro, quindi il testo centrale resta leggibile; `Ricentra` azzera anche l'angolo. Lo stato è annunciato in un live region nascosto e viene esposto in `state.rotation`. Non sono stati ripristinati pan libero né zoom con rotella.
+**Perché:** la richiesta Telegram “Inserisci la rotazione” è stata interpretata in modo minimale e accessibile: i pulsanti coprono tastiera e screen reader, il trascinamento con `Shift` è un’opzione esplicita che non interferisce con click, tap e selezione dei settori.
+**Costo se sbagliato:** chi si aspettava il solo trascinamento libero trova anche i pulsanti; chi usava la vecchia mappa ritrova `Shift` + trascina ma non pan/zoom rotella, che restano volontariamente fuori scope.
+
+**Modifiche:** `index.html` (controlli, help inline e nella finestra scorciatoie, live region), `css/sunburst.css` (cursore `grabbing` durante il trascinamento), `js/sunburst.js` (stato `rotation`, gruppo `.sun-rotor`, pointer capture, aggioramento live region e reset), `README.md`, `/tmp/verify-tools/verify.mjs` (5 nuove assertion).
+
+E2E locale completo dopo la rotazione:
+
+```text
+SUMMARY {"total":45,"passed":45,"failed":0}
+EXIT=0
+PASS_COUNT=45
+PASS rotazione iniziale — angolo=0
+PASS rotazione: pulsante ↻ — angolo=30, stato=Rotazione 30 gradi.
+PASS rotazione: pulsante ↺ — angolo=0
+PASS rotazione: trascina con Shift — angolo=270, breadcrumb=Corso
+PASS rotazione: Ricentra azzera angolo — angolo=0
+```
+
+Screenshot rigenerati dalla corsa locale: `desktop-1440x900.png` 275535 byte, `mobile-360x800.png` 120406 byte, entrambi `PNG image data` alle dimensioni richieste.

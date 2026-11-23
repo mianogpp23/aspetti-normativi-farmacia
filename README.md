@@ -4,7 +4,8 @@ Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'arch
 dispense PDF in un ambiente didattico navigabile:
 
 - **Sunburst interattivo** (`#/`): corso al centro, moduli nell'anello interno e argomenti
-  in quello esterno; clic per ingrandire fino alle slide, legenda numerata, vista elenco.
+  in quello esterno; clic per ingrandire fino alle slide, legenda numerata, rotazione con
+  pulsanti o `Shift` + trascinamento, vista elenco.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,

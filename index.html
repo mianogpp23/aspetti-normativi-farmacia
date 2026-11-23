@@ -70,7 +70,9 @@
       <div class="sun-card">
         <div class="sun-viewbar">
           <nav class="sun-crumbs" id="sun-crumbs" data-testid="sun-crumbs" aria-label="Percorso sunburst"></nav>
-          <div class="sun-controls" id="sun-controls" aria-label="Controlli ingrandimento">
+          <div class="sun-controls" id="sun-controls" aria-label="Controlli mappa">
+            <button class="sun-ctrl" type="button" data-action="rotate-left" aria-label="Ruota a sinistra di 30 gradi" title="Ruota a sinistra (30°)">↺</button>
+            <button class="sun-ctrl" type="button" data-action="rotate-right" aria-label="Ruota a destra di 30 gradi" title="Ruota a destra (30°)">↻</button>
             <button class="sun-ctrl" type="button" data-action="out" aria-label="Riduci">−</button>
             <button class="sun-ctrl" type="button" data-action="in" aria-label="Ingrandisci">+</button>
             <button class="sun-ctrl" type="button" data-action="reset" aria-label="Ricentra">Ricentra</button>
@@ -82,9 +84,10 @@
           <noscript><p class="notice">Serve JavaScript per visualizzare la mappa interattiva.</p></noscript>
           <svg class="sun-svg" id="sun-svg" data-testid="sun-svg" viewBox="0 0 730 730" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Mappa sunburst: moduli e argomenti"></svg>
           <div class="sun-tooltip" data-testid="sun-tooltip" role="status" hidden></div>
+          <p class="sr-only" id="sun-rotation-status" data-testid="sun-rotation-status" aria-live="polite"></p>
         </div>
 
-        <p class="sun-help"><strong>Come si usa:</strong> clicca un modulo per ingrandire, poi un argomento fino alle slide. Passa il mouse per il nome completo. Con la tastiera usa <kbd>Tab</kbd>, <kbd>Invio</kbd> per aprire, <kbd>Esc</kbd> per tornare indietro.</p>
+        <p class="sun-help"><strong>Come si usa:</strong> clicca un modulo per ingrandire, poi un argomento fino alle slide. Passa il mouse per il nome completo. Ruota con <kbd>↺</kbd>/<kbd>↻</kbd> oppure trascina con <kbd>Shift</kbd> + mouse. Con la tastiera usa <kbd>Tab</kbd>, <kbd>Invio</kbd> per aprire, <kbd>Esc</kbd> per tornare indietro.</p>
       </div>
     </div>
 
@@ -199,7 +202,7 @@
     </button>
     <h2 id="help-title">Come si usa</h2>
     <ol class="help-list">
-      <li><b>Sunburst</b> — il corso è al centro, i moduli formano l'anello interno e gli argomenti quello esterno. Clicca per ingrandire.</li>
+      <li><b>Sunburst</b> — il corso è al centro, i moduli formano l'anello interno e gli argomenti quello esterno. Clicca per ingrandire; usa ↺/↻ o trascina con Shift per ruotare.</li>
       <li><b>Percorso gerarchico</b> — dal modulo puoi scendere agli argomenti e alle slide; <kbd>Esc</kbd> torna al livello superiore.</li>
       <li><b>Slide full-screen</b> — clicca una slide per aprirla; naviga con le frecce, chiudi con Esc.</li>
       <li><b>Ricerca globale</b> — premi <kbd>/</kbd> e scrivi: cerca in titoli, argomenti e testo delle slide.</li>

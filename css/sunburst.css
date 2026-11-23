@@ -95,6 +95,7 @@
   user-select:none;
 }
 .sun-svg{display:block;width:100%;height:100%}
+.sun-svg.is-rotating{cursor:grabbing;touch-action:none}
 
 .sun-sector{
   stroke:var(--bg);

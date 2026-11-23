@@ -1,12 +1,11 @@
-# Piattaforma didattica universo — FARMACISTA
+# Piattaforma didattica mappa mentale — FARMACISTA
 
 Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'archivio delle
 dispense PDF in un ambiente didattico navigabile:
 
-- **Universo interattivo** (`#/`): il corso è il nucleo, i moduli sono pianeti su tre orbite,
-  gli argomenti sono lune e le slide satelliti; clic per avvicinarti fino alle slide,
-  legenda numerata, rotazione con pulsanti o `Shift` + trascinamento, pausa del moto,
-  vista elenco.
+- **Mappa mentale orizzontale** (`#/`): il corso si dirama in moduli, argomenti e slide;
+  connettori SVG cubici, espansione/comprimi, ricerca con auto-espansione, zoom con
+  `Ctrl`/`⌘` + rotella, pan trascinando lo sfondo, legenda numerata e vista elenco.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,
@@ -21,13 +20,13 @@ piattaforma-didattica/
 ├── config.json          # sorgente + titolo del corso (usato da scripts/scan.py)
 ├── css/
 │   ├── app.css          # design system (token, topbar, ricerca, modali, elenco)
-│   ├── universe.css     # mappa dell'universo (pianeti, lune, satelliti)
+│   ├── mindmap.css      # mappa mentale orizzontale (nodi, connettori, responsive)
 │   ├── flow.css         # percorso gerarchico del modulo
 │   └── viewer.css       # visore a schermo intero
 ├── js/
 │   ├── utils.js         # helper DOM/format
 │   ├── data.js          # unico livello di accesso ai dati (manifest)
-│   ├── universe.js      # universo SVG + interazioni
+│   ├── mindmap.js       # mappa mentale SVG + interazioni
 │   ├── flow.js          # argomenti → sotto-argomenti → slide
 │   ├── viewer.js        # visore full-screen
 │   ├── search.js        # ricerca globale (moduli, argomenti, slide)
@@ -59,8 +58,9 @@ L'archivio originale non viene mai modificato: nessun file è spostato, rinomina
 ## Avvio locale
 
 ```bash
-python3 -m http.server 8899
-# http://127.0.0.1:8899/index.html
+python3 -m http.server 8093
+# http://127.0.0.1:8093/index.html
+# oppure: PORT=8093 node tools/serve.js
 ```
 
 Il sito usa solo percorsi relativi, quindi funziona sia in radice sia in sottocartella
@@ -77,7 +77,7 @@ Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi onlin
 ```bash
 git init -b main          # già presente in questa cartella
 git add .
-git commit -m "feat: piattaforma didattica universo"
+git commit -m "feat: piattaforma didattica mappa mentale"
 git remote add origin git@github.com:utente/nome-repo.git
 git push -u origin main
 ```

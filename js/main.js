@@ -2,7 +2,7 @@
 
 import { $, toast } from "./utils.js";
 import { loadManifest, loadSearch, modules, getModule, pagesOf, moduleStats, topicAt } from "./data.js";
-import { createUniverse } from "./universe.js";
+import { createMindMap } from "./mindmap.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -10,7 +10,7 @@ import { buildIndex, initSearch } from "./search.js";
 const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
 
-let sun = null;
+let mind = null;
 /** slide da aprire nel visore appena il modulo è montato (ricerca → slide) */
 let pendingSlide = null;
 let listInitialized = false;
@@ -34,15 +34,15 @@ function courseTitle() {
 }
 
 function homeTitle() {
-  return `Universo · ${courseTitle()}`;
+  return `Mappa mentale · ${courseTitle()}`;
 }
 
 /* ---------------- viste ---------------- */
 function setListView(showList) {
   $("#module-list").hidden = !showList;
-  $("#sun-layout").hidden = showList;
+  $("#mind-layout").hidden = showList;
   $("#btn-list").textContent = showList ? "Vista mappa" : "Vista elenco";
-  if (!showList) requestAnimationFrame(() => sun?.layout());
+  if (!showList) requestAnimationFrame(() => mind?.layout());
 }
 
 function totalsOf() {
@@ -79,20 +79,21 @@ function renderHome() {
     li.appendChild(h("span", {}, label));
     return li;
   }));
-  $("#sun-legend-count").textContent = String(m.length);
+  $("#mind-legend-count").textContent = String(m.length);
   buildModuleList();
 
-  if (!sun) {
-    sun = createUniverse({
-      stage: $("#sun-stage"),
-      info: $("#sun-detail"),
-      crumbs: $("#sun-crumbs"),
-      controls: $("#sun-controls"),
+  if (!mind) {
+    mind = createMindMap({
+      stage: $("#mind-stage"),
+      info: $("#mind-detail"),
+      crumbs: $("#mind-crumbs"),
+      controls: $("#mind-controls"),
+      legend: $("#mind-legend"),
       onSlide: (mod, n) => viewer.open(mod, n),
-      onOpenModule: (mod) => openModule(mod),
+      onOpenModule: (mod, topicId) => openModule(mod, topicId),
     });
   }
-  sun.build(m, window.__manifest);
+  mind.build(m, window.__manifest);
 
   if (!listInitialized) {
     listInitialized = true;
@@ -144,7 +145,7 @@ function route() {
   pendingSlide = null;
   showView(VIEW_HOME);
   document.title = homeTitle();
-  if (sun) setTimeout(() => sun.layout(), 30);
+  if (mind) setTimeout(() => mind.layout(), 30);
   else renderHome();
 }
 
@@ -174,7 +175,7 @@ async function boot() {
     if (course.title) $("#brand-title").textContent = course.title;
     document.title = homeTitle();
     if (course.subtitle) $("#brand-sub").textContent = course.subtitle;
-    $("#home-title").textContent = course.title ? `Universo · ${course.title}` : "L'universo dei moduli";
+    $("#home-title").textContent = course.title ? `Mappa mentale · ${course.title}` : "Mappa mentale del corso";
     if (course.subtitle) $("#home-sub").textContent = course.subtitle;
 
     const input = $("#search-input");
@@ -200,7 +201,7 @@ async function boot() {
           openModule(mod, null);
         }
       },
-      onQuery: (value) => sun?.setQuery(value || ""),
+      onQuery: (value) => mind?.setQuery(value || ""),
     });
     mountFlow({
       onSlide: (mod, n) => viewer.open(mod, n),

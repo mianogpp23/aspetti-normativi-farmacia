@@ -322,3 +322,34 @@ Screenshot rigenerati dalla corsa locale: `desktop-1440x900.png` 275535 byte, `m
 - GitHub Pages pronto al primo controllo: HTTP 200, `<title>Universo · FARMACISTA</title>`, `css/universe.css` 200, `js/universe.js` 200, `css/sunburst.css` 404, `js/sunburst.js` 404.
 - E2E Playwright online completo su `https://mianogpp23.github.io/aspetti-normativi-farmacia/`: `SUMMARY {"total":55,"passed":55,"failed":0}`, `EXIT=0`, `PASS_COUNT=55`; console 0 errori/warning, 0 pageerror, 0 richieste fallite, 0 HTTP 4xx/5xx. Verdi anche online: `radice: moduli come pianeti — pianeti=19, moduli=19`, `nucleo: conteggio mondi dal manifest — 19 mondi da esplorare`, `naming universo — title=Universo · FARMACISTA`, `prefers-reduced-motion: controllo coerente`.
 - Screenshot online rigenerati: `desktop-1440x900.png` 437930 byte e `mobile-360x800.png` 67154 byte, entrambi `PNG image data` alle dimensioni richieste.
+
+## 2026-11-23 — Mappa mentale orizzontale: decisioni senza domande
+
+- Reference `layout07_mappa_mentale.png` non presente nel filesystem: confronto con immagine non applicabile; layout realizzato dalle specifiche testuali.
+- La missione vieta domande: scelte operate e registrate qui. Radice, moduli, argomenti e slide partono tutti espansi; “Comprimi tutto” riporta alla sola radice.
+- Zoom solo con `Ctrl`/`⌘` + rotella o pulsanti; rotella ordinaria continua a scorrere la pagina. Pan con trascinamento del fondo; nessuna rotazione e nessuna API volatile (`scroll-axis-lock`).
+- Navigazione a frecce con roving tabindex e geometria livedata: se non esiste un nodo nella direzione richiesta, l'evento non viene intercettato e lo scroll nativo resta disponibile.
+- I vecchi file `js/universe.js` e `css/universe.css` vengono rimossi; la shell, il router `#/`, la vista elenco, il lettore PDF e i dati originali restano invariati.
+
+### FASE 2–5 — tool, correzioni e verifica locale
+
+- Tool creati e documentati: `tools/serve.js` (HTTP 200 verificato su `PORT=8094`), `tools/check-links.js`, `tools/e2e.js`, `tools/screenshot.js`, `tools/verify-env.js`. Il server usato per le verifiche resta il servitore statico Python già attivo su `127.0.0.1:8093`; `tools/serve.js` è stato provato separatamente senza sostituirlo.
+- `check-links`: primo run `CHECKED 81 risorse · 1 errori` per un PDF inesistente fabbricato dal fallback (`content/pdf/introduzione.pdf`). **Ruling:** controllare solo i PDF dichiarati nel manifest (`if (mod.pdf?.path) urls.add(mod.pdf.path)`), perché `introduzione` non ha PDF (`pdfs:18` su 19 moduli); zero 404 sulle risorse reali. Re-run verde: `CHECKED 80 risorse · 0 errori`, `EXIT=0`.
+- **Ruling topic/fallback:** rimosso il fallback locale `fallbackTopic(mod)` da `js/mindmap.js`; conteggio, rendering e meta usano `topicsOf()` di `js/data.js`, stessa fonte usata da `tools/e2e.js`. Conteggio topic atteso e renderizzato: `122/122` (120 espliciti + 2 fallback del manifest).
+- **Ruling layout:** `cols.topic: 1` e colonna slide a `x=920`, larghezza `1400`; elimina l'intercettazione del click slide causata da colonne topic multiple. `drill-down slide nel visore` PASS.
+- **Root cause click modulo:** `search.js` chiude la ricerca con un listener `document` e richiama `onQuery("")` su ogni click; `setQuery("")` rieseguiva `render()` anche senza variazione, incrementando `renderToken` e facendo scartare il `setTimeout` della transizione di collapse. Fix: `setQuery` esce subito se la query non cambia e non c'è uno stato da ripristinare. Verificato con probe browser: `collapsed` passa da `[]` a una chiave e i topic da `122` a `112`.
+- **Root cause frecce:** dopo la ricostruzione del DOM il focus veniva perso, quindi `ArrowLeft` non comprimeva il nodo attivo. Fix: `commit()` cattura la chiave del nodo focalizzato, ricostruisce e richiama `focusKey()` (con fallback alla radice); l'assert E2E ora attende l'attributo `aria-expanded="false"` invece di un timeout fisso.
+- **Root cause pan:** l'hit-test dell'E2E richiedeva `elementFromPoint() === #mind-stage`, ma il punto libero restituisce il figlio `#mind-world`, che non è un nodo interattivo e lascia salire il pointerdown al gestore dello stage. Fix del test: accettare qualunque discendente dello stage che non sia `.mind-node, button, a, input`. Probe reale: drag su sfondo → `scrollTop 0→80`, `scrollLeft 0→140`. Nessun difetto di pan nel codice di produzione.
+- **Craft floor:** `impeccable detect` segnalava `11.52px body text`; portato `.mind-topic-text strong` a `0.875rem`, `.mind-slide-n` a `--ink-3`, tooltip secondario a `#5D6871` e help mobile a `0.8rem`. Detector finale: 6 findings (0 errori), di cui 4 warning pre-esistenti fuori surface (`<img id="vw-img">`, padding `flow`/`vw-bar`, glow visore) e 2 advisory `codex-grid-background` (griglia della mappa, deliberata).
+- **Verifica locale finale:** `node --check` su `js/mindmap.js`, `js/main.js` e tutti i tool → `SYNTAX_OK`; `node tools/check-links.js` → `CHECKED 80 risorse · 0 errori`; `node tools/e2e.js` → `SUMMARY {"total":40,"passed":40,"failed":0}`, `EXIT=0`, console/pageerror/richieste fallite/HTTP 4xx-5xx tutti a zero; `node tools/screenshot.js` → `SCREENSHOT` desktop e mobile, entrambe `PNG image data` a `1440x900` e `360x800`. Confronto con `layout07_mappa_mentale.png` non applicabile (file assente).
+
+### Fresh-context review finale
+
+Reviewer read-only, un solo agente, `output=false`, missione vincolante senza domande. Quattro finding concreti, tutti corretti:
+
+1. **P1 — `.sr-only` non più definita:** la regola era solo in `css/universe.css`, quindi i testi per screen reader e il live region diventavano visibili. Aggiunta la regola standard in `css/mindmap.css`. Nuovo assert E2E: `testi screen reader nascosti` PASS.
+2. **P2 — contrasto tooltip:** il testo secondario `#5D6871` su `#1F2933` era circa 2,6:1; portato a `#B9C4CC` (oltre 4,5:1).
+3. **P2 — doppio toggle rapido:** `toggle()` mutava `state.collapsed` solo nel `setTimeout` di 240 ms, quindi un secondo click prima del callback veniva scartato. Ora lo stato cambia subito, il timer precedente viene annullato e il ritardo serve solo all'animazione. Nuovo assert E2E: `doppio click rapido conserva il secondo toggle — 122/122` PASS.
+4. **P2 — README porta 8899:** il comando locale non corrispondeva ai tool (8093). Aggiornato a 8093 e documentato `PORT=8093 node tools/serve.js`.
+
+**Verifica dopo review:** `node --check` → `SYNTAX_OK`; check-links → `CHECKED 80 risorse · 0 errori`; E2E → `SUMMARY {"total":42,"passed":42,"failed":0}`, `EXIT=0`; screenshot desktop/mobile rigenerati e verificati `PNG image data` `1440x900` / `360x800`; detect finale invariato a 6 finding (4 warning pre-esistenti fuori surface + 2 advisory griglia).

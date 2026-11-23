@@ -353,3 +353,9 @@ Reviewer read-only, un solo agente, `output=false`, missione vincolante senza do
 4. **P2 — README porta 8899:** il comando locale non corrispondeva ai tool (8093). Aggiornato a 8093 e documentato `PORT=8093 node tools/serve.js`.
 
 **Verifica dopo review:** `node --check` → `SYNTAX_OK`; check-links → `CHECKED 80 risorse · 0 errori`; E2E → `SUMMARY {"total":42,"passed":42,"failed":0}`, `EXIT=0`; screenshot desktop/mobile rigenerati e verificati `PNG image data` `1440x900` / `360x800`; detect finale invariato a 6 finding (4 warning pre-esistenti fuori surface + 2 advisory griglia).
+
+### Deploy e verifica online
+
+Commit `3273690023cf8cc4ccac81056182507bcb795f12` pushato su `origin/main` senza force push. Primo workflow `Deploy GitHub Pages` (`45223621562`) fallito per un errore transiente dell'API GitHub: l'artifact `github-pages` era stato caricato correttamente, ma `actions/deploy-pages@v5` non lo trovava al momento del lookup. Rerun dello stesso workflow completato con successo, senza nuovi commit o riscrittura della storia.
+
+Pages verificato: titolo `<title>Mappa mentale · FARMACISTA</title>`, `css/mindmap.css` e `js/mindmap.js` HTTP 200, `js/universe.js` e `css/universe.css` HTTP 404. check-links online: `CHECKED 80 risorse · 0 errori`, `EXIT=0`. E2E online: `SUMMARY {"total":42,"passed":42,"failed":0}`, `EXIT=0`, console/pageerror/richieste fallite/HTTP 4xx-5xx tutti a zero. Screenshot online in `/tmp/verify-tools-online/`: `desktop-1440x900.png` e `mobile-360x800.png`, entrambi `PNG image data` alle dimensioni richieste. `git rev-list --left-right --count origin/main...HEAD` → `0 0`, working tree pulito prima di questa registrazione.

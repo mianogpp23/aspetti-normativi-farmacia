@@ -164,15 +164,6 @@ export function initSearch({ onSelect, onQuery: onQueryChange }) {
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search")) close();
   });
-
-  document.addEventListener("keydown", (e) => {
-    const tag = (e.target?.tagName || "").toLowerCase();
-    if (e.key === "/" && tag !== "input" && tag !== "textarea") {
-      e.preventDefault();
-      input.focus();
-      input.select();
-    }
-  });
 }
 
 function render(panel, tokens, raw) {
@@ -180,27 +171,36 @@ function render(panel, tokens, raw) {
   panel.hidden = false;
   $("#search-input").setAttribute("aria-expanded", "true");
 
+  const head = (left, right) => el("div", { class: "sp-head" }, `<span>${esc(left)}</span><span>${esc(right)}</span>`);
+
   if (!currentResults.length) {
-    panel.innerHTML = `<div class="sp-head"><span>Nessun risultato</span><span>${esc(raw)}</span></div>
-      <div class="sp-empty">Prova con un termine più breve, ad esempio <b>ricetta</b>, <b>stupefacenti</b> o <b>galeniche</b>.</div>`;
+    panel.replaceChildren(
+      head("Nessun risultato", raw),
+      el("div", { class: "sp-empty" }, 'Prova con un termine più breve, ad esempio <b>ricetta</b>, <b>stupefacenti</b> o <b>galeniche</b>.'),
+    );
     return;
   }
 
   const groups = { module: [], topic: [], slide: [] };
   currentResults.forEach(({ it }) => groups[it.kind].push(it));
 
-  const groupHtml = (label, items) => {
-    if (!items.length) return "";
-    return `<div class="sp-group"><p class="sp-label">${label}</p>${items.map((it) => `
-      <button class="sp-item" type="button" role="option" aria-selected="false"
-        data-kind="${it.kind}" data-mod="${esc(it.modId)}" data-n="${it.n ?? ""}" data-topic="${esc(it.topicId || "")}">
-        <span class="sp-badge">${it.kind === "module" ? "M" : it.n ?? "·"}</span>
-        <span class="sp-main">
-          <span class="sp-title">${esc(it.title)}</span>
-          <span class="sp-meta">${esc(it.meta)}</span>
-          ${it.kind === "slide" ? `<span class="sp-snip">${snippet(it, tokens)}</span>` : ""}
-        </span>
-      </button>`).join("")}</div>`;
+  const groupNode = (label, items) => {
+    if (!items.length) return null;
+    const wrap = el("div", { class: "sp-group" });
+    wrap.append(el("p", { class: "sp-label", text: label }));
+    for (const it of items) {
+      const snippetHtml = it.kind === "slide" ? `<span class="sp-snip">${snippet(it, tokens)}</span>` : "";
+      wrap.append(el("button", {
+        class: "sp-item",
+        type: "button",
+        role: "option",
+        "aria-selected": "false",
+        dataset: { kind: it.kind, mod: it.modId, n: it.n ?? "", topic: it.topicId || "" },
+      }, `<span class="sp-badge">${it.kind === "module" ? "M" : it.n ?? "·"}</span>
+        <span class="sp-main"><span class="sp-title">${esc(it.title)}</span>
+        <span class="sp-meta">${esc(it.meta)}</span>${snippetHtml}</span>`));
+    }
+    return wrap;
   };
 
   const shown =
@@ -208,10 +208,13 @@ function render(panel, tokens, raw) {
     groups.topic.slice(0, 5).length +
     groups.slide.slice(0, 14).length;
   const tail = matched > shown ? `${shown} mostrati · Invio per aprire` : "Invio per aprire";
-  panel.innerHTML = `<div class="sp-head"><span>${matched} risultat${matched === 1 ? "o" : "i"}</span><span>${tail}</span></div>
-    ${groupHtml("Moduli", groups.module.slice(0, 3))}
-    ${groupHtml("Argomenti", groups.topic.slice(0, 5))}
-    ${groupHtml("Slide", groups.slide.slice(0, 14))}`;
+  const nodes = [
+    head(`${matched} risultat${matched === 1 ? "o" : "i"}`, tail),
+    groupNode("Moduli", groups.module.slice(0, 3)),
+    groupNode("Argomenti", groups.topic.slice(0, 5)),
+    groupNode("Slide", groups.slide.slice(0, 14)),
+  ].filter(Boolean);
+  panel.replaceChildren(...nodes);
 
   panel.querySelectorAll(".sp-item").forEach((btn) => {
     btn.addEventListener("click", () => {

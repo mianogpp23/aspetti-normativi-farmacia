@@ -9,6 +9,7 @@ export function el(tag, attrs = {}, html) {
     if (v === null || v === undefined || v === false) continue;
     if (k === "class") node.className = v;
     else if (k === "dataset") Object.assign(node.dataset, v);
+    else if (k === "text") node.textContent = String(v);
     else if (k.startsWith("on") && typeof v === "function") node.addEventListener(k.slice(2), v);
     else node.setAttribute(k, v === true ? "" : String(v));
   }

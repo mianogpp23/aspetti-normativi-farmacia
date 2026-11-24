@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/flow.css">
 <link rel="stylesheet" href="css/viewer.css">
+<link rel="stylesheet" href="css/views.css">
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -37,6 +38,19 @@
       </span>
     </a>
 
+    <label class="view-picker" for="view-select">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="6" height="6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="11.5" y="3" width="6" height="6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2.5" y="11" width="6" height="6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="11.5" y="11" width="6" height="6" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      <span class="sr-only">Seleziona la vista</span>
+      <select id="view-select" aria-label="Seleziona la vista">
+        <option value="carosello">Carosello</option>
+        <option value="sommario">Sommario</option>
+        <option value="esagoni">Esagoni</option>
+        <option value="cerca">Cerca</option>
+        <option value="libreria">Libreria</option>
+        <option value="dashboard">Dashboard</option>
+      </select>
+    </label>
+
     <div class="search" role="search">
       <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12.8 12.8 17 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       <input id="search-input" type="search" placeholder="Cerca in 725 slide, argomenti, moduli…" autocomplete="off" spellcheck="false"
@@ -60,10 +74,6 @@
       <h1 id="home-title">Il corso, a colpo d’occhio</h1>
       <p class="home-sub" id="home-sub">Scegli la libreria visiva oppure la dashboard: moduli, avanzamento e prossime slide in un unico posto.</p>
       <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
-      <div class="view-switch" id="view-switch" role="group" aria-label="Seleziona la vista">
-        <button id="btn-map" type="button" aria-pressed="false">Mappa</button>
-        <button id="btn-list" type="button" aria-pressed="false">Elenco</button>
-      </div>
     </div>
 
     <div class="lib-layout" id="lib-layout">
@@ -164,6 +174,43 @@
 
       <p class="sr-only" id="dash-live" aria-live="polite"></p>
     </section>
+  </section>
+
+  <!-- ===================== NUOVE VISTE MODULO ===================== -->
+  <section class="view" id="view-carosello" aria-labelledby="car-title" hidden>
+    <div class="home-head">
+      <p class="eyebrow">Vista principale</p>
+      <h2 id="car-title">Sfoglia i moduli</h2>
+      <p class="home-sub">La scheda centrale è il modulo selezionato. Usa le frecce, i punti o la tastiera.</p>
+    </div>
+    <div id="car-mount"></div>
+  </section>
+
+  <section class="view" id="view-sommario" aria-labelledby="sum-title" hidden>
+    <div class="home-head">
+      <p class="eyebrow">Indice del corso</p>
+      <h2 id="sum-title">Sommario</h2>
+      <p class="home-sub">Pagine iniziali e argomenti, con numeri calcolati dal manifesto del corso.</p>
+    </div>
+    <div id="sum-mount"></div>
+  </section>
+
+  <section class="view" id="view-esagoni" aria-labelledby="hex-title" hidden>
+    <div class="home-head">
+      <p class="eyebrow">Alveare dei moduli</p>
+      <h2 id="hex-title">Esagoni</h2>
+      <p class="home-sub">Un modulo per cella: scegli un esagono per vedere argomenti e pagine.</p>
+    </div>
+    <div id="hex-mount"></div>
+  </section>
+
+  <section class="view" id="view-cerca" aria-labelledby="pal-title" hidden>
+    <div class="home-head">
+      <p class="eyebrow">Ricerca rapida</p>
+      <h2 id="pal-title">Cerca tutto</h2>
+      <p class="home-sub">Moduli, argomenti e slide in un'unica palette. Apri con / o Ctrl/⌘+K.</p>
+    </div>
+    <div id="pal-mount"></div>
   </section>
 
   <!-- ===================== MODULE · FLUSSO GERARCHICO ===================== -->

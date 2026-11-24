@@ -58,7 +58,11 @@ async function main() {
     if (typeof status !== "number" || status >= 400) failures.push(`${status} ${url}`);
   }
 
-  for (const hash of ["", "#/", `#/m/${manifest.modules?.[0]?.id || ""}`]) {
+  const routes = ["", "#/", `#/m/${manifest.modules?.[0]?.id || ""}`];
+  for (const view of ["carosello", "sommario", "esagoni", "cerca", "libreria", "dashboard"]) {
+    routes.push(`#/?vista=${view}`);
+  }
+  for (const hash of routes) {
     const url = new URL(hash, BASE).href;
     const res = await fetch(url);
     if (!res.ok) failures.push(`${res.status} ${url}`);

@@ -7,12 +7,38 @@ import { createDashboard } from "./dashboard.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
+import { createCarousel } from "./carousel.js";
+import { createSummary } from "./summary.js";
+import { createHoneycomb } from "./honeycomb.js";
+import { createPalette } from "./palette.js";
 
 const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
+const VIEWS = {
+  carosello: "#view-carosello",
+  sommario: "#view-sommario",
+  esagoni: "#view-esagoni",
+  cerca: "#view-cerca",
+  libreria: VIEW_HOME,
+  dashboard: VIEW_HOME,
+};
+const VIEW_LABELS = {
+  carosello: "Carosello",
+  sommario: "Sommario",
+  esagoni: "Esagoni",
+  cerca: "Cerca",
+  libreria: "Libreria",
+  dashboard: "Dashboard",
+};
+const DEFAULT_VIEW = "carosello";
 
 let library = null;
 let dashboard = null;
+let carousel = null;
+let summary = null;
+let honeycomb = null;
+let palette = null;
+let activeView = DEFAULT_VIEW;
 /** slide da aprire nel visore appena il modulo è montato (ricerca/dashboard → slide) */
 let pendingSlide = null;
 let viewMode = "map";
@@ -43,8 +69,28 @@ function homeTitle() {
 
 /* ---------------- viste ---------------- */
 const VIEW_KEY = "farmacista:v1:view";
+const GLOBAL_VIEW_KEY = "farmacista:v1:global-view";
+const NEW_VIEWS = ["carosello", "sommario", "esagoni", "cerca"];
+
+function loadGlobalView() {
+  try {
+    const saved = localStorage.getItem(GLOBAL_VIEW_KEY);
+    if (Object.hasOwn(VIEWS, saved)) return saved;
+    const legacy = localStorage.getItem(VIEW_KEY);
+    if (legacy === "map") return "libreria";
+    if (legacy === "list") return "dashboard";
+  } catch { /* localStorage non disponibile: usa il predefinito. */ }
+  return DEFAULT_VIEW;
+}
+
+function saveGlobalView(view) {
+  try { localStorage.setItem(GLOBAL_VIEW_KEY, view); } catch { /* stato solo in sessione. */ }
+}
 
 function loadViewMode() {
+  const view = loadGlobalView();
+  if (view === "dashboard") return "list";
+  if (view === "libreria") return "map";
   try {
     const saved = localStorage.getItem(VIEW_KEY);
     if (saved === "map" || saved === "list") return saved;
@@ -62,8 +108,6 @@ function setViewMode(mode) {
   const list = viewMode === "list";
   $("#module-list").hidden = !list;
   $("#lib-layout").hidden = list;
-  $("#btn-map").setAttribute("aria-pressed", String(!list));
-  $("#btn-list").setAttribute("aria-pressed", String(list));
   $("#home-title").textContent = list ? `Dashboard · ${courseTitle()}` : `Libreria · ${courseTitle()}`;
   $("#home-sub").textContent = list
     ? "Statistiche, ripresa dello studio e pagine per modulo in un’unica vista."
@@ -170,6 +214,53 @@ function renderHome() {
   setViewMode(viewMode);
 }
 
+function openFromView(mod, n, source) {
+  if (!mod) return;
+  if (!pagesOf(mod)) return openModule(mod, null);
+  pendingSlide = { id: mod.id, n, source };
+  openModule(mod, null);
+}
+
+function initViews() {
+  if (!carousel) {
+    carousel = createCarousel({
+      mount: $("#car-mount"),
+      onOpenModule: (mod) => openFromView(mod, 1, "carosello"),
+    });
+  }
+  if (!summary) {
+    summary = createSummary({
+      mount: $("#sum-mount"),
+      onOpenModule: (mod) => openFromView(mod, 1, "sommario"),
+      onOpenTopic: (mod, topic) => openModule(mod, topic.id),
+    });
+  }
+  if (!honeycomb) {
+    honeycomb = createHoneycomb({
+      mount: $("#hex-mount"),
+      onOpenModule: (mod) => openFromView(mod, 1, "esagoni"),
+      onOpenTopic: (mod, topic) => openModule(mod, topic.id),
+    });
+  }
+  if (!palette) {
+    palette = createPalette({
+      mount: $("#pal-mount"),
+      onOpenModule: (mod) => openFromView(mod, 1, "palette"),
+      onOpenTopic: (mod, topic) => openModule(mod, topic.id),
+      onOpenSlide: (mod, n) => {
+        const topic = topicAt(mod, n);
+        pendingSlide = { id: mod.id, n, source: "palette" };
+        openModule(mod, topic ? topic.id : null);
+      },
+      onEscape: () => goToView(DEFAULT_VIEW, { focus: false }),
+    });
+  }
+  carousel.render();
+  summary.render();
+  honeycomb.render();
+  palette.render();
+}
+
 /* ---------------- modulo ---------------- */
 function openModule(mod, topicId) {
   if (!mod) return;
@@ -179,7 +270,7 @@ function openModule(mod, topicId) {
 }
 
 function renderModuleView(mod, topicId) {
-  showView(VIEW_MOD);
+  showModuleView();
   renderModule(mod, topicId);
   document.title = `${mod.title} · ${courseTitle()}`;
   window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
@@ -199,31 +290,111 @@ function renderModuleView(mod, topicId) {
 }
 
 /* ---------------- router ---------------- */
-function showView(id) {
-  $(VIEW_HOME).hidden = id !== VIEW_HOME;
-  $(VIEW_MOD).hidden = id !== VIEW_MOD;
+function hideAllViews() {
+  const selectors = new Set([VIEW_MOD, ...Object.values(VIEWS)]);
+  for (const selector of selectors) {
+    const node = $(selector);
+    if (node) node.hidden = true;
+  }
+}
+
+function showModuleView() {
+  hideAllViews();
+  $(VIEW_MOD).hidden = false;
+}
+
+function showHomeView(view) {
+  hideAllViews();
+  $(VIEWS[view] || VIEWS[DEFAULT_VIEW]).hidden = false;
+}
+
+function renderCurrentView(view, { focus = false } = {}) {
+  showHomeView(view);
+  activeView = view;
+  saveGlobalView(view);
+  const select = $("#view-select");
+  if (select) select.value = view;
+  if (view === "libreria") {
+    setViewMode("map");
+    requestAnimationFrame(() => library?.layout());
+    document.title = homeTitle();
+    return;
+  }
+  if (view === "dashboard") {
+    setViewMode("list");
+    dashboard?.render();
+    document.title = homeTitle();
+    return;
+  }
+  if (!NEW_VIEWS.includes(view)) return;
+  if (view === "carosello") carousel?.render();
+  if (view === "sommario") summary?.render();
+  if (view === "esagoni") honeycomb?.render();
+  if (view === "cerca") palette?.render();
+  document.title = `${VIEW_LABELS[view]} · ${courseTitle()}`;
+  if (!focus) return;
+  if (view === "carosello") carousel?.focus();
+  if (view === "sommario") summary?.focus();
+  if (view === "esagoni") honeycomb?.focus();
+  if (view === "cerca") palette?.focus();
+}
+
+function goToView(view, { focus = false } = {}) {
+  const canonical = Object.hasOwn(VIEWS, view) ? view : DEFAULT_VIEW;
+  const hash = `#/?vista=${canonical}`;
+  if (location.hash !== hash) {
+    location.hash = hash;
+    renderCurrentView(canonical, { focus });
+    return;
+  }
+  renderCurrentView(canonical, { focus });
 }
 
 function parse() {
   const raw = location.hash.replace(/^#\/?/, "");
-  if (!raw) return { view: "home" };
-  const parts = raw.split("/");
-  if (parts[0] === "m" && parts[1]) return { view: "module", id: decodeURIComponent(parts[1]), topicId: parts[2] || null };
-  return { view: "home" };
+  const [path, query = ""] = raw.split("?");
+  const parts = path.split("/");
+  if (parts[0] === "m" && parts[1]) return { kind: "module", id: decodeURIComponent(parts[1]), topicId: parts[2] || null };
+  const requested = new URLSearchParams(query).get("vista");
+  return { kind: "home", view: Object.hasOwn(VIEWS, requested) ? requested : null };
 }
 
 function route() {
   const r = parse();
-  if (r.view === "module") {
+  if (r.kind === "module") {
     const mod = getModule(r.id);
     if (mod) { renderModuleView(mod, r.topicId); return; }
     toast("Modulo non trovato");
   }
   pendingSlide = null;
-  showView(VIEW_HOME);
-  document.title = homeTitle();
-  if (library) setTimeout(() => library.layout(), 30);
-  else renderHome();
+  const view = r.view || loadGlobalView();
+  const hash = `#/?vista=${view}`;
+  if (location.hash !== hash) history.replaceState(null, "", hash);
+  renderCurrentView(view);
+}
+
+/* ---------------- scorciatoie globali ---------------- */
+function initShortcuts() {
+  $("#view-select")?.addEventListener("change", (event) => {
+    goToView(event.target.value, { focus: true });
+  });
+  document.addEventListener("keydown", (event) => {
+    const tag = (event.target?.tagName || "").toLowerCase();
+    const typing = tag === "input" || tag === "textarea" || event.target?.isContentEditable;
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      goToView("cerca", { focus: true });
+      return;
+    }
+    if (event.key === "/" && !typing && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      event.preventDefault();
+      goToView("cerca", { focus: true });
+      return;
+    }
+    if (event.key === "Escape" && activeView === "cerca" && document.activeElement === document.body) {
+      goToView(DEFAULT_VIEW, { focus: false });
+    }
+  });
 }
 
 /* ---------------- help ---------------- */
@@ -280,6 +451,7 @@ async function boot() {
       onQuery: (value) => {
         library?.setQuery(value || "");
         dashboard?.setQuery(value || "");
+        palette?.setQuery(value || "");
       },
     });
     mountFlow({
@@ -295,9 +467,8 @@ async function boot() {
     });
     initHelp();
     initViewerTracking();
-
-    $("#btn-map").addEventListener("click", () => setViewMode("map"));
-    $("#btn-list").addEventListener("click", () => setViewMode("list"));
+    initViews();
+    initShortcuts();
 
     window.addEventListener("hashchange", route);
     renderHome();

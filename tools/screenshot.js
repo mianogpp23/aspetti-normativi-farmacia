@@ -1,4 +1,4 @@
-/* screenshot.js — catture viewport della dashboard: desktop, tablet e mobile. */
+/* screenshot.js — catture viewport di ogni vista: desktop, tablet e mobile. */
 
 import { mkdir } from "node:fs/promises";
 import { BASE_URL, OUT_DIR, CHROMIUM } from "./verify-env.js";
@@ -12,24 +12,26 @@ const shots = [
   { name: "tablet-820x1100.png", width: 820, height: 1100, mobile: false },
   { name: "mobile-360x800.png", width: 360, height: 800, mobile: true },
 ];
+const views = ["carosello", "sommario", "esagoni", "cerca"];
+const legacy = { libreria: "#lib-layout", dashboard: "#dash-modules .dash-module" };
 
-for (const shot of shots) {
-  const context = await browser.newContext({
-    viewport: { width: shot.width, height: shot.height },
-    isMobile: shot.mobile,
-    hasTouch: shot.mobile,
-  });
-  const page = await context.newPage();
-  await page.goto(`${BASE_URL}#/`, { waitUntil: "domcontentloaded" });
-  await page.waitForSelector("#dash-modules .dash-module", { state: "attached", timeout: 15000 });
-  await page.evaluate(() => {
-    localStorage.setItem("farmacista:v1:view", "list");
-  });
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await page.waitForSelector("#dash-modules .dash-module", { timeout: 15000 });
-  await page.screenshot({ path: `${OUT_DIR}/${shot.name}` });
-  console.log(`SHOT ${OUT_DIR}/${shot.name} ${shot.width}x${shot.height}`);
-  await context.close();
+for (const view of [...views, ...Object.keys(legacy)]) {
+  for (const shot of shots) {
+    const context = await browser.newContext({
+      viewport: { width: shot.width, height: shot.height },
+      isMobile: shot.mobile,
+      hasTouch: shot.mobile,
+    });
+    const page = await context.newPage();
+    await page.goto(`${BASE_URL}#/?vista=${view}`, { waitUntil: "domcontentloaded" });
+    const selector = legacy[view] || `#view-${view}:not([hidden])`;
+    await page.waitForSelector(selector, { state: "attached", timeout: 15000 });
+    await page.waitForTimeout(220);
+    const path = `${OUT_DIR}/${view}-${shot.name}`;
+    await page.screenshot({ path });
+    console.log(`SHOT ${path} ${shot.width}x${shot.height}`);
+    await context.close();
+  }
 }
 
 await browser.close();

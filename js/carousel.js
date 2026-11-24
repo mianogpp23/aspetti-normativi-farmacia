@@ -104,7 +104,10 @@ export function createCarousel({ mount, onOpenModule }) {
 
   track.addEventListener("click", (event) => {
     const card = event.target.closest(".car-card");
-    if (card) select(Number(card.dataset.index), { focusCard: true });
+    if (card) {
+      select(Number(card.dataset.index), { focusCard: true });
+      onOpenModule?.(list[active]);
+    }
   });
 
   dots.addEventListener("click", (event) => {
@@ -117,11 +120,13 @@ export function createCarousel({ mount, onOpenModule }) {
   open.addEventListener("click", () => onOpenModule?.(list[active]));
 
   viewport.addEventListener("keydown", (event) => {
-    if (!event.target.closest(".car-card")) return;
-    const map = { ArrowLeft: active - 1, ArrowRight: active + 1, Home: 0, End: list.length - 1 };
+    const card = event.target.closest(".car-card");
+    if (!card) return;
+    const cardIndex = Number(card.dataset.index);
+    const map = { ArrowLeft: cardIndex - 1, ArrowRight: cardIndex + 1, Home: 0, End: list.length - 1 };
     if (event.key === "Enter") {
       event.preventDefault();
-      onOpenModule?.(list[active]);
+      onOpenModule?.(list[cardIndex]);
       return;
     }
     const target = map[event.key];

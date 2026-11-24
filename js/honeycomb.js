@@ -165,7 +165,10 @@ export function createHoneycomb({ mount, onOpenModule, onOpenTopic }) {
 
   cellsGroup.addEventListener("click", (event) => {
     const cell = event.target.closest(".hex-cell");
-    if (cell) select(Number(cell.dataset.index));
+    if (cell) {
+      select(Number(cell.dataset.index));
+      onOpenModule?.(list[active]);
+    }
   });
 
   cellsGroup.addEventListener("keydown", (event) => {
@@ -179,6 +182,7 @@ export function createHoneycomb({ mount, onOpenModule, onOpenTopic }) {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       select(Number(cell.dataset.index));
+      onOpenModule?.(list[active]);
     }
   });
 

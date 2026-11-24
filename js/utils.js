@@ -22,7 +22,8 @@ export function svgEl(tag, attrs = {}) {
   const node = document.createElementNS(svgNS, tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (v === null || v === undefined) continue;
-    node.setAttribute(k, String(v));
+    if (k === "dataset") Object.assign(node.dataset, v);
+    else node.setAttribute(k, String(v));
   }
   return node;
 }

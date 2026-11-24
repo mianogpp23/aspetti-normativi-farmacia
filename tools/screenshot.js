@@ -13,7 +13,7 @@ const shots = [
   { name: "mobile-360x800.png", width: 360, height: 800, mobile: true },
 ];
 const views = ["carosello", "sommario", "esagoni", "cerca"];
-const legacy = { libreria: "#lib-layout", dashboard: "#dash-modules .dash-module" };
+const legacy = { libreria: "#lib-layout" };
 
 for (const view of [...views, ...Object.keys(legacy)]) {
   for (const shot of shots) {

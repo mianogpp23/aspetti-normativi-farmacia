@@ -95,6 +95,10 @@ export function close() {
   document.body.style.overflow = "";
   setZoom(false);
   if (lastFocus?.focus) lastFocus.focus({ preventScroll: true });
+  // Navigate back to home view
+  if (location.hash.startsWith("#/m/")) {
+    location.hash = "#/";
+  }
 }
 
 export function goto(page, force = false) {

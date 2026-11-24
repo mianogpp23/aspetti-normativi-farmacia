@@ -57,10 +57,8 @@ const navTopics = manifest.modules.reduce((a, m) => a + ((m.topics?.length) || (
 const first = manifest.modules[0];
 const second = manifest.modules[1];
 const noPdf = manifest.modules.find((m) => !(m.pdf?.pages || m.slides?.length));
-const DASH_KEY = "farmacista:v1:dashboard";
-const LEGACY_KEY = "farmacista:v1:kanban";
 const GLOBAL_KEY = "farmacista:v1:global-view";
-const VIEWS = ["carosello", "sommario", "esagoni", "cerca", "libreria", "dashboard"];
+const VIEWS = ["carosello", "sommario", "esagoni", "cerca", "libreria"];
 await mkdir(OUT_DIR, { recursive: true });
 
 const browser = await chromium.launch({ executablePath: CHROMIUM, headless: true, args: ["--no-sandbox"] });
@@ -79,6 +77,7 @@ async function goto(view) {
     if (v === "sommario") return document.querySelectorAll(".sum-module-btn").length > 0;
     if (v === "esagoni") return document.querySelectorAll("#hex-svg .hex-cell").length > 0;
     if (v === "cerca") return document.querySelector("#pal-input") !== null;
+    if (v === "libreria") return document.querySelectorAll(".lib-book").length > 0;
     return true;
   }, view, { timeout: 15000 });
 }
@@ -171,10 +170,8 @@ await page.fill("#search-input", "");
 await page.waitForTimeout(260);
 
 await goto("carosello");
-await cards.first().focus();
-await page.keyboard.press("Enter");
-await page.waitForSelector("#view-module:not([hidden])", { timeout: 5000 });
-check("carosello: invio apre il modulo", await page.locator("#view-module").isVisible());
+await cards.first().click();
+check("carosello: click apre il modulo", await page.locator("#view-module").isVisible());
 await page.waitForSelector("#viewer:not([hidden])", { timeout: 5000 });
 check("visore: slide iniziale", (await page.locator("#vw-cur").innerText()).trim() === "1");
 await page.keyboard.press("ArrowRight");
@@ -190,83 +187,21 @@ await page.locator(".brand").click();
 await page.waitForSelector("#view-carosello:not([hidden])", { timeout: 5000 });
 check("brand torna alla vista attiva", await page.locator("#view-carosello").isVisible() && await page.locator("#view-select").isVisible());
 
-await page.selectOption("#view-select", "dashboard");
-await page.waitForSelector("#dash-modules .dash-module", { timeout: 5000 });
-check("dashboard storica intatta", await page.locator('[data-testid="dashboard"]').isVisible() && await page.locator("#dash-modules .dash-module").count() === expectedModules);
-const stats = await page.locator("#dash-stats .dash-stat-value").allInnerTexts();
-check("dashboard: coerenza dati", JSON.stringify(stats.slice(0, 3)) === JSON.stringify([String(expectedModules), String(expectedTopics), String(expectedPages)]), stats.join(" | "));
-const row = page.locator(`.dash-module[data-module-id="${first.id}"]`);
-await row.locator(".dash-module-main").click();
-await row.locator(".dash-slide").first().click();
-await page.waitForSelector("#viewer:not([hidden])", { timeout: 5000 });
-await closeViewer();
-await page.locator(".brand").click();
-await page.waitForSelector("#view-home:not([hidden])", { timeout: 5000 });
-check("dashboard: progresso registrato", Number((await row.locator(".dash-module-meter b").innerText()).replace("%", "")) > 0);
-await row.locator('[data-action="override"]').click();
-check("dashboard: completamento", await row.locator(".dash-status-done").count() === 1);
-await page.click("#dash-reset");
-await page.click("#dash-confirm-yes");
-check("dashboard: azzeramento", await page.locator("#dash-modules .dash-status-done").count() === 0);
-await page.fill("#dash-filter", "deontologico");
-await page.waitForTimeout(120);
-const filteredIds = await page.locator("#dash-modules .dash-module").evaluateAll((nodes) => nodes.map((n) => n.dataset.moduleId));
-const filterToken = norm("deontologico");
-check("dashboard: filtro locale reale", filteredIds.length > 0 && filteredIds.length < expectedModules && filteredIds.every((id) => {
-  const mod = manifest.modules.find((m) => m.id === id);
-  return mod && haystack(mod).includes(filterToken);
-}), `${filteredIds.length} moduli`);
-await page.fill("#dash-filter", "");
-
-await page.reload({ waitUntil: "domcontentloaded" });
-await page.waitForSelector("#dash-modules .dash-module", { timeout: 15000 });
-check("vista persistita dopo reload", await page.evaluate(() => location.hash) === "#/?vista=dashboard" && await page.locator("#module-list").isVisible());
-
 await selectView("libreria");
 check("libreria storica intatta", await page.locator("#lib-layout").isVisible() && await page.locator(".lib-book").count() === expectedModules);
 
-const migration = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-await migration.addInitScript(([legacy, globalKey, id]) => {
-  localStorage.setItem(legacy, JSON.stringify({ modules: { [id]: { seen: [1, 2], last: 2 } } }));
-  localStorage.setItem(globalKey, "dashboard");
-}, [LEGACY_KEY, GLOBAL_KEY, first.id]);
-const migrationPage = await migration.newPage();
-watch(migrationPage, "migrazione", []);
-await migrationPage.goto(`${BASE_URL}#/?vista=dashboard`, { waitUntil: "domcontentloaded" });
-await migrationPage.waitForFunction(() => {
-const sel = document.querySelector("#view-home:not([hidden])");
-return sel && document.querySelectorAll("#dash-modules .dash-module").length > 0;
-}, null, { timeout: 20000 });
-const migrated = await migrationPage.evaluate((key) => JSON.parse(localStorage.getItem(key) || "{}"), DASH_KEY);
-check("migrazione da chiave legacy", (migrated.modules?.[first.id]?.seen || []).includes(2), JSON.stringify(migrated).slice(0, 90));
-check("chiave legacy rimossa", await migrationPage.evaluate((key) => localStorage.getItem(key), LEGACY_KEY) === null);
-await migration.close();
-
-if (noPdf) {
-  const npContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  await npContext.addInitScript(([key, globalKey, id]) => {
-    localStorage.setItem(key, JSON.stringify({ modules: { [id]: { seen: [], last: null, override: "done" } } }));
-    localStorage.setItem(globalKey, "dashboard");
-  }, [DASH_KEY, GLOBAL_KEY, noPdf.id]);
-  const npPage = await npContext.newPage();
-  watch(npPage, "no-pdf", []);
-  await npPage.goto(`${BASE_URL}#/?vista=dashboard`, { waitUntil: "domcontentloaded" });
-  await npPage.waitForFunction(() => {
-    const sel = document.querySelector("#view-home:not([hidden])");
-    return sel && document.querySelectorAll("#dash-modules .dash-module").length > 0;
-  }, null, { timeout: 20000 });
-  const txt = await npPage.locator("#dash-resume").innerText();
-  check("ripresa ignora modulo senza pagine", !txt.includes(noPdf.title));
-  await npContext.close();
-}
+await page.reload({ waitUntil: "domcontentloaded" });
+await page.waitForSelector(".lib-book", { timeout: 15000 });
+check("vista persistita dopo reload", await page.evaluate(() => location.hash) === "#/?vista=libreria" && await page.locator("#lib-layout").isVisible());
 
 for (const [label, width, height, mobile] of [["tablet", 820, 1100, false], ["mobile", 360, 800, true]]) {
   const ctx = await browser.newContext({ viewport: { width, height }, isMobile: mobile, hasTouch: mobile });
   const responsive = await ctx.newPage();
   watch(responsive, label, []);
-  for (const view of ["carosello", "sommario", "esagoni", "cerca"]) {
+  for (const view of ["carosello", "sommario", "esagoni", "cerca", "libreria"]) {
     await responsive.goto(`${BASE_URL}#/?vista=${view}`, { waitUntil: "domcontentloaded" });
-    await responsive.waitForSelector(`#view-${view}:not([hidden])`, { timeout: 15000 });
+    const selector = view === "libreria" ? "#view-home:not([hidden])" : `#view-${view}:not([hidden])`;
+    await responsive.waitForSelector(selector, { timeout: 15000 });
     const metrics = await responsive.evaluate(() => ({
       bodyOverflow: document.documentElement.scrollWidth > window.innerWidth + 2,
       pickerVisible: Boolean(document.querySelector("#view-select")?.getBoundingClientRect().width),

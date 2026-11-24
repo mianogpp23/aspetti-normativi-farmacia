@@ -329,6 +329,9 @@ export function createLibrary({ stage, shelves, info, crumbs, controls, legend, 
     if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"].includes(event.key)) {
       event.preventDefault();
       moveFocus(book, event.key);
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      openModule(list.find((mod) => mod.id === book.dataset.moduleId));
     } else if (event.key === "Escape") {
       event.preventDefault();
       clear();

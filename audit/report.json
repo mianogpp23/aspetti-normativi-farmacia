@@ -1,0 +1,842 @@
+[
+  {
+    "name": "PDF esiste: dispositivi-medici-e-presidi-medico-chirurgici",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/dispositivi-medici-e-presidi-medico-chirurgici/0001.webp: dispositivi-medici-e-presidi-medico-chirurgici slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/dispositivi-medici-e-presidi-medico-chirurgici/0001.webp: dispositivi-medici-e-presidi-medico-chirurgici slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/dispositivi-medici-e-presidi-medico-chirurgici/0053.webp: dispositivi-medici-e-presidi-medico-chirurgici slide 53",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/dispositivi-medici-e-presidi-medico-chirurgici/0053.webp: dispositivi-medici-e-presidi-medico-chirurgici slide 53",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: farmaci-stupefacenti-la-ricetta-elettronica-veterinaria",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria/0001.webp: farmaci-stupefacenti-la-ricetta-elettronica-veterinaria slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria/0001.webp: farmaci-stupefacenti-la-ricetta-elettronica-veterinaria slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria/0039.webp: farmaci-stupefacenti-la-ricetta-elettronica-veterinaria slide 39",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria/0039.webp: farmaci-stupefacenti-la-ricetta-elettronica-veterinaria slide 39",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: gestione-dei-medicinali-dopanti-e-dei-veleni",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-dei-medicinali-dopanti-e-dei-veleni/0001.webp: gestione-dei-medicinali-dopanti-e-dei-veleni slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-dei-medicinali-dopanti-e-dei-veleni/0001.webp: gestione-dei-medicinali-dopanti-e-dei-veleni slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-dei-medicinali-dopanti-e-dei-veleni/0012.webp: gestione-dei-medicinali-dopanti-e-dei-veleni slide 12",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-dei-medicinali-dopanti-e-dei-veleni/0012.webp: gestione-dei-medicinali-dopanti-e-dei-veleni slide 12",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al/0001.webp: gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al/0001.webp: gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al/0084.webp: gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al slide 84",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al/0084.webp: gestione-dei-medicinali-uso-umano-e-disciplina-di-dispensazione-al slide 84",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: gestione-economico-finanziaria-e-imprenditoriale-della-farmacia",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-economico-finanziaria-e-imprenditoriale-della-farmacia/0001.webp: gestione-economico-finanziaria-e-imprenditoriale-della-farmacia slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-economico-finanziaria-e-imprenditoriale-della-farmacia/0001.webp: gestione-economico-finanziaria-e-imprenditoriale-della-farmacia slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-economico-finanziaria-e-imprenditoriale-della-farmacia/0059.webp: gestione-economico-finanziaria-e-imprenditoriale-della-farmacia slide 59",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-economico-finanziaria-e-imprenditoriale-della-farmacia/0059.webp: gestione-economico-finanziaria-e-imprenditoriale-della-farmacia slide 59",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: gestione-sostanze-stupefacenti-e-psicotrope",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-sostanze-stupefacenti-e-psicotrope/0001.webp: gestione-sostanze-stupefacenti-e-psicotrope slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-sostanze-stupefacenti-e-psicotrope/0001.webp: gestione-sostanze-stupefacenti-e-psicotrope slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/gestione-sostanze-stupefacenti-e-psicotrope/0042.webp: gestione-sostanze-stupefacenti-e-psicotrope slide 42",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/gestione-sostanze-stupefacenti-e-psicotrope/0042.webp: gestione-sostanze-stupefacenti-e-psicotrope slide 42",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: il-codice-deontologico-del-farmacista",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/il-codice-deontologico-del-farmacista/0001.webp: il-codice-deontologico-del-farmacista slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/il-codice-deontologico-del-farmacista/0001.webp: il-codice-deontologico-del-farmacista slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/il-codice-deontologico-del-farmacista/0010.webp: il-codice-deontologico-del-farmacista slide 10",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/il-codice-deontologico-del-farmacista/0010.webp: il-codice-deontologico-del-farmacista slide 10",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: il-tirocinio-pratico-valutativo-finalita-e-adempimenti",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/il-tirocinio-pratico-valutativo-finalita-e-adempimenti/0001.webp: il-tirocinio-pratico-valutativo-finalita-e-adempimenti slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/il-tirocinio-pratico-valutativo-finalita-e-adempimenti/0001.webp: il-tirocinio-pratico-valutativo-finalita-e-adempimenti slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/il-tirocinio-pratico-valutativo-finalita-e-adempimenti/0034.webp: il-tirocinio-pratico-valutativo-finalita-e-adempimenti slide 34",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/il-tirocinio-pratico-valutativo-finalita-e-adempimenti/0034.webp: il-tirocinio-pratico-valutativo-finalita-e-adempimenti slide 34",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: integratori-alimentari-alimenti-per-gruppi-speciali",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/integratori-alimentari-alimenti-per-gruppi-speciali/0001.webp: integratori-alimentari-alimenti-per-gruppi-speciali slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/integratori-alimentari-alimenti-per-gruppi-speciali/0001.webp: integratori-alimentari-alimenti-per-gruppi-speciali slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/integratori-alimentari-alimenti-per-gruppi-speciali/0049.webp: integratori-alimentari-alimenti-per-gruppi-speciali slide 49",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/integratori-alimentari-alimenti-per-gruppi-speciali/0049.webp: integratori-alimentari-alimenti-per-gruppi-speciali slide 49",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: medicinali-ad-uso-veterinario",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/medicinali-ad-uso-veterinario/0001.webp: medicinali-ad-uso-veterinario slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/medicinali-ad-uso-veterinario/0001.webp: medicinali-ad-uso-veterinario slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/medicinali-ad-uso-veterinario/0102.webp: medicinali-ad-uso-veterinario slide 102",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/medicinali-ad-uso-veterinario/0102.webp: medicinali-ad-uso-veterinario slide 102",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1/0001.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1 slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1/0001.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1 slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1/0009.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1 slide 9",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1/0009.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-1 slide 9",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2/0001.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2 slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2/0001.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2 slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2/0032.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2 slide 32",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2/0032.webp: organizzazione-della-farmacia-aperta-al-pubblico-e-attivita-2 slide 32",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: ossigeno-e-ossigenoterapia",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/ossigeno-e-ossigenoterapia/0001.webp: ossigeno-e-ossigenoterapia slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/ossigeno-e-ossigenoterapia/0001.webp: ossigeno-e-ossigenoterapia slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/ossigeno-e-ossigenoterapia/0010.webp: ossigeno-e-ossigenoterapia slide 10",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/ossigeno-e-ossigenoterapia/0010.webp: ossigeno-e-ossigenoterapia slide 10",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: preparazioni-galeniche-magistrali-o-officinali",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/preparazioni-galeniche-magistrali-o-officinali/0001.webp: preparazioni-galeniche-magistrali-o-officinali slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/preparazioni-galeniche-magistrali-o-officinali/0001.webp: preparazioni-galeniche-magistrali-o-officinali slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/preparazioni-galeniche-magistrali-o-officinali/0070.webp: preparazioni-galeniche-magistrali-o-officinali slide 70",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/preparazioni-galeniche-magistrali-o-officinali/0070.webp: preparazioni-galeniche-magistrali-o-officinali slide 70",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: prodotti-cosmetici",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/prodotti-cosmetici/0001.webp: prodotti-cosmetici slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/prodotti-cosmetici/0001.webp: prodotti-cosmetici slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/prodotti-cosmetici/0014.webp: prodotti-cosmetici slide 14",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/prodotti-cosmetici/0014.webp: prodotti-cosmetici slide 14",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: prodotti-e-preparati-di-origine-vegetale",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/prodotti-e-preparati-di-origine-vegetale/0001.webp: prodotti-e-preparati-di-origine-vegetale slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/prodotti-e-preparati-di-origine-vegetale/0001.webp: prodotti-e-preparati-di-origine-vegetale slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/prodotti-e-preparati-di-origine-vegetale/0025.webp: prodotti-e-preparati-di-origine-vegetale slide 25",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/prodotti-e-preparati-di-origine-vegetale/0025.webp: prodotti-e-preparati-di-origine-vegetale slide 25",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: sanita-digitale-e-tracciabilita-dei-farmaci",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/sanita-digitale-e-tracciabilita-dei-farmaci/0001.webp: sanita-digitale-e-tracciabilita-dei-farmaci slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/sanita-digitale-e-tracciabilita-dei-farmaci/0001.webp: sanita-digitale-e-tracciabilita-dei-farmaci slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/sanita-digitale-e-tracciabilita-dei-farmaci/0033.webp: sanita-digitale-e-tracciabilita-dei-farmaci slide 33",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/sanita-digitale-e-tracciabilita-dei-farmaci/0033.webp: sanita-digitale-e-tracciabilita-dei-farmaci slide 33",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "PDF esiste: vaccini",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/vaccini/0001.webp: vaccini slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/vaccini/0001.webp: vaccini slide 1",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/thumbs/vaccini/0048.webp: vaccini slide 48",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset content/slides/vaccini/0048.webp: vaccini slide 48",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico css/app.css",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico css/library.css",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico css/flow.css",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico css/viewer.css",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico css/views.css",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/main.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/data.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/utils.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/library.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/flow.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/viewer.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/search.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/carousel.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/summary.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/honeycomb.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/palette.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico js/views-common.js",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Asset statico favicon.svg",
+    "ok": true,
+    "detail": "HTTP 200"
+  },
+  {
+    "name": "Carosello card 0 click",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Carosello card 1 click",
+    "ok": true,
+    "detail": "hash=#/m/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria"
+  },
+  {
+    "name": "Carosello card 2 click",
+    "ok": true,
+    "detail": "hash=#/m/gestione-dei-medicinali-dopanti-e-dei-veleni"
+  },
+  {
+    "name": "Carosello Enter key",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Sommario modulo 0 click",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Sommario modulo 1 click",
+    "ok": true,
+    "detail": "hash=#/m/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria"
+  },
+  {
+    "name": "Sommario modulo 2 click",
+    "ok": true,
+    "detail": "hash=#/m/gestione-dei-medicinali-dopanti-e-dei-veleni"
+  },
+  {
+    "name": "Sommario topic click",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici/t1"
+  },
+  {
+    "name": "Esagoni cella 0 click",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Esagoni cella 1 click",
+    "ok": true,
+    "detail": "hash=#/m/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria"
+  },
+  {
+    "name": "Esagoni cella 2 click",
+    "ok": true,
+    "detail": "hash=#/m/gestione-dei-medicinali-dopanti-e-dei-veleni"
+  },
+  {
+    "name": "Esagoni Enter key",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Cerca risultati",
+    "ok": true,
+    "detail": "count=16"
+  },
+  {
+    "name": "Cerca click risultato",
+    "ok": true,
+    "detail": "hash=#/m/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria"
+  },
+  {
+    "name": "Cerca Escape pulisce",
+    "ok": true,
+    "detail": "value="
+  },
+  {
+    "name": "Libreria libro 0 dblclick",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Libreria libro 1 dblclick",
+    "ok": true,
+    "detail": "hash=#/m/farmaci-stupefacenti-la-ricetta-elettronica-veterinaria"
+  },
+  {
+    "name": "Libreria libro 2 dblclick",
+    "ok": true,
+    "detail": "hash=#/m/gestione-dei-medicinali-dopanti-e-dei-veleni"
+  },
+  {
+    "name": "Libreria Apri modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Libreria Enter key",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Modulo Inizia slide",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Flow topic click",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Flow slide click",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Modulo PDF link",
+    "ok": true,
+    "detail": "href=content/pdf/dispositivi-medici-e-presidi-medico-chirurgici.pdf"
+  },
+  {
+    "name": "Viewer freccia destra",
+    "ok": true,
+    "detail": "cur=2"
+  },
+  {
+    "name": "Viewer freccia sinistra",
+    "ok": true,
+    "detail": "cur=1"
+  },
+  {
+    "name": "Viewer PDF link",
+    "ok": true,
+    "detail": "href=content/pdf/dispositivi-medici-e-presidi-medico-chirurgici.pdf#page=1&zoom=page-fit"
+  },
+  {
+    "name": "Coerenza carosello -> modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Coerenza sommario -> modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Coerenza esagoni -> modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Coerenza cerca -> modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Coerenza libreria -> modulo",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici"
+  },
+  {
+    "name": "Browser back",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Browser forward",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Reload deep link",
+    "ok": true,
+    "detail": "hash=#/m/dispositivi-medici-e-presidi-medico-chirurgici/t1"
+  },
+  {
+    "name": "Direct open title",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Hash sconosciuto -> home",
+    "ok": true,
+    "detail": "hash=#/?vista=libreria"
+  },
+  {
+    "name": "desktop/carosello: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "desktop/sommario: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "desktop/esagoni: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "desktop/cerca: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "desktop/libreria: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "tablet/carosello: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "tablet/sommario: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "tablet/esagoni: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "tablet/cerca: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "tablet/libreria: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "mobile/carosello: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "mobile/sommario: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "mobile/esagoni: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "mobile/cerca: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "mobile/libreria: no horizontal overflow",
+    "ok": true,
+    "detail": "ok"
+  },
+  {
+    "name": "Carosello Enter",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Sommario Enter",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Esagoni Enter",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Esagoni Space",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Ctrl+K",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Cerca Enter",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Libreria Enter",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "Close viewer -> home",
+    "ok": true,
+    "detail": ""
+  }
+]

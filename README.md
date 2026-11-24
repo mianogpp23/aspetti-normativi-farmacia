@@ -3,13 +3,13 @@
 Sito statico (HTML + CSS + ES modules, **zero build step**) che trasforma l'archivio delle
 dispense PDF in un ambiente didattico navigabile:
 
-- **Board Kanban** (`#/`, vista *Elenco*): una card per modulo in tre colonne di stato,
-  con avanzamento calcolato dalle slide aperte, filtri, ordinamento, override completato,
-  continuazione dall'ultima slide e navigazione da tastiera.
+- **Dashboard** (`#/`, vista *Elenco*): quattro statistiche, ripresa dello studio, prossimi
+  argomenti e pagine per modulo con avanzamento calcolato dalle slide aperte, filtri,
+  ordinamento, override completato, continuazione dall'ultima slide e navigazione da tastiera.
 - **Libreria interattiva** (`#/`, vista *Mappa*): un volume per modulo su scaffali calcolati dalla
   larghezza disponibile; scheda di dettaglio, legenda, navigazione con frecce, ricerca
   con evidenziazione e doppio clic per aprire il modulo. Il selettore *Mappa | Elenco*
-  ricorda la scelta; sotto `640px` la board è la vista predefinita.
+  ricorda la scelta; sotto `640px` la dashboard è la vista predefinita.
 - **Percorso gerarchico** (`#/m/<modulo>`): argomenti in sequenza (rail), sotto-argomenti,
   griglia delle slide con miniature.
 - **Visore a schermo intero**: immagine della pagina PDF, navigazione avanti/indietro,
@@ -24,14 +24,14 @@ piattaforma-didattica/
 ├── config.json          # sorgente + titolo del corso (usato da scripts/scan.py)
 ├── css/
 │   ├── app.css          # design system (token, topbar, ricerca, modali)
-│   ├── kanban.css       # board della vista elenco (colonne, card, filtri)
+│   ├── dashboard.css     # dashboard della vista elenco (metriche, card, filtri)
 │   ├── library.css      # libreria interattiva (volumi, scaffali, responsive)
 │   ├── flow.css         # percorso gerarchico del modulo
 │   └── viewer.css       # visore a schermo intero
 ├── js/
 │   ├── utils.js         # helper DOM/format
 │   ├── data.js          # unico livello di accesso ai dati (manifest)
-│   ├── kanban.js        # board, progressi e interazioni della vista elenco
+│   ├── dashboard.js     # dashboard, progressi e interazioni della vista elenco
 │   ├── library.js       # libreria interattiva + interazioni
 │   ├── flow.js          # argomenti → sotto-argomenti → slide
 │   ├── viewer.js        # visore full-screen
@@ -83,7 +83,7 @@ Le copie dei 18 PDF delle dispense sono incluse in `content/pdf/` e quindi onlin
 ```bash
 git init -b main          # già presente in questa cartella
 git add .
-git commit -m "feat: sostituisci vista elenco con board Kanban"
+git commit -m "feat: sostituisci vista elenco con dashboard"
 git remote add origin git@github.com:utente/nome-repo.git
 git push -u origin main
 ```
@@ -102,16 +102,17 @@ relativi, quindi funziona anche se ospitato in una sottocartella).
 ## Verifica
 
 ```bash
-node --check js/kanban.js && node --check js/main.js && node --check tools/e2e.js
+node --check js/dashboard.js && node --check js/main.js && node --check tools/e2e.js
 node tools/check-links.js
 node tools/e2e.js
 node tools/screenshot.js
 ```
 
 Gli screenshot vengono scritti in `/tmp/verify-tools` (desktop 1440×900,
-tablet 768×1024, mobile 360×800). `BASE_URL` può puntare al sito pubblicato
-per ripetere le stesse verifiche online. La suite E2E copre colonne, colori,
-progressi, override, ricerca, ordinamento, tastiera, persistenza e mobile.
+tablet 820×1100, mobile 360×800). `BASE_URL` può puntare al sito pubblicato
+per ripetere le stesse verifiche online. La suite E2E copre statistiche, coerenza
+con il manifest, ripresa, prossimi argomenti, progressi, override, ricerca,
+ordinamento, tastiera, migrazione dello stato e mobile.
 
 ## Note operative
 

@@ -3,7 +3,7 @@
 import { $, toast } from "./utils.js";
 import { loadManifest, loadSearch, modules, getModule, pagesOf, topicAt } from "./data.js";
 import { createLibrary } from "./library.js";
-import { createKanban } from "./kanban.js";
+import { createDashboard } from "./dashboard.js";
 import { mountFlow, renderModule } from "./flow.js";
 import * as viewer from "./viewer.js";
 import { buildIndex, initSearch } from "./search.js";
@@ -12,8 +12,8 @@ const VIEW_HOME = "#view-home";
 const VIEW_MOD = "#view-module";
 
 let library = null;
-let kanban = null;
-/** slide da aprire nel visore appena il modulo è montato (ricerca/board → slide) */
+let dashboard = null;
+/** slide da aprire nel visore appena il modulo è montato (ricerca/dashboard → slide) */
 let pendingSlide = null;
 let viewMode = "map";
 let trackedModuleId = null;
@@ -38,7 +38,7 @@ function courseTitle() {
 }
 
 function homeTitle() {
-  return `${viewMode === "list" ? "Board" : "Libreria"} · ${courseTitle()}`;
+  return `${viewMode === "list" ? "Dashboard" : "Libreria"} · ${courseTitle()}`;
 }
 
 /* ---------------- viste ---------------- */
@@ -64,31 +64,37 @@ function setViewMode(mode) {
   $("#lib-layout").hidden = list;
   $("#btn-map").setAttribute("aria-pressed", String(!list));
   $("#btn-list").setAttribute("aria-pressed", String(list));
-  $("#home-title").textContent = list ? `Board · ${courseTitle()}` : `Libreria · ${courseTitle()}`;
+  $("#home-title").textContent = list ? `Dashboard · ${courseTitle()}` : `Libreria · ${courseTitle()}`;
   $("#home-sub").textContent = list
-    ? "Tre colonne per seguire i moduli: apri le slide, continua da dove eri e segna i completamenti."
+    ? "Statistiche, ripresa dello studio e pagine per modulo in un’unica vista."
     : "Ogni modulo è un volume: scegli un libro dallo scaffale, consulta la scheda e apri il percorso di argomenti e slide.";
-  if (list) kanban?.render();
+  if (list) dashboard?.render();
   else requestAnimationFrame(() => library?.layout());
   if (!$(VIEW_HOME).hidden) document.title = homeTitle();
 }
 
-function initKanban() {
-  if (kanban) return;
-  kanban = createKanban({
-    board: $("#kb-board"),
-    filter: $("#kb-filter"),
-    sort: $("#kb-sort-select"),
-    count: $("#kb-count"),
-    summary: $("#kb-summary"),
-    live: $("#kb-live"),
-    reset: $("#kb-reset"),
-    confirm: $("#kb-confirm"),
-    confirmYes: $("#kb-confirm-yes"),
-    confirmNo: $("#kb-confirm-no"),
+function initDashboard() {
+  if (dashboard) return;
+  dashboard = createDashboard({
+    mount: $("#module-list"),
+    stats: $("#dash-stats"),
+    greeting: $("#dash-greeting"),
+    subtitle: $("#dash-subtitle"),
+    overallPct: $("#dash-overall-pct"),
+    overallBar: $("#dash-overall-bar"),
+    resume: $("#dash-resume"),
+    next: $("#dash-next"),
+    filter: $("#dash-filter"),
+    sort: $("#dash-sort-select"),
+    count: $("#dash-count"),
+    live: $("#dash-live"),
+    reset: $("#dash-reset"),
+    confirm: $("#dash-confirm"),
+    confirmYes: $("#dash-confirm-yes"),
+    confirmNo: $("#dash-confirm-no"),
     onSlide: (mod, n) => {
       const topic = topicAt(mod, n);
-      pendingSlide = { id: mod.id, n, source: "kanban" };
+      pendingSlide = { id: mod.id, n, source: "dashboard" };
       openModule(mod, topic ? topic.id : null);
     },
     onOpenModule: (mod, topicId) => openModule(mod, topicId),
@@ -96,13 +102,13 @@ function initKanban() {
 }
 
 function syncProgressFromViewer() {
-  if (!kanban || !trackedModuleId || !viewer.isOpen()) return;
+  if (!dashboard || !trackedModuleId || !viewer.isOpen()) return;
   const mod = getModule(trackedModuleId);
   if (!mod) return;
   const current = Number(viewer.current()?.n);
   if (!Number.isInteger(current) || current < 1 || current === lastTrackedSlide) return;
   lastTrackedSlide = current;
-  kanban.recordSlide(mod, current);
+  dashboard.recordSlide(mod, current);
 }
 
 function initViewerTracking() {
@@ -139,7 +145,7 @@ function renderHome() {
     return li;
   }));
 
-  initKanban();
+  initDashboard();
   if (!library) {
     library = createLibrary({
       stage: $("#lib-stage"),
@@ -153,7 +159,7 @@ function renderHome() {
         trackedModuleId = mod.id;
         lastTrackedSlide = n;
         viewer.open(mod, n);
-        kanban?.recordSlide(mod, n);
+        dashboard?.recordSlide(mod, n);
       },
       onOpenModule: (mod, topicId) => openModule(mod, topicId),
     });
@@ -186,7 +192,7 @@ function renderModuleView(mod, topicId) {
       requestAnimationFrame(() => {
         viewer.open(mod, p.n);
         lastTrackedSlide = p.n;
-        if (p.source !== "kanban") kanban?.recordSlide(mod, p.n);
+        if (p.source !== "dashboard") dashboard?.recordSlide(mod, p.n);
       });
     }
   }
@@ -273,7 +279,7 @@ async function boot() {
       },
       onQuery: (value) => {
         library?.setQuery(value || "");
-        kanban?.setQuery(value || "");
+        dashboard?.setQuery(value || "");
       },
     });
     mountFlow({
@@ -281,7 +287,7 @@ async function boot() {
         trackedModuleId = mod.id;
         lastTrackedSlide = n;
         viewer.open(mod, n);
-        kanban?.recordSlide(mod, n);
+        dashboard?.recordSlide(mod, n);
       },
       onTopic: (mod, topicId) => {
         history.replaceState(null, "", `#/m/${mod.id}/${topicId}`);

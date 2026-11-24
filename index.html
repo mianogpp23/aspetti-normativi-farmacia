@@ -9,7 +9,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/app.css">
 <link rel="stylesheet" href="css/library.css">
-<link rel="stylesheet" href="css/kanban.css">
+<link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/flow.css">
 <link rel="stylesheet" href="css/viewer.css">
 </head>
@@ -58,7 +58,7 @@
     <div class="home-head">
       <p class="eyebrow" id="home-eyebrow">Archivio didattico</p>
       <h1 id="home-title">Il corso, a colpo d’occhio</h1>
-      <p class="home-sub" id="home-sub">Scegli la libreria visiva oppure la board: moduli, avanzamento e prossime slide in un unico posto.</p>
+      <p class="home-sub" id="home-sub">Scegli la libreria visiva oppure la dashboard: moduli, avanzamento e prossime slide in un unico posto.</p>
       <ul class="stat-row" id="stat-row" aria-label="Riepilogo dell'archivio"></ul>
       <div class="view-switch" id="view-switch" role="group" aria-label="Seleziona la vista">
         <button id="btn-map" type="button" aria-pressed="false">Mappa</button>
@@ -99,38 +99,70 @@
 
     <p class="sr-only" id="lib-live" aria-live="polite"></p>
 
-    <section class="kanban-shell" id="module-list" aria-labelledby="kb-heading" hidden>
-      <h2 class="sr-only" id="kb-heading">Board di avanzamento dei moduli</h2>
+    <section class="dashboard-shell" id="module-list" aria-labelledby="dash-heading" data-testid="dashboard" hidden>
+      <h2 class="sr-only" id="dash-heading">Dashboard del corso</h2>
 
-      <div class="kb-toolbar">
-        <div class="kb-filter-wrap">
-          <label for="kb-filter">Filtra moduli e argomenti</label>
-          <input id="kb-filter" type="search" placeholder="Filtra per modulo o argomento…" autocomplete="off">
+      <header class="dash-hero">
+        <div>
+          <p class="dash-eyebrow" id="dash-eyebrow">La tua dashboard</p>
+          <h3 id="dash-greeting">Buongiorno</h3>
+          <p class="dash-subtitle" id="dash-subtitle">Una vista d’insieme del corso.</p>
         </div>
-        <div class="kb-sort">
-          <label for="kb-sort-select">Ordina per</label>
-          <select id="kb-sort-select">
-            <option value="course">Ordine del corso</option>
-            <option value="progress">Avanzamento</option>
-          </select>
+        <div class="dash-overall">
+          <b id="dash-overall-pct">0%</b>
+          <span>del percorso completato</span>
+          <progress class="dash-overall" id="dash-overall-bar" max="100" value="0" aria-label="Avanzamento complessivo del corso"></progress>
         </div>
+      </header>
+
+      <ul class="dash-stats" id="dash-stats" aria-label="Statistiche del corso"></ul>
+
+      <div class="dash-grid">
+        <div class="dash-col dash-col-main">
+          <section class="dash-card" aria-labelledby="dash-resume-heading">
+            <h3 id="dash-resume-heading">Riprendi da dove eri</h3>
+            <div class="dash-resume" id="dash-resume" data-testid="dashboard-resume"></div>
+          </section>
+
+          <section class="dash-card" aria-labelledby="dash-next-heading">
+            <h3 id="dash-next-heading">Prossimi argomenti</h3>
+            <ol class="dash-next" id="dash-next" data-testid="dashboard-next"></ol>
+          </section>
+        </div>
+
+        <section class="dash-card dash-card-pages" aria-labelledby="dash-pages-heading">
+          <div class="dash-pages-head">
+            <div>
+              <h3 id="dash-pages-heading">Pagine per modulo</h3>
+              <p class="dash-pages-note" id="dash-count">— moduli</p>
+            </div>
+            <div class="dash-tools">
+              <label class="sr-only" for="dash-sort-select">Ordina per</label>
+              <select id="dash-sort-select">
+                <option value="course">Ordine del corso</option>
+                <option value="progress">Avanzamento</option>
+                <option value="pages">Pagine</option>
+              </select>
+            </div>
+          </div>
+          <div class="dash-filter-wrap">
+            <label for="dash-filter">Filtra moduli e argomenti</label>
+            <input id="dash-filter" type="search" placeholder="Filtra per modulo o argomento…" autocomplete="off">
+          </div>
+          <ol class="dash-modules" id="dash-modules" data-testid="dashboard-modules"></ol>
+          <div class="dash-foot">
+            <p>Le barre mostrano le slide aperte registrate in questo browser.</p>
+            <button class="dash-reset" id="dash-reset" type="button">Azzera avanzamento</button>
+          </div>
+          <div class="dash-confirm" id="dash-confirm" role="group" aria-label="Conferma azzeramento avanzamento" hidden>
+            <p>Azzerrare tutto l’avanzamento registrato? L’operazione non può essere annullata.</p>
+            <button id="dash-confirm-yes" type="button">Conferma</button>
+            <button id="dash-confirm-no" type="button">Annulla</button>
+          </div>
+        </section>
       </div>
 
-      <p class="kb-progress-summary" id="kb-summary">— moduli in board</p>
-      <div class="kb-board" id="kb-board" data-testid="kanban-board"></div>
-
-      <div class="kb-foot">
-        <p id="kb-count">— moduli</p>
-        <button class="kb-reset" id="kb-reset" type="button">Azzera progressi</button>
-      </div>
-
-      <div class="kb-confirm" id="kb-confirm" role="group" aria-label="Conferma azzeramento progressi" hidden>
-        <p>Azzerrare tutti i progressi registrati? L’operazione non può essere annullata.</p>
-        <button id="kb-confirm-yes" type="button">Conferma</button>
-        <button id="kb-confirm-no" type="button">Annulla</button>
-      </div>
-
-      <p class="sr-only" id="kb-live" aria-live="polite"></p>
+      <p class="sr-only" id="dash-live" aria-live="polite"></p>
     </section>
   </section>
 

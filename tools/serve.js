@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* serve.js — server statico minimale per la verifica locale della board Kanban. */
+/* serve.js — server statico minimale per la verifica locale della dashboard. */
 
 import http from "node:http";
 import { createReadStream } from "node:fs";
@@ -64,5 +64,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`board: http://${HOST}:${PORT}/ (root: ${ROOT})`);
+  console.log(`dashboard: http://${HOST}:${PORT}/ (root: ${ROOT})`);
 });

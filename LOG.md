@@ -535,3 +535,13 @@ Missione: sostituire il modulo visuale della home con una libreria in cui ogni m
 - **Ruling V44** — `node --check` verde su `js/*.js` e `tools/*.js`; `git diff --check` `DIFF_CHECK_OK`.
 - **Ruling V45** — commit atomici includono: `LOG.md`, `index.html`, `css/views.css`, `js/views-common.js`, `js/carousel.js`, `js/summary.js`, `js/honeycomb.js`, `js/palette.js`, `js/main.js`, `js/search.js`, `tools/e2e.js`, `tools/check-links.js`, `tools/screenshot.js`.
 - **Ruling V46** — push normale su `main` senza force push; Pages run completato con success; check-links e E2E online rilanciati e verdi; screenshot online catturati; consegna finale con tutto verde.
+
+### Deploy e verifica online
+
+- Commit implementazione: `68bb066daa8e7d062c69b34fad097d5d68400c37` — `feat: quattro viste modulo (Carosello, Sommario, Esagoni, Cerca) + selettore globale`; push normale su `main` da `44b310b` a `68bb066`, senza force push e senza riscrittura della storia.
+- Commit fix E2E timing: `c17df97` — `fix: attesa inizializzazione viste in E2E per deploy remoto`; push normale su `main` da `68bb066` a `c17df97`.
+- Pages: run `45382101126` (SHA `68bb066`) e run `45383183456` (SHA `c17df97`) entrambi completati con `conclusion: success`.
+- URL verificato: `https://mianogpp23.github.io/aspetti-normativi-farmacia/`. HTTP `200` per home, `css/views.css`, `js/carousel.js`, `js/summary.js`, `js/honeycomb.js`, `js/palette.js`, `js/views-common.js`, `js/main.js`, `js/search.js`; HTTP `404` per vecchi file non più riferiti. `<title>Board · FARMACISTA</title>` invariato e `<meta name="description">` byte-identica a `HEAD`. Il titolo dinamico a runtime diventa `Carosello · FARMACISTA`, `Sommario · FARMACISTA`, `Esagoni · FARMACISTA`, `Cerca · FARMACISTA` secondo la vista attiva.
+- check-links online: `HTML 200`, `MANIFEST 200 moduli=19`, `CHECKED 82 risorse · 0 errori`. E2E online: `SUMMARY {"total":75,"passed":75,"failed":0}` con console, pageerror, richieste fallite e HTTP error vuoti.
+- Screenshot online validi in `/tmp/verify-tools/`: 18 file PNG (4 viste × 3 viewport + 2 viste storiche × 3 viewport) alle dimensioni richieste `1440×900`, `820×1100`, `360×800`.
+- `git rev-list --left-right --count origin/main...HEAD` → `0 0` dopo i due push. Nessuna consegna Telegram: sessione disconnessa e non autorizzata per questa missione.

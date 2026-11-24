@@ -72,6 +72,15 @@ watch(page, "principale", dialogs);
 async function goto(view) {
   await page.goto(`${BASE_URL}#/?vista=${view}`, { waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => document.querySelectorAll("#view-select option").length > 0, null, { timeout: 15000 });
+  await page.waitForFunction((v) => {
+    const sel = document.querySelector(`#view-${v}:not([hidden])`);
+    if (!sel) return false;
+    if (v === "carosello") return document.querySelectorAll("#car-mount .car-card").length > 0;
+    if (v === "sommario") return document.querySelectorAll(".sum-module-btn").length > 0;
+    if (v === "esagoni") return document.querySelectorAll("#hex-svg .hex-cell").length > 0;
+    if (v === "cerca") return document.querySelector("#pal-input") !== null;
+    return true;
+  }, view, { timeout: 15000 });
 }
 
 async function selectView(view) {

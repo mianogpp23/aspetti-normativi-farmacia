@@ -233,7 +233,10 @@ await migration.addInitScript(([legacy, globalKey, id]) => {
 const migrationPage = await migration.newPage();
 watch(migrationPage, "migrazione", []);
 await migrationPage.goto(`${BASE_URL}#/?vista=dashboard`, { waitUntil: "domcontentloaded" });
-await migrationPage.waitForSelector("#dash-modules .dash-module", { timeout: 15000 });
+await migrationPage.waitForFunction(() => {
+const sel = document.querySelector("#view-home:not([hidden])");
+return sel && document.querySelectorAll("#dash-modules .dash-module").length > 0;
+}, null, { timeout: 20000 });
 const migrated = await migrationPage.evaluate((key) => JSON.parse(localStorage.getItem(key) || "{}"), DASH_KEY);
 check("migrazione da chiave legacy", (migrated.modules?.[first.id]?.seen || []).includes(2), JSON.stringify(migrated).slice(0, 90));
 check("chiave legacy rimossa", await migrationPage.evaluate((key) => localStorage.getItem(key), LEGACY_KEY) === null);
@@ -248,7 +251,10 @@ if (noPdf) {
   const npPage = await npContext.newPage();
   watch(npPage, "no-pdf", []);
   await npPage.goto(`${BASE_URL}#/?vista=dashboard`, { waitUntil: "domcontentloaded" });
-  await npPage.waitForSelector("#dash-modules .dash-module", { timeout: 15000 });
+  await npPage.waitForFunction(() => {
+    const sel = document.querySelector("#view-home:not([hidden])");
+    return sel && document.querySelectorAll("#dash-modules .dash-module").length > 0;
+  }, null, { timeout: 20000 });
   const txt = await npPage.locator("#dash-resume").innerText();
   check("ripresa ignora modulo senza pagine", !txt.includes(noPdf.title));
   await npContext.close();
